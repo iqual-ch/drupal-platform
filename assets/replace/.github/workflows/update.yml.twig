@@ -1,0 +1,59 @@
+{% if workflows.update %}
+{%- verbatim -%}
+name: Update Drupal Project
+
+env:
+  DOCKER_WEB_PORT: 80:80
+
+on:
+  workflow_dispatch:
+    inputs:
+      token:
+        required: false
+        type: string
+        description: 'If you want pull requests created by this action to trigger an on: push or on: pull_request workflow then you cannot use the default GITHUB_TOKEN and need a Personal Access Token. If you want to use the GITHUB_TOKEN, then leave this field blank.'
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Install Drupal locally
+      uses: ./.github/actions/install-local
+      with:
+        dockerhub_container_registry_user: ${{ secrets.DOCKERHUB_CONTAINER_REGISTRY_USER }}
+        dockerhub_container_registry_password: ${{ secrets.DOCKERHUB_CONTAINER_REGISTRY_PASSWORD }}
+        ssh_key: ${{ secrets.SSH_KEY }}
+        composer_auth: ${{ secrets.COMPOSER_AUTH }}
+
+    - name: Run Drupal updates
+      shell: bash
+      run: |
+        make cli-local COMMAND="make update COMPOSER_FLAGS=-n DRUSH_FLAGS=-y"
+
+    - name: Create Pull Request
+      uses: peter-evans/create-pull-request@v3
+      with:
+        token: ${{ github.event.inputs.token || secrets.GITHUB_TOKEN }}
+        commit-message: Updated Drupal site
+        title: Update Drupal site (${{ env.EXECUTION_DATE }})
+        body: |
+          Automatically generated Drupal update (${{ env.EXECUTION_DATE }}):
+
+          ## Tasks
+
+          - [x] Update vendor packages locally with `composer update`
+          - [x] Update Drupal database locally with `drush updatedb`
+          - [x] Export updated Drupal config with `drush config:export`
+          - [x] Website quality assurance after update using visual regression tests
+          - [ ] Synchronize config from live website
+          - [ ] Deploy update to live website
+
+          Check the logs in the [Github Actions workflow run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) for more information about the update.
+        branch: misc/update-${{ env.EXECUTION_DATE }}
+        reviewers: ${{ github.actor }}
+{% endverbatim -%}
+{% endif %}

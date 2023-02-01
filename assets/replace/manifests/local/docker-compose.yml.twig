@@ -1,0 +1,49 @@
+version: '3.4'
+
+x-drupal-variables: &drupal-variables
+  MYSQL_HOST: db
+  MYSQL_DATABASE: drupal
+  MYSQL_DATABASE_USER: drupal
+  MYSQL_DATABASE_PW: drupal
+  DRUPAL_ENVIRONMENT: local
+  DRUSH_OPTIONS_URI: {{ name }}-sw-project.{{ local_domain_suffix }}
+  VIRTUAL_HOST: {{ name }}-sw-project.{{ local_domain_suffix }}
+  SW_PROJECT_ROOT: /project
+  APP_ROOT: /project/app
+  NGINX_ROOT: /project/app/public
+
+services:
+  db:
+    image: {{ runtime.db_image }}:{{ runtime.db_image_tag|replace({'VERSION': runtime.db_version}) }}
+    environment:
+      - MYSQL_DATABASE=drupal
+      - MYSQL_USER=drupal
+      - MYSQL_PASSWORD=drupal
+      - MYSQL_ROOT_PASSWORD=local
+    volumes:
+      - db_storage:/var/lib/mysql
+
+  web:
+    image: {{ runtime.base_image }}:{{ runtime.base_image_tag|replace({'VERSION': runtime.php_version}) }}
+    environment:
+      <<: *drupal-variables
+    env_file:
+      - ../../.env
+      - ../../.env.secrets
+      - ../../.env.local
+    depends_on:
+      - db
+    ports:
+      - "${DOCKER_WEB_PORT:-80}"
+    volumes:
+      - ./../..:/project
+    networks:
+      - localdev-proxied-webapps
+      - default
+
+volumes:
+  db_storage:
+
+networks:
+  localdev-proxied-webapps:
+    external: true

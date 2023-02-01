@@ -1,0 +1,85 @@
+#
+# A minimalist Drush config file.
+# See https://www.drush.org/latest/using-drush-configuration/ for lots more documentation.
+#
+# Also check out https://github.com/drush-ops/drush/blob/master/examples/example.drush.yml for a detailed setup
+
+# Preflight configuration.
+drush:
+  include:
+    # - '${env.HOME}/.drush/commands'
+    # - /usr/share/drush/commands
+  paths:
+    config:
+      # Load additional config files. Is silently skipped if not found. Filename must be drush.yml
+      # - ${env.HOME}/.drush/config/drush.yml
+    alias-path:
+      # - '${env.HOME}/.drush/sites'
+      # - /etc/drush/sites
+
+# Global options.
+options:
+  # Specify the base_url that should be used when generating links.
+  # uri: 'https://localhost'
+
+# Command-specific options.
+command:
+  sql:
+    dump:
+      options:
+        # if you need these tables, use --no-structure-tables-list
+        structure-tables-key: common
+  php:
+    script:
+      options:
+        # Additional folders to search for scripts.
+#       script-path: 'sites/all/scripts:profiles/myprofile/scripts'
+  core:
+    rsync:
+      options:
+        # Ensure all rsync commands use verbose output.
+#       verbose: true
+
+  site:
+    install:
+      options:
+        # Set a predetermined username and password when using site-install.
+#       account-name: 'alice'
+#       account-pass: 'secret'
+
+sql:
+  # List of tables whose *data* is skipped by the 'sql-dump' and 'sql-sync'
+  # commands when the "--structure-tables-key=common" option is provided.
+  # You may add specific tables to the existing array or add a new element.
+  structure-tables:
+    common:
+      - 'cache'
+      - 'cache_*'
+      - 'history'
+      - 'search_*'
+      - 'sessions'
+      - 'watchdog'
+      - 'queue'
+      - 'key_value_expire'
+      - 'field_deleted_data_*'
+      - 'field_deleted_revision_*'
+      - 'webform_submission*'
+  # List of tables to be omitted entirely from SQL dumps made by the 'sql-dump'
+  # and 'sql-sync' commands when the "--skip-tables-key=common" option is
+  # provided on the command line.  This is useful if your database contains
+  # non-Drupal tables used by some other application or during a migration for
+  # example.  You may add new tables to the existing array or add a new element.
+  skip-tables:
+    common:
+      - 'migration_*'
+      - '*_bk'
+      - 'old_*'
+
+# Non-options.
+ssh:
+  # Specify options to pass to ssh.  The default is to prohibit
+  # password authentication, and is included here, so you may add additional
+  # parameters without losing the default configuration.
+  options: '-p ${env.SSH_PORT} -o PasswordAuthentication=no -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o LogLevel=FATAL'
+  # This string is valid for Bash shell. Override in case you need something different. See https://github.com/drush-ops/drush/issues/3816.
+  pipefail: 'set -o pipefail; '

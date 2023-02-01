@@ -1,0 +1,33 @@
+{% if workflows.vrt %}
+{%- verbatim -%}
+name: Visual Regression testing
+
+env:
+  DOCKER_WEB_PORT: 80:80
+
+on:
+  workflow_dispatch:
+  pull_request:
+    types: [opened, reopened]
+
+jobs:
+  run-vr-tests:
+    name: Visual Regression tests
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Install Drupal locally
+      uses: ./.github/actions/install-local
+      with:
+        dockerhub_container_registry_user: ${{ secrets.DOCKERHUB_CONTAINER_REGISTRY_USER }}
+        dockerhub_container_registry_password: ${{ secrets.DOCKERHUB_CONTAINER_REGISTRY_PASSWORD }}
+        ssh_key: ${{ secrets.SSH_KEY }}
+        composer_auth: ${{ secrets.COMPOSER_AUTH }}
+
+    - name: Run Visual regression tests
+      uses: ./app/vendor/iqual-ch/ci-pocketknife-installer/.github/actions/visual-regression-tests
+{% endverbatim -%}
+{% endif %}

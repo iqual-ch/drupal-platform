@@ -1,0 +1,33 @@
+{
+  "window.title": "{{ name }}-sw-project${separator}${dirty}${activeEditorMedium}${separator}${appName}",
+  "terminal.integrated.profiles.linux": {
+    "bash": {
+      "path": "/bin/bash",
+      "icon": "terminal-bash"
+    }
+  },
+  "terminal.integrated.defaultProfile.linux": "bash",
+  "terminal.integrated.cwd": "${workspaceFolder}",
+  "terminal.integrated.allowChords": false,
+  "sqltools.connections": [
+    {
+      "mysqlOptions": {
+        "authProtocol": "default"
+      },
+      "previewLimit": 50,
+      "server": "db",
+      "port": 3306,
+      "driver": "MariaDB",
+      "name": "db",
+      "database": "drupal",
+      "username": "drupal",
+      "password": "drupal"
+    }
+  ],
+  "git.autofetch": true,
+  "[php]": {
+    "editor.defaultFormatter": "wongjn.php-sniffer"
+  },
+  "phpcs.executablePath": "/project/app/vendor/bin/phpcs",
+  "phpSniffer.standard": "/project/app/vendor/drupal/coder/coder_sniffer/DrupalPractice,/project/app/vendor/drupal/coder/coder_sniffer/Drupal"
+}

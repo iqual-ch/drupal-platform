@@ -1,0 +1,46 @@
+{% if workflows.update or workflows.vrt %}
+{%- verbatim -%}
+name: Install Drupal locally
+description: Checkout, configure, deploy and install a local drupal project
+inputs:
+  dockerhub_container_registry_user:
+    required: true
+  dockerhub_container_registry_password:
+    required: true
+  ssh_key:
+    required: true
+  composer_auth:
+    required: true
+runs:
+  using: composite
+  steps:
+  - name: Import environment variables from a file
+    shell: bash
+    run: |
+      grep -v '^#' .env | grep . >> $GITHUB_ENV
+
+  - name: Generate dynamic env variables
+    shell: bash
+    run: |
+      echo "EXECUTION_DATE=$(date --rfc-3339=date)" >> $GITHUB_ENV
+
+  - name: Login to Docker Hub
+    uses: docker/login-action@v1
+    with:
+      username: ${{ inputs.dockerhub_container_registry_user }}
+      password: ${{ inputs.dockerhub_container_registry_password }}
+
+  - name: Deploy local environment
+    shell: bash
+    env:
+      SSH_KEY: ${{ inputs.ssh_key }}
+      COMPOSER_AUTH: ${{ inputs.composer_auth }}
+    run: |
+      make deploy-local COMPOSE_FLAGS=-d
+
+  - name: Install local environment
+    shell: bash
+    run: |
+      make cli-local COMMAND="make project COMPOSER_FLAGS=-n && ln -nfs /project/app/public /var/www/public && sed -i 's/\(iq_stage_file_proxy.settings.*offload.*\) = TRUE/\1 = FALSE/' /project/app/public/sites/default/local.settings.php"
+{% endverbatim -%}
+{% endif %}

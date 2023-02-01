@@ -1,0 +1,49 @@
+{
+    "name": "iqual/drupal-project",
+    "description": "iqual's Drupal project scaffolding.",
+    "type": "library",
+    "license": "GPL-2.0-or-later",
+    "authors": [
+        {
+            "name": "martinstadelmann",
+            "email": "m.stadelmann@iqual.ch"
+        }
+    ],
+    "require": {
+        "iqual/project-scaffold": "*"
+    },
+    "extra": {
+        "project-scaffold": {
+            "runtime": {
+                "base_image": "iqualch/dc-drupal",
+                "base_image_tag": "exp-VERSION-dev",
+                "db_image": "iqualch/dc-mysql",
+                "db_image_tag": "vVERSION",
+                "php_version": 7.3,
+                "db_version": 10.3,
+                "php_memory_limit": "128M"
+            },
+            "workflows": {
+                "update": true,
+                "vrt": true
+            },
+            "local_domain_suffix": "localdev.iqual.ch",
+            "development": [
+                "devcontainer-docker-compose"
+            ],
+            "deployment": "kubernetes",
+            "kubernetes_contexts": {
+                "dev": "do-fra1-dev-cluster-1",
+                "stage": "do-fra1-dev-cluster-1",
+                "prod": "do-fra1-prod-cluster-1"
+            },
+            "drupal_spot": "dev",
+            "assets": {
+                "add": "assets/add",
+                "replace": "assets/replace",
+                "merge": "assets/merge",
+                "read": "questions.json"
+            }
+        }
+    }
+}

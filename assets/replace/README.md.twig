@@ -1,0 +1,52 @@
+# {{ title|default(name) }} Drupal Website
+
+{% if (locations['web-root'] ~ '/apple-touch-icon.png') is existing_file %}
+<img src="./app/{{ locations['web-root'] }}/apple-touch-icon.png" align="right" width="100" height="100">
+{% endif %}
+
+This repository contains the software project for the {{ title|default(name) }} Drupal website. It contains a Drupal installation with custom business logic, configuration, themes and styling for the website.
+
+* [Live URL]({{ url }}/)
+* [Local URL](https://{{ name }}-sw-project.{{ local_domain_suffix }}/)
+
+## Usage
+
+To install the project within a working Drupal environment, you can run:
+
+```bash
+make project
+```
+
+This will retrieve the newest version from the specified git branch and deploy all changes using composer and drush.
+
+* [See project documentation](./docs)
+
+> If you do not already have a working environment see the following sections on either development or deployment.
+
+## Development
+
+To start developing locally you can use use the following command to set-up a local Drupal environment running VS Code:
+
+```bash
+make code
+```
+
+This will prepare the local environment and launch VS Code in the current workfolder. To start the local deployment you can run `Rebuild and Reopen in Container` using the `Remote-Containers` extension. Check the development documentation for the requirements and further tooling instructions.
+
+* [See development documentation](./docs)
+
+## Deployment
+
+Environments can be deployed using the `make` target `deploy-%`. For example the `dev` environment can be deployed remotely, using the following command:
+
+```bash
+make deploy-dev
+```
+
+The `make` target allows the deployment of the specified environments either locally or remotely, depending on the definitions in the `./manifests` directory.
+
+* [See deployment documentation](./docs)
+
+## Further Documentation
+
+* [See `./docs` directory for further documentation](./docs)

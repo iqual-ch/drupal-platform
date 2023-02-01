@@ -1,0 +1,42 @@
+// @see https://code.visualstudio.com/docs/remote/devcontainerjson-reference
+{
+    "name": "iqual Local Dev",
+    "dockerComposeFile": [
+        "../manifests/local/docker-compose.yml",
+    ],
+    "service": "web",
+    "runServices": [],
+    "workspaceFolder": "/project/",
+
+    // Setup local environment variables
+    "initializeCommand": "make env-local",
+
+    // Setup the project after start-up
+    "postStartCommand": ["bash", "-l", "-c", "make project"],
+
+    // Legacy project folder soft linking for nginx
+    "postCreateCommand": "ln -nfs /project/app/public /var/www/public",
+
+    // Set the container user to www-data
+    "remoteUser": "www-data",
+
+    // Set *default* container specific settings.json values on container create.
+    "settings": {
+    },
+
+    // Add the IDs of extensions you want installed when the container is created.
+    "extensions": [
+        "eamodio.gitlens",
+        "mtxr.sqltools",
+        "mtxr.sqltools-driver-mysql",
+        "bmewburn.vscode-intelephense-client",
+        "DmitryDorofeev.empty-indent",
+        "DotJoshJohnson.xml",
+        "wongjn.php-sniffer",
+        "michelemelluso.code-beautifier",
+        "neilbrayfield.php-docblocker",
+        "persoderlind.vscode-phpcbf",
+        "xdebug.php-debug",
+        "shaharkazaz.git-merger"
+    ],
+}

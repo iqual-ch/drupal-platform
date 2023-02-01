@@ -1,0 +1,47 @@
+{
+    "required": [
+        "name",
+        "drupal_spot",
+        "url",
+        "runtime.php_version",
+        "runtime.db_version"
+    ],
+    "questions": {
+        "name": {
+            "question": "What is the <info>code name</info> of the project?",
+            "default": "[root-package-name]",
+            "filter": "/iqual\\/(.+?)-sw-project/$1/",
+            "validation": "[a-z][a-z0-9\\-]{0,28}[a-z0-9]"
+        },
+        "title": {
+            "question": "What is the <info>title</info> of the project?",
+            "default": "[name]"
+        },
+        "url": {
+            "question": "What's the current <info>live URL</info> of the website?",
+            "default": "[name].docker-stage.iqual.ch",
+            "validation": "https:\\/\\/.+"
+        },
+        "runtime.php_version": {
+            "question": "What <info>PHP version</info> should be installed?",
+            "options": [
+                "7.3"
+            ]
+        },
+        "runtime.db_version": {
+            "question": "What <info>database version</info> should be installed?",
+            "options": [
+                "10.3"
+            ]
+        },
+        "drupal_spot": {
+            "question": "Where is the current Single Point of Truth (<info>SPOT</info>) of the Drupal database?",
+            "default": "dev",
+            "options": [
+                "dev",
+                "stage",
+                "prod"
+            ]
+        }
+    }
+}
