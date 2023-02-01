@@ -19,7 +19,7 @@
         },
         "url": {
             "question": "What's the current <info>live URL</info> of the website?",
-            "default": "[name].docker-stage.iqual.ch",
+            "default": "https://[name].docker-stage.iqual.ch",
             "validation": "https:\\/\\/.+"
         },
         "runtime.php_version": {
