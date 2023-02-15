@@ -157,7 +157,6 @@ install: check-in-container-true ## Install existing Drupal site
 	fi
 	echo "Deploying Drupal"
 	drush deploy || exit 1
-	make theme
 	chown -Rf www-data:www-data .
 
 uninstall: check-in-container-true ## Uninstall/reset Drupal site
