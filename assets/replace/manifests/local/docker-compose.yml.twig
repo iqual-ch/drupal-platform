@@ -7,7 +7,7 @@ x-drupal-variables: &drupal-variables
   MYSQL_DATABASE_PW: drupal
   DRUPAL_ENVIRONMENT: local
   DRUSH_OPTIONS_URI: {{ name }}-sw-project.{{ local_domain_suffix }}
-  VIRTUAL_HOST: {{ name }}-sw-project.{{ local_domain_suffix }}
+  VIRTUAL_HOST: "*.{{ name }}-sw-project.{{ local_domain_suffix }},{{ name }}-sw-project.{{ local_domain_suffix }}"
   SW_PROJECT_ROOT: /project
   APP_ROOT: /project/app
   NGINX_ROOT: /project/app/public
