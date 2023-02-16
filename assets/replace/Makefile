@@ -133,7 +133,7 @@ new: check-in-container-true ## Create new Drupal site from repo
 	fi
 	if compgen -G "$$APP_ROOT/resources/*.sql.gz" > /dev/null; then
 		drush sqlq --file=$$(compgen -G "$$APP_ROOT/resources/*.sql.gz" | head -1)
-		drush deploy || exit 1
+		drush updb || exit 1
 	else
 		drush si $(DRUSH_FLAGS) || exit 1
 	fi
