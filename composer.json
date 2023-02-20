@@ -20,8 +20,7 @@
                 "db_image": "iqualch/dc-mysql",
                 "db_image_tag": "vVERSION",
                 "php_version": 7.3,
-                "db_version": 10.3,
-                "php_memory_limit": "128M"
+                "db_version": 10.3
             },
             "workflows": {
                 "update": true,

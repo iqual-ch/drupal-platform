@@ -11,6 +11,9 @@ x-drupal-variables: &drupal-variables
   SW_PROJECT_ROOT: /project
   APP_ROOT: /project/app
   NGINX_ROOT: /project/app/public
+{% if runtime.php_memory_limit %}
+  PHP_MEMORY_LIMIT: {{ runtime.php_memory_limit }}
+{% endif %}
 
 services:
   db:
