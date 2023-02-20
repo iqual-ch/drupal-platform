@@ -36,7 +36,7 @@
         },
         "drupal_spot": {
             "question": "Where is the current Single Point of Truth (<info>SPOT</info>) of the Drupal database?",
-            "default": "dev",
+            "default": "stage",
             "options": [
                 "dev",
                 "stage",
