@@ -1,5 +1,5 @@
 {
-  "window.title": "{{ name }}-sw-project${separator}${dirty}${activeEditorMedium}${separator}${appName}",
+  "window.title": "{{ project_name|default(name ~ '-sw-project') }}${separator}${dirty}${activeEditorMedium}${separator}${appName}",
   "terminal.integrated.profiles.linux": {
     "bash": {
       "path": "/bin/bash",
