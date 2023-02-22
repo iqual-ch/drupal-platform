@@ -66,7 +66,8 @@ db.session.sql
 
 # Custom themes and modules
 !app/public/themes/custom/iq_custom
-!app/public/modules/custom/{{ name }}
+!app/public/modules/custom/{{ name|replace({'-': '_'}) }}
+!app/public/modules/custom/{{ name|replace({'-': '_'}) }}_*
 
 # Assets
 app/resources/*.sql

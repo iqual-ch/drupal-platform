@@ -11,7 +11,7 @@
             "question": "What is the <info>code name</info> of the project?",
             "default": "[root-package-name]",
             "filter": "/iqual\\/(.+?)-sw-project/$1/",
-            "validation": "[a-z][a-z0-9\\-]{0,28}[a-z0-9]"
+            "validation": "[a-z][a-z0-9\\-]{0,18}[a-z0-9]"
         },
         "title": {
             "question": "What is the <info>title</info> of the project?",
@@ -36,7 +36,7 @@
         },
         "drupal_spot": {
             "question": "Where is the current Single Point of Truth (<info>SPOT</info>) of the Drupal database?",
-            "default": "dev",
+            "default": "stage",
             "options": [
                 "dev",
                 "stage",
