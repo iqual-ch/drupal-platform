@@ -19,11 +19,11 @@
         "project-scaffold": {
             "runtime": {
                 "base_image": "iqualch/dc-drupal",
-                "base_image_tag": "exp-VERSION-dev",
-                "db_image": "iqualch/dc-mysql",
-                "db_image_tag": "vVERSION",
-                "php_version": 7.3,
-                "db_version": 10.3
+                "base_image_tag": "nginx-phpVERSION-dev",
+                "db_image": "iqualch/dc-mariadb",
+                "db_image_tag": "VERSION",
+                "php_version": 8.1,
+                "db_version": 10.6
             },
             "workflows": {
                 "update": true,

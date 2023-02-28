@@ -25,13 +25,19 @@
         "runtime.php_version": {
             "question": "What <info>PHP version</info> should be installed?",
             "options": [
-                "7.3"
+                "7.3",
+                "7.4",
+                "8.0",
+                "8.1"
             ]
         },
         "runtime.db_version": {
             "question": "What <info>database version</info> should be installed?",
             "options": [
-                "10.3"
+                "10.3",
+                "10.4",
+                "10.5",
+                "10.6"
             ]
         },
         "drupal_spot": {
