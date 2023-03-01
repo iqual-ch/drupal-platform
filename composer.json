@@ -12,6 +12,9 @@
     "require": {
         "iqual/project-scaffold": "^1.0"
     },
+    "archive": {
+        "exclude": ["/docs"]
+    },
     "extra": {
         "project-scaffold": {
             "runtime": {
