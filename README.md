@@ -4,7 +4,7 @@ This is a project asset composer package to be used with the [iqual/project-scaf
 
 The bundled assets are for the iqual internal developer platform's Drupal integration. It supports a local (and remote) VS Code setup running docker-compose containers, integrations for Drupal deployments on Kubernetes and workflows for automation.
 
-> Disclaimer: This package is not (yet) intended for public usage and depends on iqual's internal developer platform. 
+> Disclaimer: This package is not (yet) intended for public usage and depends on iqual's internal developer platform.
 
 ## Platform Features
 
@@ -17,37 +17,28 @@ The bundled assets are for the iqual internal developer platform's Drupal integr
 
 ## Package Variables
 
+
+
 * `name`: Code name of the project (e.g. `iqual`)
 * `title`: Title of the project (e.g. `iqual AG`)
 * `url`: URL to the current remote live deployment (e.g. `https://www.iqual.ch`)
 * `drupal_spot`: The drupal single point of truth for asset synchronization (e.g. `prod`)
-* Runtime configuration
-  * `runtime.base_image`: Base docker image for the Drupal container
-  * `runtime.base_image_tag`: Base docker image tag for the Drupal container
-  * `runtime.db_image`: Database docker image
-  * `runtime.db_image_tag`: Database docker image tag
-  * `runtime.php_version`: PHP version of the platform (e.g. `8.2`)
-  * `runtime.db_version`: Database version of the platform (e.g. `10.6`)
-  * `runtime.php_memory_limit`: PHP memory limit (e.g. `256M`)
-* CI/CD workflow settings
-  * `workflows.update`: Enable/Add the Drupal update workflow
-  * `workflows.vrt`: Enable/Add the visual regression testing workflow
-* `local_domain_suffix`: The domain suffix for local development
-* Development setup (`development` array)
-  * `devcontainer-docker-compose`: Local dev environment with docker-compose and devcontainers
-* `deployment`: Deployment integration type
-* Kubernetes contexts
-  * `kubernetes_contexts.dev`: Kubernetes development cluster context
-  * `kubernetes_contexts.stage`: Kubernetes staging cluster context
-  * `kubernetes_contexts.prod`: Kubernetes production cluster context
+* `runtime.php_version`: PHP version of the platform (e.g. `8.2`)
+* `runtime.db_version`: Database version of the platform (e.g. `10.6`)
+
+> Check the documentation for a [full list of the Drupal Platform's available package variables](./docs/configuration.md#drupal-platform-package-variables).
 
 ## Managed Assets
 
-List of files that are going to be managed in the destination project by this package:
+List of files that are going to be managed in the destination project by this package.
 
 ### Added Assets
 
 Assets that are only added if it doesn't exist in the target yet:
+
+<details>
+<summary>Show structure of added assets</summary>
+<br>
 
 ```
 assets/add/
@@ -59,9 +50,15 @@ assets/add/
             └── local.settings.php.twig
 ```
 
+</details>
+
 ### Replaced Assets
 
 Assets that are fully managed by the package and will be created if inexistant or otherwise overwritten in the target destination:
+
+<details>
+<summary>Show structure of repplaced assets</summary>
+<br>
 
 ```
 assets/replace/
@@ -95,9 +92,15 @@ assets/replace/
         └── docker-compose.yml.twig
 ```
 
+</details>
+
 ### Merged Assets
 
 Assets that will be merged into existing destination files or added if inexstistant:
+
+<details>
+<summary>Show structure of merged assets</summary>
+<br>
 
 ```
 assets/merge/
@@ -108,6 +111,21 @@ assets/merge/
 └── .gitignore.twig
 ```
 
+</details>
+
 ## Documentation
 
-_WIP_
+* Guides
+  * [Step-by-step initial setup](https://support-iqual.atlassian.net/wiki/spaces/ID/pages/2532704262/Initial+setup+G)
+* Drupal Platform
+  * [Concepts](./docs/concepts.md)
+  * [Configuration](./docs/configuration.md)
+  * [Commands](./docs/commands.md)
+  * [Repository Structure](./docs/structure.md)
+  * [Drupal Development](./docs/drupal-development.md)
+  * [Service Deployment](./docs/deployment.md)
+  * [App Installation](./docs/installation.md)
+  * [Automation (CI/CD)](./docs/automation.md)
+* Docker Images
+  * [iqual Drupal Image](https://github.com/iqual-ch/dc-drupal/)
+  * [iqual MariaDB Image](https://github.com/iqual-ch/dc-mariadb/)
