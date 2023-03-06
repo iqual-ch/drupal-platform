@@ -39,7 +39,7 @@ The `app` directory contains everything related to the Drupal website.
 │   │   └── themes
 │   │       ├── contrib         # Contributed themes (ignored)
 │   │       └── custom          # Custom website theme
-│   ├── resources               # Scripts and assets for the project
+│   ├── resources               # Scripts and assets for the app
 │   └── vendor                  # Composer vendor packages (ignored)
 └── ...
 
@@ -59,7 +59,7 @@ The `manifests` directory contains all the definitions for a deployment of a env
 
 ## Automation workflows (CI/CD)
 
-The `.github` directory contains the GitHub Actions workflows for continous integration and delivery functionality. See [automation documentation](./automation.md) for more information.
+The `.github` directory contains the GitHub Actions workflows for continous integration and delivery functionality. See the [automation documentation](./automation.md) for more information.
 
 
 ```

@@ -59,7 +59,7 @@ Remote deployment secrets can be injected from Kubernetes Secrets as environment
 
 ### SSH Authentication
 
-For `git` authentication and SSH proxy access (e.g. `drush` remote commands) a SSH authentication mechanism has to be provided. This can be either be done using VS Code's integrated `ssh-agent` integration or by using the `SSH_KEY` environment variable (e.g. in `.env.secrets`). Check the [Drupal Image environment variable documentation](https://github.com/iqual-ch/dc-drupal/blob/main/docs/environment-variables.md).
+For `git` authentication and SSH proxy access (e.g. `drush` remote commands) a SSH authentication mechanism has to be provided. This can either be done using VS Code's `ssh-agent` integration or by using the `SSH_KEY` environment variable (e.g. in `.env.secrets`). Check the [Drupal Image environment variable documentation](https://github.com/iqual-ch/dc-drupal/blob/main/docs/environment-variables.md) for more information.
 
 ### Composer Authentication
 

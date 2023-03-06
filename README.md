@@ -118,15 +118,14 @@ assets/merge/
 * Guides
   * [Step-by-step initial setup](https://support-iqual.atlassian.net/wiki/spaces/ID/pages/2532704262/Initial+setup+G)
 * Drupal Platform
-  * [Configuration](./docs/configuration.md)
   * [Concepts](./docs/concepts.md)
+  * [Configuration](./docs/configuration.md)
   * [Commands](./docs/commands.md)
   * [Repository Structure](./docs/structure.md)
   * [Drupal Development](./docs/drupal-development.md)
   * [Service Deployment](./docs/deployment.md)
   * [App Installation](./docs/installation.md)
   * [Automation (CI/CD)](./docs/automation.md)
-  * Troubleshooting
 * Docker Images
   * [iqual Drupal Image](https://github.com/iqual-ch/dc-drupal/)
   * [iqual MariaDB Image](https://github.com/iqual-ch/dc-mariadb/)

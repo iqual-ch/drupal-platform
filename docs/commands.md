@@ -2,7 +2,7 @@
 
 ## Make targets
 
-The following `make` targets are avialble in the project's `Makefile`. They can be executed in the project root using `make TARGET`.
+The following `make` targets are available in the project's `Makefile`. They can be executed in the project root using `make TARGET`.
 
 ### Help
 
@@ -12,7 +12,7 @@ The following `make` targets are avialble in the project's `Makefile`. They can 
 
 > These commands can only be run from within the Drupal container
 
-* `project`: Deploy the Drupal project into the current environment (requires a running container environment)
+* `project`: Auto-install the Drupal project into the current environment (requires a running container environment)
     * Checks if there are uncommited changes and aborts if detected
     * Pulls new commits from git if set (`$GIT_COMMIT` or `$GIT_BRANCH`)
     * Checks if `vendor` folder exists
@@ -28,7 +28,7 @@ The following `make` targets are avialble in the project's `Makefile`. They can 
 * `db-sync`: Synchronize Drupal database from `$DB_SOURCE` (if not set from `$DRUPAL_SPOT`)
 * `fs-sync`: Synchronize Drupal public files if `$DRUPAL_FS_SYNC` is set to `true` (`rsync`), otherwise enables `iq_stage_file_proxy`.
 * `uninstall`: Uninstall/reset the Drupal site
-* `new`: Create a new Drupal site form repo (`drush site:install` with profile or from a backup in the `ressources` folder)
+* `new`: Create a new Drupal site form repo (`drush site:install` with profile or from a backup in the `app/resources` folder)
 
 ### Development commands
 
@@ -52,4 +52,4 @@ The following `make` targets are avialble in the project's `Makefile`. They can 
 
 ## Scripts and aliases
 
-There are also scripts and a bunch of aliases available in the Drupal container. Check the [Script documentation of the Drupal image](https://github.com/iqual-ch/dc-drupal/blob/main/docs/scripts.md).
+There are also scripts and a bunch of aliases available in the Drupal container. Check the [script documentation of the Drupal image](https://github.com/iqual-ch/dc-drupal/blob/main/docs/scripts.md).

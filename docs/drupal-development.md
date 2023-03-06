@@ -33,11 +33,11 @@ The recommended development approach is to `git` clone (with SSH) the repository
 
 The project repository contains a `.devcontainer`, `.vscode` and depending on the setup a workspace configuration for development using Visual Studio Code.
 
-When starting VS Code with `make code` (or `code .`) within the project repository it will automatically prepare the local environment and deploy it. Once the container start-up has succeeded VS Code will install itself inside of the container and use the `Remote Containers` feature to communicate with the window on the desktop. It also makes sure that the SSH authenticated provided in the linux environment through the `ssh-agent` is propagated to the container.
+When starting VS Code with `make code` (or `code .`) within the project repository it will automatically prepare the local environment and deploy it. Once the container start-up has succeeded VS Code will install itself inside of the container and use the `Remote Containers` feature to communicate with the window on the desktop. It also makes sure that the SSH authentication provided in the linux environment through the `ssh-agent` is propagated to the container.
 
 After VS Code completed its installation it will execute `make project` within the container to automatically set-up the Drupal project. This command will try to install all vendor packages using `composer`, sync the database and filesystem from the single point of truth using `drush`, run database updates and import the config with a `drush deploy`.
 
-The start-up might soft-fail due to multiple reasons, since it tries to automatically set-up the desired environment but aborts if anomalies are detected. Check the project commands and project concepts documentation for further explanations on how these commands work.
+The start-up might soft-fail due to multiple reasons, since it tries to automatically set-up the desired environment but aborts if anomalies are detected. Check the [project commands](./commands.md) and [project concepts](./concepts.md) documentation for further explanations on how these commands work.
 
 ### Development with other IDEs
 
@@ -45,11 +45,11 @@ Other IDEs apart from Visual Studio Code are currently not actively supported. H
 
 ## Developing remotely
 
-Alternatively to local development there is the option to run a development environment with a code editor remotely. This can be useful for quick access to a new environment without requring local compute ressources.
+Alternatively to local development there is the option to run a development environment with a code editor remotely. This can be useful for quick access to a new environment without requring local compute resources.
 
 ### Development on GitHub Codespaces
 
-Currently the only supported remote development environment is GitHub Codespaces. This basically provides a hosted solution to the Visual Studio Code editor setup. The same launch operations are executed on GitHub Codespaces as on a local VS Code setup. It can be directly launched on a GitHub repository in the "Code" dropdown at the top (Feature has to be enabled by administrator).
+Currently the only supported remote development environment is GitHub Codespaces. This basically provides a hosted solution to the Visual Studio Code editor setup. The same launch operations are executed on GitHub Codespaces as on a local VS Code setup. It can be directly launched on a GitHub repository in the "Code" dropdown at the top (feature has to be enabled by administrator).
 
 In order for GitHub Codespaces to work a few environment variables are needed for proper authentication:
 
@@ -57,7 +57,7 @@ In order for GitHub Codespaces to work a few environment variables are needed fo
 * `DOCKERHUB_CONTAINER_REGISTRY_PASSWORD`: The Docker Hub container registry password to access the private container images (read access)
 * `DOCKERHUB_CONTAINER_REGISTRY_SERVER`: The Docker Hub container registry server, i.e. `https://index.docker.io/v1/`
 * `SSH_KEY`: A private SSH key for drush remote access. The public key has to be added to the SSH-to-kubectl proxy
-* `COMPOSER_AUTH`: The composer authentication string for access to the private packagist repo
+* `COMPOSER_AUTH`: (Optional) The composer authentication string for access to a private packagist repo
     * e.g. `{\"http-basic\":{\"repo.packagist.com\":{\"username\":\"USER\",\"password\":\"TOKEN\"}}}`
 
 ## XDebug
@@ -125,9 +125,9 @@ $config['swiftmailer.transport']['smtp_credentials']['swiftmailer']['password'] 
 
 ## Multiple local deployments
 
-It is possible to run multiple environments of the same project in parallel. To enable this, the `name` of the proejct needs to be changed. This can be done using `composer project:update` and by reopening the container in VS Code. In this case it possible to have different databases per git branch. For example a project by the name `example` can be changed to `example-feature` on a `feature-x` branch. In that case the database can be kept completely separate from the main branch.
+It is possible to run multiple environments of the same project in parallel. To enable this, the `name` of the project needs to be changed. This can be done using `composer project:update` and by re-opening the container in VS Code. In this case it possible to have different databases per git branch. For example a project by the name `example` can be changed to `example-feature` on a `feature-x` branch. In that case the database can be kept completely separate from the main branch.
 
-If multiple environments should be running simultaneously then the repository (i.e. the filesystem/codebase) also has to exist multiple times. This can be achieved by copy the existing repository or by cloning to a different folder.
+If multiple environments should be running simultaneously then the repository (i.e. the filesystem/codebase) also has to exist multiple times. This can be achieved by creating a copy of the existing repository or by cloning to a different secondary folder.
 
 > Make sure to not commit a modified `name` to main, since the modification is tracked in multiple files and could break other developer's setup.
 

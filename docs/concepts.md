@@ -12,11 +12,11 @@ The core codebase's SPOT is the project repository. It contains business logic a
 
 ### Vendor packages
 
-The vendor packages (such as Drupal core, iqual modules or contributed modules) are locked to specific version using composer in the project repository. The code of the packages is however located in a package repository and tracked in separate code repositories. The code is then downloaded during an installation of Drupal.
+The vendor packages (such as Drupal core, iqual modules or contributed modules) are locked to specific versions using composer in the project repository. The code of the packages is however located in a package repository and tracked in separate code repositories. The code is then downloaded during an installation of Drupal.
 
 ### Database & public assets
 
-The SPOT of the database and public asset is always situated on a remote deployment (e.g. `dev`, `stage`, `prod`) unless during the project's initial setup when there is now deployment yet.
+The SPOT of the database and public asset is always situated on a remote deployment (e.g. `dev`, `stage`, `prod`) unless during the project's initial setup when there is no deployment yet.
 
 ## Data synchronization
 
