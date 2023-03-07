@@ -41,6 +41,6 @@ runs:
   - name: Install local environment
     shell: bash
     run: |
-      make cli-local COMMAND="make project COMPOSER_FLAGS=-n && ln -nfs /project/app/public /var/www/public && sed -i 's/\(iq_stage_file_proxy.settings.*offload.*\) = TRUE/\1 = FALSE/' /project/app/public/sites/default/local.settings.php"
+      make cli-local COMMAND="make project COMPOSER_FLAGS=-n && sed -i 's/\(iq_stage_file_proxy.settings.*offload.*\) = TRUE/\1 = FALSE/' /project/app/public/sites/default/local.settings.php"
 {% endverbatim -%}
 {% endif %}
