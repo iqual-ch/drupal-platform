@@ -124,7 +124,7 @@ delete-local: check-in-container-false
 new: check-in-container-true ## Create new Drupal site from repo
 	@echo "Creating new Drupal site"
 	composer install --working-dir=$(APP_ROOT) $(COMPOSER_FLAGS)
-	mkdir -p $(APP_ROOT)/private
+	mkdir -p $(APP_ROOT)/{private,config/sync}
 	chmod 755 $(NGINX_ROOT)/sites/default/
 	chmod 444 $(NGINX_ROOT)/sites/default/*settings.php
 	chmod 444 $(NGINX_ROOT)/sites/default/settings.local.php || :
