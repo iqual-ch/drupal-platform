@@ -19,7 +19,7 @@ make project
 
 This will retrieve the newest version from the specified git branch and deploy all changes using composer and drush.
 
-* [See project documentation](./docs)
+* [See installation documentation](https://github.com/iqual-ch/drupal-platform/blob/main/docs/installation.md)
 
 > If you do not already have a working environment see the following sections on either development or deployment.
 
@@ -33,7 +33,7 @@ make code
 
 This will prepare the local environment and launch VS Code in the current workfolder. To start the local deployment you can run `Rebuild and Reopen in Container` using the `Remote-Containers` extension. Check the development documentation for the requirements and further tooling instructions.
 
-* [See development documentation](./docs)
+* [See development documentation](https://github.com/iqual-ch/drupal-platform/blob/main/docs/drupal-development.md)
 
 ## Deployment
 
@@ -45,8 +45,11 @@ make deploy-dev
 
 The `make` target allows the deployment of the specified environments either locally or remotely, depending on the definitions in the `./manifests` directory.
 
-* [See deployment documentation](./docs)
+* [See deployment documentation](https://github.com/iqual-ch/drupal-platform/blob/main/docs/deployment.md)
 
 ## Further Documentation
 
-* [See `./docs` directory for further documentation](./docs)
+* [Drupal Platform Documentation](https://github.com/iqual-ch/drupal-platform#readme)
+{% if (locations['project-root'] ~ '/docs') is existing_file %}
+* [See `./docs` directory for further project documentation](./docs)
+{% endif %}
