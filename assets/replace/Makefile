@@ -100,6 +100,8 @@ deploy-%: check-in-container-false ## Deploy environment %
 		make deploy-$*-compose
 	elif [[ -f ./manifests/$*/deployment.yml ]]; then
 		make deploy-$*-kubectl
+	elif [[ -f ./manifests/$*/patch.yml ]]; then
+		make deploy-$*-kubectl-patch
 	elif [[ -f ./manifests/$*/kustomization.yml ]]; then
 		make deploy-$*-kustomize
 	else
@@ -112,11 +114,19 @@ deploy-%-compose: check-in-container-false env-local
 	docker-compose -p $(COMPOSE_PROJECT_NAME) -f ./manifests/$*/docker-compose.yml up $(COMPOSE_FLAGS)
 
 deploy-%-kubectl: check-in-container-false
-	@echo "Deploying $* docker-compose manifests"
+	@echo "Deploying $* kubernetes manifests"
 	K8S_CONTEXT="$(K8S_$(shell echo $* | tr a-z A-Z)_CONTEXT)"
 	K8S_NAMESPACE="$*-drpl-$(PROJECT_CODE_NAME)"
 	kubectl create namespace $$K8S_NAMESPACE --dry-run=client -o yaml | kubectl apply --context $$K8S_CONTEXT -f -
 	kubectl apply --context $$K8S_CONTEXT -f ./manifests/$*/ -n $$K8S_NAMESPACE
+
+deploy-%-kubectl-patch: check-in-container-false
+	@echo "Patching $* kubernetes manifests"
+	K8S_CONTEXT="$(K8S_$(shell echo $* | tr a-z A-Z)_CONTEXT)"
+	K8S_NAMESPACE="$*-drpl-$(PROJECT_CODE_NAME)"
+	K8S_DEPLOYMENT="$(PROJECT_CODE_NAME)-drpl"
+	kubectl patch --context $$K8S_CONTEXT deployment $$K8S_DEPLOYMENT -p "$$(cat ./manifests/$*/patch.yml)" -n $$K8S_NAMESPACE || exit 1
+	kubectl rollout status --context $$K8S_CONTEXT -w deployment $$K8S_DEPLOYMENT -n $$K8S_NAMESPACE
 
 delete-local: check-in-container-false
 	@echo -e " $(MSG_WARNING) This will irreversible delete your local database's and container's data. This will not affect code in the repo."

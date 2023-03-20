@@ -1,0 +1,13 @@
+spec:
+  template:
+    spec:
+      containers:
+      - name: {{ name}}-drpl
+        image: {{ runtime.base_image }}:{{ runtime.base_image_tag|replace({'VERSION': runtime.php_version}) }}
+        env:
+        - name: DRUPAL_ENVIRONMENT
+          value: prod
+{% if runtime.php_memory_limit %}
+        - name: PHP_MEMORY_LIMIT
+          value: {{ runtime.php_memory_limit }}
+{% endif %}
