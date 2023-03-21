@@ -3,7 +3,7 @@ spec:
     spec:
       containers:
       - name: {{ name}}-drpl
-        image: {{ runtime.base_image }}:{{ runtime.base_image_tag|replace({'VERSION': runtime.php_version}) }}
+        image: {{ runtime.base_image }}:{{ runtime.base_image_tag|replace({'VERSION': runtime.php_version, '-dev': ''}) }}
         env:
         - name: DRUPAL_ENVIRONMENT
           value: stage
