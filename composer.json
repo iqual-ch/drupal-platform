@@ -39,7 +39,7 @@
                 "stage": "do-fra1-dev-cluster-1",
                 "prod": "do-fra1-prod-cluster-1"
             },
-            "drupal_spot": "dev",
+            "drupal_spot": "stage",
             "assets": {
                 "add": "assets/add",
                 "replace": "assets/replace",
