@@ -70,7 +70,11 @@ cli-%: check-in-container-false ## Attach to environment %
 		EXEC_FLAG=
 	fi
 	if [[ $* == "local" ]]; then
-		docker exec $$EXEC_FLAG --user $(REMOTE_USER) --workdir /project $(COMPOSE_PROJECT_NAME)_$(REMOTE_CONTAINER)_1 bash -l -c "$$EXEC_COMMAND"
+		if [[ "$$(docker-compose --version --short)" == "2."* ]]; then
+			docker exec $$EXEC_FLAG --user $(REMOTE_USER) --workdir /project $(COMPOSE_PROJECT_NAME)-$(REMOTE_CONTAINER)-1 bash -l -c "$$EXEC_COMMAND"
+		else
+			docker exec $$EXEC_FLAG --user $(REMOTE_USER) --workdir /project $(COMPOSE_PROJECT_NAME)_$(REMOTE_CONTAINER)_1 bash -l -c "$$EXEC_COMMAND"
+		fi
 	else
 		K8S_CONTEXT="$(K8S_$(shell echo $* | tr a-z A-Z)_CONTEXT)"
 		if [[ -z "$$K8S_CONTEXT" ]]; then
