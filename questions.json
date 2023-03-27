@@ -20,7 +20,7 @@
         "url": {
             "question": "What's the current <info>live URL</info> of the website?",
             "default": "https://[name].docker-stage.iqual.ch",
-            "validation": "https:\\/\\/.+"
+            "validation": "https:\\/\\/[^\\/\\s]+"
         },
         "runtime.php_version": {
             "question": "What <info>PHP version</info> should be installed?",
