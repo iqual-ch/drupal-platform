@@ -124,6 +124,17 @@ delete-local: check-in-container-false
 	docker-compose -p $(COMPOSE_PROJECT_NAME) -f ./manifests/local/docker-compose.yml down -v --remove-orphans || exit 1
 	docker volume rm $(COMPOSE_PROJECT_NAME)_{db,web}_storage 2>/dev/null || true
 
+# PHP commands
+xdebug: check-in-container-true ## Enable XDebug
+	@if [[ "$(DRUPAL_ENVIRONMENT)" == "local" ]]; then
+		sudo -E enable_xdebug
+	fi
+
+xdebug-disable: check-in-container-true ## Disable XDebug
+	@if [[ "$(DRUPAL_ENVIRONMENT)" == "local" ]]; then
+		sudo -E disable_xdebug
+	fi
+
 # Drupal (Drush) commands
 new: check-in-container-true ## Create new Drupal site from repo
 	@echo "Creating new Drupal site"
