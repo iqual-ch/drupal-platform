@@ -50,6 +50,13 @@ The following `make` targets are available in the project's `Makefile`. They can
 * `deploy-%`: Deploy the `%` environment (replace `%` with name of environment in `./manifests` folder)
 * `delete-local`: Delete the local deployment with `docker-compose` permanently
 
+### PHP commands
+
+> These commands can only be run from within the Drupal container
+
+* `xdebug`: Enable XDebug and restart the web server.
+* `xdebug-disable`: Disable XDebug and restart the web server.
+
 ## Scripts and aliases
 
 There are also scripts and a bunch of aliases available in the Drupal container. Check the [script documentation of the Drupal image](https://github.com/iqual-ch/dc-drupal/blob/main/docs/scripts.md).
