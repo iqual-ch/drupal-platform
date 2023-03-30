@@ -1,0 +1,19 @@
+{
+    "version": "2.0.0",
+    "tasks": [{
+        "label": "enable-xdebug",
+        "command": "make xdebug &",
+        "type": "shell",
+        "presentation": {
+            "reveal": "silent"
+        }
+    },
+    {
+        "label": "disable-xdebug",
+        "command": "make xdebug-disable",
+        "type": "shell",
+        "presentation": {
+            "reveal": "silent"
+        }
+    }]
+}

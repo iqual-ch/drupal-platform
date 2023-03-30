@@ -11,7 +11,9 @@
       "port": 9003,
       "pathMappings": {
         "/project/": "${workspaceRoot}/",
-      }
+      },
+      "preLaunchTask": "enable-xdebug",
+      "postDebugTask": "disable-xdebug"
     }
   ]
 }
