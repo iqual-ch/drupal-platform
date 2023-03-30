@@ -1,19 +1,41 @@
 {
     "version": "2.0.0",
     "tasks": [{
-        "label": "enable-xdebug",
-        "command": "make xdebug &",
+        "label": "make xdebug",
+        "command": "make xdebug",
+        "isBackground": true,
         "type": "shell",
         "presentation": {
-            "reveal": "silent"
-        }
+            "reveal": "silent",
+            "revealProblems": "onProblem",
+            "close": true
+        },
+        "problemMatcher": [
+            {
+              "pattern": [
+                {
+                  "regexp": ".",
+                  "file": 1,
+                  "location": 2,
+                  "message": 3
+                }
+              ],
+              "background": {
+                "activeOnStart": true,
+                "beginsPattern": ".",
+                "endsPattern": ".",
+              }
+            }
+        ]
     },
     {
-        "label": "disable-xdebug",
+        "label": "make xdebug-disable",
         "command": "make xdebug-disable",
         "type": "shell",
         "presentation": {
-            "reveal": "silent"
+            "reveal": "silent",
+            "revealProblems": "onProblem",
+            "close": true
         }
     }]
 }

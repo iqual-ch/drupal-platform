@@ -12,8 +12,8 @@
       "pathMappings": {
         "/project/": "${workspaceRoot}/",
       },
-      "preLaunchTask": "enable-xdebug",
-      "postDebugTask": "disable-xdebug"
+      "preLaunchTask": "make xdebug",
+      "postDebugTask": "make xdebug-disable"
     }
   ]
 }
