@@ -22,6 +22,7 @@ The following `make` targets are available in the project's `Makefile`. They can
     * Execute `make db-sync` and `make fs-sync` if the database is empty
     * Runs `drush deploy` (WARNING: This will override config)
 * `update`: Update the Drupal site (`composer` and `drush`) and export the new config
+* `upgrade`: Upgrade the Drupal site by running the `upgrade.sh` script with a `JSON_INPUT`. See the [upgrade workflow documentation](automation.md#upgrade-drupal-project).
 * `theme`: Compile the current Drupal theme (`iq_barrio`)
 * `db-backup`: Alias for db-dump wth `$APP_ROOT/backups` as backup folder
 * `db-dump`: Dump the Drupal database to `$DUMP_FOLDER` (or if not set to `$APP_ROOT`)
