@@ -57,7 +57,7 @@ assets/add/
 Assets that are fully managed by the package and will be created if inexistant or otherwise overwritten in the target destination:
 
 <details>
-<summary>Show structure of repplaced assets</summary>
+<summary>Show structure of replaced assets</summary>
 <br>
 
 ```
@@ -66,10 +66,14 @@ assets/replace/
 │   └── devcontainer.json
 ├── .github
 │   ├── actions
-│   │   └── install-local
-│   │       └── action.yml.twig
+│   │   ├── install-local
+│   │   │   └── action.yml.twig
+│   │   └── upgrade
+│   │       ├── rector.php
+│   │       └── upgrade.sh
 │   └── workflows
 │       ├── update.yml.twig
+│       ├── upgrade.yml.twig
 │       └── visual-regression-testing.yml.twig
 ├── .vscode
 │   ├── launch.json
