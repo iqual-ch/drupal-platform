@@ -27,6 +27,7 @@
             },
             "workflows": {
                 "update": true,
+                "upgrade": true,
                 "vrt": true
             },
             "local_domain_suffix": "localdev.iqual.ch",
