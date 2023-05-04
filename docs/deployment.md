@@ -26,6 +26,12 @@ To deploy the local environment run `make deploy-local`. The command will look f
 
 The remote deployment into a Kubernetes cluster is currently done using Rancher/Helm. See the [prod deployment](https://support-iqual.atlassian.net/wiki/spaces/ID/pages/1864073238/Prod-Instance+Rancher) and [dev/staging deployment guide](https://support-iqual.atlassian.net/wiki/spaces/ID/pages/1863942165/Dev-Instance+Staging+Rancher) for more details.
 
+### Patching existing deployments
+
+A patch to an existing deployment can be applied using the `make deploy-%` targets (e.g. `make deploy-prod` for a production patch). The patch includes the currently set image and environment variables (`DRUPAL_ENVIRONMENT` and optionally `PHP_MEMORY_LIMIT`).
+
+> The command will re-deploy existing pods and wait for a successful roll-out.
+
 ### Non-default Kubernetes contexts
 
 If a project is being deployed into a non-default cluster context, then the context variable has to be overriden. The default contexts can be found in the `kubernetes_contexts` variables in the [`composer.json`](../composer.json).

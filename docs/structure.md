@@ -53,6 +53,9 @@ The `manifests` directory contains all the definitions for a deployment of a env
 .
 ├── ...
 └── manifests
+    ├── dev                     # Remote development deployment patch (Kubernetes)
+    ├── stage                   # Remote staging deployment patch (Kubernetes)
+    ├── prod                    # Remote production deployment patch (Kubernetes)
     └── local                   # Local deployment manifest (compose)
 ```
 
