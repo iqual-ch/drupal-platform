@@ -60,7 +60,7 @@ function rsh {
     # Make sure the arguments' value is quoted in a format that can be reused as input.
     COMMAND="${*@Q}" make cli
   else
-    eval "$@"
+    eval "${*@Q}"
   fi
 }
 
