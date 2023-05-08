@@ -98,6 +98,8 @@ jobs:
 
     - name: Run Drupal upgrades script
       shell: bash
+      env:
+        RSH: "make-cli"
       run: |
         make upgrade
 
