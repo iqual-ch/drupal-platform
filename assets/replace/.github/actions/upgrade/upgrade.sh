@@ -145,6 +145,10 @@ for operation in "${OPERATIONS[@]}"; do
         echo "Rector configuration is not present, using default."
         RECTOR_CONFIG=".github/actions/upgrade/rector.php"
       fi
+      if [ -z "$DATA" ]; then
+        echo "No path defined. Auto-generating themes and module custom path."
+        DATA="$(git ls-tree -d -r $(git write-tree) --name-only | grep -E '(themes|modules)/custom/[^/]+$' | paste -s -d, -)"
+      fi
       rsh rector process ${DATA} ${OPTIONS} --config ${RECTOR_CONFIG}
       if [ -n "$RECTOR_INSTALLED" ]; then
         rsh composer remove --dev palantirnet/drupal-rector -n -d ${APP_ROOT}
@@ -152,6 +156,10 @@ for operation in "${OPERATIONS[@]}"; do
       ;;
     "phpcbf")
       if grep -q "drupal/coder" $COMPOSER_JSON_FILE; then
+        if [ -z "$DATA" ]; then
+          echo "No path defined. Auto-generating themes and module custom path."
+          DATA="$(git ls-tree -d -r $(git write-tree) --name-only | grep -E '(themes|modules)/custom/[^/]+$' | paste -s -d, -)"
+        fi
         rsh phpcbf ${OPTIONS} ${DATA} || true
       else
         echo "Warning: missing \"drupal/coder\" package for code beautifying"
