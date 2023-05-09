@@ -147,7 +147,7 @@ for operation in "${OPERATIONS[@]}"; do
       fi
       if [ -z "$DATA" ]; then
         echo "No path defined. Auto-generating themes and module custom path."
-        DATA="$(git ls-tree -d -r $(git write-tree) --name-only | grep -E '(themes|modules)/custom/[^/]+$' | paste -s -d, -)"
+        DATA="$(git ls-tree -d -r $(git write-tree) --name-only | grep -E '(themes|modules)/custom/[^/]+$' | paste -s -)"
       fi
       rsh rector process ${DATA} ${OPTIONS} --config ${RECTOR_CONFIG}
       if [ -n "$RECTOR_INSTALLED" ]; then
@@ -158,7 +158,7 @@ for operation in "${OPERATIONS[@]}"; do
       if grep -q "drupal/coder" $COMPOSER_JSON_FILE; then
         if [ -z "$DATA" ]; then
           echo "No path defined. Auto-generating themes and module custom path."
-          DATA="$(git ls-tree -d -r $(git write-tree) --name-only | grep -E '(themes|modules)/custom/[^/]+$' | paste -s -d, -)"
+          DATA="$(git ls-tree -d -r $(git write-tree) --name-only | grep -E '(themes|modules)/custom/[^/]+$' | paste -s -)"
         fi
         rsh phpcbf ${OPTIONS} ${DATA} || true
       else
