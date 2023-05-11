@@ -209,7 +209,7 @@ for operation in "${OPERATIONS[@]}"; do
       fi
       ;;
     "commit")
-      echo "git add . && git commit ${OPTIONS} -m "${DATA}" || true"
+      echo "git add . && git commit ${OPTIONS} -m \"${DATA}\" || true"
       git add . && git commit ${OPTIONS} -m "${DATA}" || true
       ;;
     "reboot")
