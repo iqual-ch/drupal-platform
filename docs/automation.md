@@ -120,11 +120,9 @@ An example operation for removing `dompdf/dompdf` if it is installed and requiri
       },
       {
         "action": "rector",
-        "data": "/project/app/public/modules/custom/*"
       },
       {
         "action": "phpcbf",
-        "data": "/project/app/public/modules/custom/",
         "options": "--standard=Drupal,DrupalPractice --extensions='php,module,inc,install,test,profile,theme,css,info,txt,md,yml'"
       },
       {
