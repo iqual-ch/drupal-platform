@@ -62,15 +62,21 @@ In order for GitHub Codespaces to work a few environment variables are needed fo
 
 ## XDebug
 
-XDebug is enabled by default in the image for debugging PHP (`debug` mode). The VS Code setup includes the XDebug debugger for adding break-points. It will try to start debugging on any request and no further tools are required (like browser extensions). This has a performance impact so it is also possible to disable XDebug altogether.
+XDebug is disabled by default in the image for debugging PHP (`trigger` mode). The VS Code setup includes the XDebug debugger for adding break-points. It will automatically enable XDebug once a debugging session is launched (i.e. when pressing F5) by running the `xdebug` `make` target as a background task.
 
 Check the [official XDebug documentation](https://xdebug.org/docs/) for further more advanced documentation.
 
 Below are some common configurations for XDebug. To add a environment variable it can be added as a separate line in `.env.secrets`. Whenever a environment variable is changed the deployment has to re-deployed. In the case of VS Code this can be simply done by doing a `Rebuild Container`.
 
-### Disabling XDebug
+### Enabling and Disabling XDebug
 
-It is possible to disable XDebug altogether by setting the environment variable `XDEBUG_MODE` to `off`.
+VS Code will automatically enable XDebug when a debugging session is started. However XDebug can also be manually enabled by running the `make xdebug` target. For disabling there is a `make xdebug-disable` target.
+
+```bash
+make xdebug
+```
+
+To completely disable XDebug it can also be turned off by setting the following environment variable:
 
 ```bash
 XDEBUG_MODE=off
@@ -85,9 +91,9 @@ XDEBUG_MODE=profile
 XDEBUG_CONFIG="output_dir=/project"
 ```
 
-> Currently the profiler is started on every request (including cli commands) even when `start_with_request=trigger` is set. This is a bug.
+The profiler can then be triggered by either enabling xdebug with `make xdebug` or by using the trigger variable `XDEBUG_TRIGGER` (in `ENV`, `GET` or `COOKIE`). For example to profile a drush command `XDEBUG_TRIGGER= drush status` can be run.
 
-To analyze the generated `cachegrind` files there are a few available tools. Check the [profiling documentation on the official XDebug page](https://xdebug.org/docs/profiler). For a very simple overview it is possible to use Webgrind to display a weighted table or graph of the called function.
+To analyze the generated `cachegrind` files there are a few available tools. Check the [profiling documentation on the official XDebug page](https://xdebug.org/docs/profiler). For a very simple overview it is possible to use [Webgrind](https://github.com/jokkedk/webgrind) to display a weighted table or graph of the called function.
 
 > Make sure to not commit the cachegrind files.
 
