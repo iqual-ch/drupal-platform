@@ -25,6 +25,7 @@ Assets and configuration managed by the Drupal Platform has to be customized usi
   * `runtime.php_memory_limit`: PHP memory limit (e.g. `256M`)
 * CI/CD workflow settings
   * `workflows.update`: Enable/Add the Drupal update workflow
+  * `workflows.upgrade`: Enable/Add the Drupal upgrade workflow
   * `workflows.vrt`: Enable/Add the visual regression testing workflow
 * `local_domain_suffix`: The domain suffix for local development
 * Development setup (`development` array)

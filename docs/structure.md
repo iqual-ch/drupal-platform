@@ -68,10 +68,14 @@ The `.github` directory contains the GitHub Actions workflows for continous inte
 ```
 .github/                               # GitHub Actions Workflows
 ├── actions
-│   └── install-local
-│       └── action.yml                 # Composite action for installing Drupal
+│   ├── install-local
+│   │   └── action.yml                 # Composite action for installing Drupal
+│   └── upgrade
+│       ├── rector.php                 # Default/fallback rector config for upgrade.sh
+│       └── upgrade.sh                 # Composite action for installing Drupal
 ├── workflows
 │   ├── update.yml                     # Automated Drupal Update
+│   ├── upgrade.yml                    # Automated Drupal Upgrades
 │   └── visual-regression-testing.yml  # Automated VRT
 └── ...
 ```

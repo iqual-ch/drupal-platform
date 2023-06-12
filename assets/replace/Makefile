@@ -65,8 +65,8 @@ cli-%: check-in-container-false ## Attach to environment %
 	@echo "Attaching to $* environment"
 	EXEC_COMMAND="bash"
 	EXEC_FLAG="-it"
-	if [[ -n "$(COMMAND)" ]]; then
-		EXEC_COMMAND="$(COMMAND)"
+	if [[ -n "$$COMMAND" ]]; then
+		EXEC_COMMAND="$$COMMAND"
 		EXEC_FLAG=
 	fi
 	if [[ $* == "local" ]]; then
@@ -195,6 +195,17 @@ update: check-in-container-true ## Update Drupal site
 	drush cr
 	drush updb $(DRUSH_FLAGS) || exit 1
 	drush cex $(DRUSH_FLAGS)
+
+upgrade: ## Upgrade Drupal site
+	@echo "Upgrading Drupal"
+	if [[ -z "$$JSON_INPUT" ]]; then
+		echo -e " $(MSG_ERROR) Missing upgrade operations JSON_INPUT."
+		exit 1
+	fi
+	if make check-in-container-false >/dev/null 2>&1; then
+		RSH="make-cli"
+	fi
+	bash ./.github/actions/upgrade/upgrade.sh
 
 theme: check-in-container-true ## Compile current Drupal theme
 	@echo "Compiling Drupal theme"
