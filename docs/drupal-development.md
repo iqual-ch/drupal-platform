@@ -131,11 +131,11 @@ $config['swiftmailer.transport']['smtp_credentials']['swiftmailer']['password'] 
 
 ## Multiple local deployments
 
-It is possible to run multiple environments of the same project in parallel. To enable this, the `name` of the project needs to be changed. This can be done using `composer project:update` and by re-opening the container in VS Code. In this case it possible to have different databases per git branch. For example a project by the name `example` can be changed to `example-feature` on a `feature-x` branch. In that case the database can be kept completely separate from the main branch.
+It is possible to run multiple environments of the same project in parallel. To enable this, the `project_name` of the project needs to be changed. This variable has to be updated or added in the `extra.project-scaffold` section of the project's `composer.json`. After modifying or adding the variable make sure to run `composer project:scaffold`. Once the change has been applied the container has to be re-opened in VS Code. In this case it possible to have different databases per git branch. For example a project by the name `example-sw-project` can be changed to `example-feature-sw-project` on a `feature-x` branch. In that case the database can be kept completely separate from the main branch.
 
 If multiple environments should be running simultaneously then the repository (i.e. the filesystem/codebase) also has to exist multiple times. This can be achieved by creating a copy of the existing repository or by cloning to a different secondary folder.
 
-> Make sure to not commit a modified `name` to main, since the modification is tracked in multiple files and could break other developer's setup.
+> Make sure to not commit a modified `project_name` to main, since the modification is tracked in multiple files and could break other developer's setup.
 
 ## Database Administration
 
