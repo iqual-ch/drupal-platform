@@ -88,6 +88,12 @@ assets/replace/
 ├── Makefile
 ├── README.md.twig
 └── manifests
+    ├── dev
+    │   └── patch.yml.twig
+    ├── stage
+    │   └── patch.yml.twig
+    ├── prod
+    │   └── patch.yml.twig
     └── local
         └── docker-compose.yml.twig
 ```

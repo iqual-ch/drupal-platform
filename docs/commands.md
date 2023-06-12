@@ -46,7 +46,9 @@ The following `make` targets are available in the project's `Makefile`. They can
 
 * `local`: Alias for `deploy-local`
 * `deploy-local`: Deploy the local environment (`docker-compose`)
-* `deploy-prod`: Deploy the production environment (Kubernetes) – _not yet supported_
+* `deploy-dev`: Deploy the development environment (Kubernetes) – _patch operation by default_
+* `deploy-stage`: Deploy the staging environment (Kubernetes) – _patch operation by default_
+* `deploy-prod`: Deploy the production environment (Kubernetes) – _patch operation by default_
 * `deploy-%`: Deploy the `%` environment (replace `%` with name of environment in `./manifests` folder)
 * `delete-local`: Delete the local deployment with `docker-compose` permanently
 
