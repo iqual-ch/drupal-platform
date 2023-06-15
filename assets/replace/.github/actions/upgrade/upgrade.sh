@@ -196,14 +196,16 @@ for operation in "${OPERATIONS[@]}"; do
       ;;
     "patch-add")
       if grep -q "szeidler/composer-patches-cli" $COMPOSER_JSON_FILE; then
-        rsh composer patch-add ${OPTIONS} -n ${DATA} -d ${APP_ROOT}
+        declare -a "DATA_ARRAY=($DATA)"
+        rsh composer patch-add ${OPTIONS} -n "${DATA_ARRAY[@]}" -d ${APP_ROOT}
       else
         echo "Warning: missing \"szeidler/composer-patches-cli\" package for patch CLI."
       fi
       ;;
     "patch-remove")
       if grep -q "szeidler/composer-patches-cli" $COMPOSER_JSON_FILE; then
-        rsh composer patch-remove ${OPTIONS} -n ${DATA} -d ${APP_ROOT}
+        declare -a "DATA_ARRAY=($DATA)"
+        rsh composer patch-remove ${OPTIONS} -n "${DATA_ARRAY[@]}" -d ${APP_ROOT}
       else
         echo "Warning: missing \"szeidler/composer-patches-cli\" package for patch CLI."
       fi
