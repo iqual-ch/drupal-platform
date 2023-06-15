@@ -150,6 +150,7 @@ new: check-in-container-true ## Create new Drupal site from repo
 	@echo "Creating new Drupal site"
 	composer install --working-dir=$(APP_ROOT) $(COMPOSER_FLAGS)
 	mkdir -p $(APP_ROOT)/{private,config/sync}
+	mkdir -p $(APP_root)/sites/default/files/translations
 	chmod 755 $(NGINX_ROOT)/sites/default/
 	chmod 444 $(NGINX_ROOT)/sites/default/*settings.php
 	chmod 444 $(NGINX_ROOT)/sites/default/settings.local.php || :
@@ -167,6 +168,7 @@ new: check-in-container-true ## Create new Drupal site from repo
 install: check-in-container-true ## Install existing Drupal site
 	@echo "Installing Drupal"
 	mkdir -p $(APP_ROOT)/private
+	mkdir -p $(APP_root)/sites/default/files/translations
 	chmod 444 $(NGINX_ROOT)/sites/default/*settings.php
 	echo "Installing vendor packages"
 	if [[ "$(DRUPAL_ENVIRONMENT)" == "prod" ]]; then
