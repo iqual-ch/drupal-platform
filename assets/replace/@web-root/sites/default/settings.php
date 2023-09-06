@@ -178,6 +178,33 @@ if(getenv('DRUPAL_ENVIRONMENT')){
     }
 }
 
+if(getenv('PLATFORM_ENVIRONMENT_TYPE')){
+    $platform_environments = [
+        "production" => "prod",
+        "staging" => "stage",
+        "development" => "dev"
+    ];
+      
+    $platform_environment = "dev";
+    if (array_key_exists(getenv('PLATFORM_ENVIRONMENT_TYPE'), $platform_environment)) {
+    $platform_environment = $platform_environment[getenv('PLATFORM_ENVIRONMENT_TYPE')];
+    }
+
+    // Environment specific settings files.
+    if (file_exists($app_root . '/' . $site_path . '/' . $platform_environment . '.settings.php')) {
+      include $app_root . '/' . $site_path . '/' . $platform_environment . '.settings.php';
+    }
+
+    // Environment specific services files.
+    if (file_exists($app_root . '/' . $site_path . '/' . $platform_environment . '.services.yml')) {
+      $settings['container_yamls'][] = $app_root . '/' . $site_path . '/' . $platform_environment . '.services.yml';
+    }
+}
+
+if (file_exists($app_root . '/' . $site_path . '/settings.platformsh.php')) {
+    include $app_root . '/' . $site_path . '/settings.platformsh.php';
+}
+
 if (file_exists($app_root . '/' . $site_path . '/settings.local.php')) {
     include $app_root . '/' . $site_path . '/settings.local.php';
 }
@@ -185,5 +212,3 @@ if (file_exists($app_root . '/' . $site_path . '/settings.local.php')) {
 if (file_exists($app_root . '/' . $site_path . '/services.local.yml')) {
     $settings['container_yamls'][] = $app_root . '/' . $site_path . '/services.local.yml';
 }
-
-#AUTO_GEN_LOCK

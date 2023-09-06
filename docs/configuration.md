@@ -25,6 +25,8 @@ Assets and configuration managed by the Drupal Platform has to be customized usi
   * `runtime.solr_image`: Solr docker image
   * `runtime.solr_image_tag`: Solr image tag
   * `runtime.solr_version`: Solr version of the platform (e.g. `9.2`)
+  * `runtime.php_memory_limit`: PHP memory limit (e.g. `256M`)
+  * `runtime.php_upload_limit`: PHP upload limit (e.g. `100M`)
 * CI/CD workflow settings
   * `workflows.update`: Enable/Add the Drupal update workflow
   * `workflows.upgrade`: Enable/Add the Drupal upgrade workflow
@@ -38,6 +40,9 @@ Assets and configuration managed by the Drupal Platform has to be customized usi
   * `kubernetes_contexts.dev`: Kubernetes development cluster context
   * `kubernetes_contexts.stage`: Kubernetes staging cluster context
   * `kubernetes_contexts.prod`: Kubernetes production cluster context
+* Platform.sh config
+  * `platformsh_config.region`: Deployment region (e.g. `de-2`)
+  * `platformsh_config.project_id`: ID of the project
 
 </details>
 

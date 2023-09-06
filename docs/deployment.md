@@ -23,9 +23,9 @@ To deploy the local environment run `make deploy-local`. The command will look f
 * MariaDB database container
 * Solr search API container (Optional)
 
-## Remote Deployment (Kubernetes)
+## Remote Deployment on Kubernetes
 
-The remote deployment into a Kubernetes cluster is currently done using Rancher/Helm. See the [prod deployment](https://support-iqual.atlassian.net/wiki/spaces/ID/pages/1864073238/Prod-Instance+Rancher) and [dev/staging deployment guide](https://support-iqual.atlassian.net/wiki/spaces/ID/pages/1863942165/Dev-Instance+Staging+Rancher) for more details.
+The default remote deployment into a Kubernetes cluster is currently done using Rancher/Helm. See the [prod deployment](https://support-iqual.atlassian.net/wiki/spaces/ID/pages/1864073238/Prod-Instance+Rancher) and [dev/staging deployment guide](https://support-iqual.atlassian.net/wiki/spaces/ID/pages/1863942165/Dev-Instance+Staging+Rancher) for more details.
 
 ### Patching existing deployments
 
@@ -38,3 +38,7 @@ A patch to an existing deployment can be applied using the `make deploy-%` targe
 If a project is being deployed into a non-default cluster context, then the context variable has to be overriden. The default contexts can be found in the `kubernetes_contexts` variables in the [`composer.json`](../composer.json).
 
 For example if the `prod` Kubernetes cluster context ist `example-cluster-1` then the `kubernetes_contexts.prod` has to be set to that value in the `composer.json`'s `extra.project-scaffold` section.
+
+## Remote Deployment on Platform.sh
+
+Alternatively to the deployment into Kubernetes there is also the option to deploy the repository to [Platform.sh](https://platform.sh/).

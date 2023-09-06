@@ -1,6 +1,7 @@
 # Edit or remove this file as needed.
 # Docs at https://github.com/drush-ops/drush/blob/master/examples/example.site.yml
 
+{% if deployment == "kubernetes" %}
 dev:
   root: ${env.NGINX_ROOT}
   user: ${env-name}-drpl-${env.PROJECT_CODE_NAME}_${env.K8S_DEV_CONTEXT}
@@ -18,3 +19,18 @@ prod:
   user: ${env-name}-drpl-${env.PROJECT_CODE_NAME}_${env.K8S_PROD_CONTEXT}
   host: ${env.SSH_HOST}
   uri: {{ url }}
+{% elseif deployment == "platform.sh" %}
+# Production
+prod:
+  root: /app/public
+  user: {{ platformsh_config.project_id }}-{{ drupal_spot }}--drupal
+  host: ssh.{{ platformsh_config.region }}.platform.sh
+  uri: {{ url }}
+
+# Wildcard for any environment
+'*':
+  root: /app/public
+  user: {{ platformsh_config.project_id }}-${env-name}--drupal
+  host: ssh.{{ platformsh_config.region }}.platform.sh
+  uri: https://${env-name}-{{ platformsh_config.project_id }}.{{ platformsh_config.region }}.platformsh.site
+{% endif %}
