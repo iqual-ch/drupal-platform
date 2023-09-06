@@ -40,6 +40,10 @@
                 "stage": "do-fra1-dev-cluster-1",
                 "prod": "do-fra1-prod-cluster-1"
             },
+            "platformsh_config": {
+                "region": "de-2",
+                "project_id": ""
+            },
             "drupal_spot": "stage",
             "assets": {
                 "add": "assets/add",

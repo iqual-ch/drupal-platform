@@ -1,0 +1,17 @@
+{% if deployment == "platform.sh" %}
+"https://www.{default}/":
+    type: upstream
+    upstream: "drupal:http"
+    cache:
+      enabled: true
+      cookies: ['/^SS?ESS/', '/^Drupal.visitor/']
+    tls:
+      strict_transport_security:
+          enabled: true
+          include_subdomains: true
+          preload: true
+
+"https://{default}/":
+    type: redirect
+    to: "https://www.{default}/"
+{% endif %}

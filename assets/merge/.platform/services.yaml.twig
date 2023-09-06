@@ -1,0 +1,10 @@
+{% if deployment == "platform.sh" %}
+{% if op.new_file == true %}
+db:
+  type: mariadb:{{ runtime.db_version }}
+  disk: 1024
+{% else %}
+db:
+  type: mariadb:{{ runtime.db_version }}
+{% endif %}
+{% endif %}
