@@ -2,7 +2,7 @@
 {% if op.new_file == true %}
 db:
   type: mariadb:{{ runtime.db_version }}
-  disk: 1024
+  disk: 2048
 {% else %}
 db:
   type: mariadb:{{ runtime.db_version }}
