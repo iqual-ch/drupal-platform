@@ -19,7 +19,7 @@ resources:
 # Default PHP variables
 variables:
     php:
-        memory_limit: 256M
+        memory_limit: {{ runtime.php_memory_limit|default('256M') }}
         'date.timezone': 'Europe/Zurich'
 
 # Default dependencies
