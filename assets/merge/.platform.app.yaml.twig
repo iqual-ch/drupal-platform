@@ -95,12 +95,12 @@ build:
 hooks:
     # The build hook runs after Composer to finish preparing up your code.
     # No services are available but the disk is writeable.
-    build: ./resources/build.sh
+    build: bash ./resources/build.sh
     # The deploy hook runs after your application has been deployed and started.
     # Code cannot be modified at this point but the database is available.
     # The site is not accepting requests while this script runs so keep it
     # fast.
-    deploy: ./resources/deploy.sh
+    deploy: bash ./resources/deploy.sh
 
 # The configuration of app when it is exposed to the web.
 web:
