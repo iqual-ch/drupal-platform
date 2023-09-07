@@ -5,7 +5,7 @@
 set -e
 
 # Generate Drush config for Platform.sh
-php ../drush/platformsh_generate_drush_yml.php
+php ./drush/platformsh_generate_drush_yml.php
 
 # Deploy custom styles
 if [ -d "./build/public/themes/custom/" ]; then
