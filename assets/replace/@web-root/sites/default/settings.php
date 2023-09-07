@@ -166,7 +166,7 @@ if (file_exists($app_root . '/' . $site_path . '/all.services.yml')) {
     $settings['container_yamls'][] = $app_root . '/' . $site_path . '/all.services.yml';
 }
 
-if(getenv('DRUPAL_ENVIRONMENT')){
+if (getenv('DRUPAL_ENVIRONMENT')) {
     // Environment specific settings files.
     if (file_exists($app_root . '/' . $site_path . '/' . getenv('DRUPAL_ENVIRONMENT') . '.settings.php')) {
       include $app_root . '/' . $site_path . '/' . getenv('DRUPAL_ENVIRONMENT') . '.settings.php';
@@ -178,16 +178,16 @@ if(getenv('DRUPAL_ENVIRONMENT')){
     }
 }
 
-if(getenv('PLATFORM_ENVIRONMENT_TYPE')){
+if (getenv('PLATFORM_ENVIRONMENT_TYPE')) {
     $platform_environments = [
         "production" => "prod",
         "staging" => "stage",
         "development" => "dev"
     ];
-      
+
     $platform_environment = "dev";
-    if (array_key_exists(getenv('PLATFORM_ENVIRONMENT_TYPE'), $platform_environment)) {
-    $platform_environment = $platform_environment[getenv('PLATFORM_ENVIRONMENT_TYPE')];
+    if (array_key_exists(getenv('PLATFORM_ENVIRONMENT_TYPE'), $platform_environments)) {
+        $platform_environment = $platform_environments[getenv('PLATFORM_ENVIRONMENT_TYPE')];
     }
 
     // Environment specific settings files.
