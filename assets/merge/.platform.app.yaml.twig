@@ -12,7 +12,7 @@ name: 'drupal'
 type: 'php:{{ runtime.php_version }}'
 
 # Recommended memory resources for Standard plan
-resources: 
+resources:
     base_memory: 96
     memory_ratio: 768
 
@@ -180,5 +180,6 @@ type: 'php:{{ runtime.php_version }}'
 variables:
     php:
         memory_limit: {{ runtime.php_memory_limit }}
+{% endif %}
 {% endif %}
 {% endif %}
