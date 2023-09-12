@@ -23,6 +23,7 @@ The bundled assets are for the iqual internal developer platform's Drupal integr
 * `drupal_spot`: The drupal single point of truth for asset synchronization (e.g. `prod`)
 * `runtime.php_version`: PHP version of the platform (e.g. `8.2`)
 * `runtime.db_version`: Database version of the platform (e.g. `10.6`)
+* `deployment`: Remote deployment integration (e.g. `kubernetes`)
 
 > Check the documentation for a [full list of the Drupal Platform's available package variables](./docs/configuration.md#drupal-platform-package-variables).
 

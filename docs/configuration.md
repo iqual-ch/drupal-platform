@@ -66,7 +66,7 @@ Additionally to the environment file there are environment variables defined in 
 
 Local deployment secrets can be stored in a `.env.secrets` file in the root of the project. The file is git-ignored but will be created on environment creation. This can be useful for storing sensitive API credentials as environment variables that can be loaded into the config in a settings file in Drupal (see Credentials in Config section).
 
-Remote deployment secrets can be injected from Kubernetes Secrets as environment variables.
+Remote deployment secrets can be injected from Kubernetes Secrets as environment variables or in the case of Platform.sh using [project or environment variables](#credentials-on-platformsh).
 
 ### SSH Authentication
 

@@ -49,6 +49,8 @@ For example if the `prod` Kubernetes cluster context ist `example-cluster-1` the
 
 ### Platform.sh Deployment
 
+> The Platform.sh integration requires the `platformsh/config-reader` package. This needs to be required in the project.
+
 Alternatively to the deployment into Kubernetes there is also the option to deploy the repository to [Platform.sh](https://platform.sh/). In this case a `project_id` is required, as well as setting the `drupal_spot` to the machine name of the main, production branch of the Platform.sh project (i.e. `platform environment:info machine_name`).
 
 
