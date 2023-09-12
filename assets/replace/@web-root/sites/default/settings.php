@@ -32,6 +32,9 @@ if (getenv('MYSQL_DATABASE_USER')) {
       'driver' => (getenv('MYSQL_DATABASE_DRIVER') ?: 'mysql'),
       'prefix' => (getenv('MYSQL_DATABASE_PREFIX') ?: ''),
       'collation' => (getenv('MYSQL_DATABASE_COLLATION') ?: 'utf8mb4_general_ci'),
+      'init_commands' => [
+        'isolation_level' => 'SET SESSION TRANSACTION ISOLATION LEVEL READ COMMITTED',
+      ],
     ];
 }
 
