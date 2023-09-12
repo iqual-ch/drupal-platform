@@ -7,6 +7,7 @@ The project is structured according to the following top-level layout:
 ├── Makefile                    # Make targets
 ├── .devcontainer               # VS Code development container
 ├── .github                     # GitHub Actions Workflows
+├── .platform                   # Platform.sh configuration (if enabled)
 ├── .vscode                     # VS Code config
 ├── app                         # Drupal app directory
 └── manifests                   # Deployment manifests
@@ -52,11 +53,13 @@ The `manifests` directory contains all the definitions for a deployment of a env
 ```
 .
 ├── ...
+├── .platform                   # Service and route confiugration (Platform.sh)
+├── .platform.app.yaml          # Deployment confiugration (Platform.sh)
 └── manifests
     ├── dev                     # Remote development deployment patch (Kubernetes)
     ├── stage                   # Remote staging deployment patch (Kubernetes)
     ├── prod                    # Remote production deployment patch (Kubernetes)
-    └── local                   # Local deployment manifest (compose)
+    └── local                   # Local deployment manifest (Docker Compose)
 ```
 
 
