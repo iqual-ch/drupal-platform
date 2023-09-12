@@ -2,7 +2,7 @@
 
 This is a project asset composer package to be used with the [iqual/project-scaffold](https://github.com/iqual-ch/project-scaffold) Composer plugin for creating new or updating existing projects with pre-defined assets.
 
-The bundled assets are for the iqual internal developer platform's Drupal integration. It supports a local (and remote) VS Code setup running docker-compose containers, integrations for Drupal deployments on Kubernetes and workflows for automation.
+The bundled assets are for the iqual internal developer platform's Drupal integration. It supports a local (and remote) VS Code setup running docker-compose containers, integrations for Drupal deployments on Kubernetes or Platform.sh and workflows for automation.
 
 > Disclaimer: This package is not (yet) intended for public usage and depends on iqual's internal developer platform.
 
@@ -11,13 +11,11 @@ The bundled assets are for the iqual internal developer platform's Drupal integr
 * Local development environment with docker-compose
 * VS Code setup with `.devcontainer`
 * Workflows for Drupal automation using GitHub Actions
-* Kubernetes integration
+* Integration for Kubernetes or Platform.sh
 * Drush configuration for SSH proxy
 * `Makefile` commands for project and app tasks
 
 ## Package Variables
-
-
 
 * `name`: Code name of the project (e.g. `iqual`)
 * `title`: Title of the project (e.g. `iqual AG`)
@@ -42,6 +40,8 @@ Assets that are only added if it doesn't exist in the target yet:
 
 ```
 assets/add/
+├── .platform
+│   └── routes.yaml.twig
 └── @web-root
     └── sites
         └── default
@@ -83,16 +83,25 @@ assets/replace/
 │   └── settings.json.twig
 ├── @app-root
 │   ├── phpunit.xml.dist
+│   ├── .environment.twig
 │   ├── drush
 │   │   ├── drush.yml
+│   │   ├── platformsh_generate_drush_yml.php.twig
 │   │   └── sites
 │   │       └── self.site.yml.twig
+│   ├── php.ini.twig
 │   └── resources
-│       └── robots.txt.twig
+│       ├── build.sh.twig
+│       ├── deploy.mk.twig
+│       ├── deploy.sh.twig
+│       ├── drupal.mk
+│       ├── robots.txt.twig
+│       └── utility.mk
 ├── @web-root
 │   └── sites
 │       └── default
-│           └── settings.php
+│           ├── settings.php
+│           └── settings.platformsh.php.twig
 ├── Makefile
 ├── README.md.twig
 ├── manifests
@@ -125,7 +134,10 @@ assets/merge/
 ├── .env.twig
 ├── .env.visreg.twig
 ├── .gitattributes
-└── .gitignore.twig
+├── .gitignore.twig
+├── .platform
+│   └── services.yaml.twig
+└── .platform.app.yaml.twig
 ```
 
 </details>
