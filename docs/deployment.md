@@ -57,3 +57,28 @@ Alternatively to the deployment into Kubernetes there is also the option to depl
 #### Customization
 
 The `platform.app.yaml` configuration file can be customized, e.g. to add cronjobs or increase disk size. For a go-live the `routes.yaml` in the `.platform` folder can be modified, to e.g. add redirects or customize the `www` handling.
+
+
+#### Multi-Domain Setup
+
+For multi-domain setups the additional domains need to defined in the `.platform/routes.yaml` file. To enable automatic hostname overrides for development environments a `domain.record` can be set in the `attributes` section of the corresponding route. This will be automatically converted into a configuration override in the `settings.platformsh.php` when on a non-production branch.
+
+Example route for an additional domain `www.example.ch` that will override the `hostname` in the `domain.record.example_ch` config to `www.example.ch`:
+
+```yaml
+"https://www.example.ch/":
+    type: upstream
+    upstream: "drupal:http"
+    cache:
+      enabled: true
+      cookies: ['/^SS?ESS/', '/^Drupal.visitor/']
+    tls:
+      strict_transport_security:
+          enabled: true
+          include_subdomains: true
+          preload: true
+    attributes:
+      "domain.record": "example_ch"
+```
+
+> Make sure to also add the respective domain record attributes to the default route.

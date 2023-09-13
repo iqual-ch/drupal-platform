@@ -45,18 +45,17 @@ if (isset($platformsh->branch)) {
   else {
     $config['system.logging']['error_level'] = 'verbose';
 
-    // Multi-domain example setup.
-    // $primaryRoute = $platformsh->getPrimaryRoute();
-    // $url = $primaryRoute['url'];
-    // $parse = parse_url($url);
-    // $host = $parse['host'];
-    // $config['domain.record.example_ch']['hostname'] = $host;
-    // if (strpos($host, "www.") !== FALSE && strpos($host, "www.secondary-example.ch.") === FALSE) {
-    //   $config['domain.record.seondary_example_ch']['hostname'] = str_replace("www.", "www.secondary-example.ch.", $host);
-    // }
-
-    // Iqual stage file proxy config.
-    $config['iq_stage_file_proxy.settings']['remote_instance'] = 'https://main-bvxea6i-dartgz7gesxuu.de-2.platformsh.site';
+    // Enable adding domain record hostname overrides for development environments
+    // by setting an "domain.record" attribute on a route.
+    $routes = $platformsh->getUpstreamRoutes();
+    foreach($routes as $route) {
+      if (array_key_exists("attributes", $route) && array_key_exists("domain.record", $route["attributes"])) {
+        $url = $route['url'];
+        $parsedUrl = parse_url($url);
+        $domainRecord = $route["attributes"]["domain.record"];
+        $config['domain.record.' . $domainRecord]['hostname'] = $parsedUrl['host'];
+      }
+    }
   }
 }
 
