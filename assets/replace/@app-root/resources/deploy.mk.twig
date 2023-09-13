@@ -50,20 +50,20 @@ deploy-%: check-in-container-false ## Deploy environment %
 		echo -e " $(MSG_ERROR) Environment $* does not exist."
 		exit 1;
 	fi
-	{%~ if deployment == "kubernetes" %}
 	if [[ -f ./manifests/$*/docker-compose.yml ]]; then
 		make deploy-$*-compose
+	{%~ if deployment == "kubernetes" %}
 	elif [[ -f ./manifests/$*/deployment.yml ]]; then
 		make deploy-$*-kubectl
 	elif [[ -f ./manifests/$*/patch.yml ]]; then
 		make deploy-$*-kubectl-patch
 	elif [[ -f ./manifests/$*/kustomization.yml ]]; then
 		make deploy-$*-kustomize
+	{%~ endif %}
 	else
 		echo -e " $(MSG_ERROR) No manifests found for environment $*."
 		exit 1;
 	fi
-	{%~ endif %}
 
 deploy-%-compose: check-in-container-false env-local
 	@echo "Deploying $* docker-compose manifests"
