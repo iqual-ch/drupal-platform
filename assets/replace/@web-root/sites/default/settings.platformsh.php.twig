@@ -27,8 +27,8 @@ if ($platformsh->hasRelationship('database')) {
     'host' => $creds['host'],
     'port' => $creds['port'],
     'pdo' => [PDO::MYSQL_ATTR_COMPRESS => !empty($creds['query']['compression'])],
-    'init_commands' => [	
-      'isolation_level' => 'SET SESSION TRANSACTION ISOLATION LEVEL READ COMMITTED',	
+    'init_commands' => [
+      'isolation_level' => 'SET SESSION TRANSACTION ISOLATION LEVEL READ COMMITTED',
     ],
   ];
 }
