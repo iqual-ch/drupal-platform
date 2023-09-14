@@ -1,3 +1,65 @@
 {% if deployment == "platform.sh" %}
 export PATH=/app/vendor/bin:$PATH
+
+if [ -n "$PS1" ] && [ -n "$PLATFORM_PROJECT" ] && [ "$PLATFORM_APPLICATION_NAME" == "drupal" ]; then
+    # Display platform environment and colorize by type
+    if [ -n "$PLATFORM_ENVIRONMENT_TYPE" ] && [ -n "$PLATFORM_ENVIRONMENT" ]; then
+        case "$PLATFORM_ENVIRONMENT_TYPE" in
+            "development")
+            PROMPT_ENV_COLOR="\[\033[37;41m\]"
+            ;;
+            "staging")
+            PROMPT_ENV_COLOR="\[\033[37;44m\]"
+            ;;
+            "production")
+            PROMPT_ENV_COLOR="\[\033[37;42m\]"
+            ;;
+            *)
+            PROMPT_ENV_COLOR="\[\033[49m\]"
+            ;;
+        esac
+        PROMPT_ENV="${PROMPT_ENV_COLOR}[${PLATFORM_ENVIRONMENT}]\[\033[0m\]"
+    fi
+
+    # Use project code name as hostname, fallback to real hostname
+    if [ -n "${PROJECT_CODE_NAME}" ]; then
+        PROMPT_HOSTNAME="${PROJECT_CODE_NAME}-drpl"
+    elif [ -f "$PLATFORM_DIR/composer.json" ]; then
+        PROJECT_NAME=$(jq -r '.name' "$PLATFORM_DIR/composer.json" | sed 's/[^\/]*\///')
+        PROMPT_HOSTNAME="${PROJECT_NAME/-sw-project}-drpl"
+    else
+        PROMPT_HOSTNAME="${HOSTNAME/.0}"
+    fi
+
+    # Generate PS1 prompt
+    PS1="\[\033[01;32m\]${PROMPT_HOSTNAME}\[\033[00m\]${PROMPT_ENV:-}:\[\033[01;34m\]\w\[\033[00m\]\$ "
+
+    alias ll='ls -alF'
+    alias la='ls -A'
+    alias l='ls -CF'
+    alias vim='vim.tiny'
+
+    # Aliases for common Drush commands that work in a global context.
+    alias dr='drush'
+    alias ddd='drush drupal:directory'
+    alias ev='drush php:eval'
+    alias sa='drush site:alias'
+    alias st='drush core:status'
+    alias use='drush site:set'
+
+    # Aliases for Drush commands that work on the current drupal site
+    alias cr='drush cache:rebuild'
+    alias en='drush pm:enable'
+    alias pml='drush pm:list'
+    alias pmu='drush pm:uninstall'
+    alias updb='drush updatedb'
+    alias q='drush sql:query'
+    alias sqlc='drush sql:cli'
+    alias cex='drush config:export'
+    alias cim='drush config:import'
+    alias cst='drush config:status'
+    alias scr='drush php:script'
+    alias ws='drush watchdog:show'
+    alias uli='drush user:login'
+fi
 {% endif %}
