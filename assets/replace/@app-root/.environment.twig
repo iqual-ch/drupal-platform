@@ -25,10 +25,10 @@ if [ -n "$PS1" ] && [ -n "$PLATFORM_PROJECT" ] && [ "$PLATFORM_APPLICATION_NAME"
     if [ -n "${PROJECT_CODE_NAME}" ]; then
         PROMPT_HOSTNAME="${PROJECT_CODE_NAME}-drpl"
     elif [ -f "$PLATFORM_DIR/composer.json" ]; then
-        PROJECT_NAME=$(jq -r '.name' "$PLATFORM_DIR/composer.json" | sed 's/[^\/]*\///')
-        PROMPT_HOSTNAME="${PROJECT_NAME/-sw-project}-drpl"
+        PROJECT_CODE_NAME=$(jq -r '.name' "$PLATFORM_DIR/composer.json" | sed 's/[^\/]*\///' | sed 's/-sw-project//')
+        PROMPT_HOSTNAME="${PROJECT_CODE_NAME}-drpl"
     else
-        PROMPT_HOSTNAME="${HOSTNAME/.0}"
+        PROMPT_HOSTNAME="${HOSTNAME}"
     fi
 
     # Generate PS1 prompt
