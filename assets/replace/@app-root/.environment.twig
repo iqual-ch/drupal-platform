@@ -1,7 +1,7 @@
 {% if deployment == "platform.sh" %}
 export PATH=/app/vendor/bin:$PATH
 
-if [ -n "$PS1" ] && [ -n "$PLATFORM_PROJECT" ] && [ "$PLATFORM_APPLICATION_NAME" == "drupal" ]; then
+if [ -n "$PS1" ] && [ -n "$PLATFORM_PROJECT" ] && [ "$PLATFORM_APPLICATION_NAME" = "drupal" ]; then
     # Display platform environment and colorize by type
     if [ -n "$PLATFORM_ENVIRONMENT_TYPE" ] && [ -n "$PLATFORM_ENVIRONMENT" ]; then
         case "$PLATFORM_ENVIRONMENT_TYPE" in
