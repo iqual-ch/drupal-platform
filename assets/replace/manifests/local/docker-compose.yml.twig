@@ -50,8 +50,7 @@ services:
 
 {% if runtime.solr_version is not null %}
   solr:
-{#    image: {{ runtime.solr_image }}:{{ runtime.solr_image_tag|replace({'VERSION': runtime.solr_version}) }}#}
-    image: solr:9
+    image: {{ runtime.solr_image }}:{{ runtime.solr_image_tag|replace({'VERSION': runtime.solr_version}) }}
     ports:
       - 8983
     volumes:
