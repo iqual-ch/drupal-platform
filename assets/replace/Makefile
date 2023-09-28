@@ -132,7 +132,7 @@ delete-local: check-in-container-false
 	@echo -e " $(MSG_WARNING) This will irreversible delete your local database's and container's data. This will not affect code in the repo."
 	echo -n "Do you want to continue? [n] " && read REPLY && [[ $$REPLY == "y" ]] || exit 1
 	docker-compose -p $(COMPOSE_PROJECT_NAME) -f ./manifests/local/docker-compose.yml down -v --remove-orphans || exit 1
-	docker volume rm $(COMPOSE_PROJECT_NAME)_{db,web}_storage 2>/dev/null || true
+	docker volume rm $(COMPOSE_PROJECT_NAME)_{db,web,solr}_storage 2>/dev/null || true
 
 # PHP commands
 xdebug: check-in-container-true ## Enable XDebug
