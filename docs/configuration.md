@@ -166,4 +166,4 @@ composer project:scaffold
 
 6. Make sure to rebuild the container in VS Code so Solr is started (without a core for initial configuration).
 
-You should now have a running Solr service with a core created from the configuration in the `solr` directory.
+You should now have a running Solr service with a core created from the configuration in the `solr` directory. Follow the Search API module's documentation on how to create indexes.
