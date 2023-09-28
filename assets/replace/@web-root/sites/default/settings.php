@@ -58,7 +58,7 @@ if (getenv('SOLR_HOST') && getenv('SOLR_CORE')) {
     $config['search_api.server.solr']['backend_config']['connector_config']['http']['http_user'] = (getenv('SOLR_USER') ?: '');
     $config['search_api.server.solr']['backend_config']['connector_config']['http_pass'] = (getenv('SOLR_PASSWORD') ?: '');
     $config['search_api.server.solr']['backend_config']['connector_config']['http']['http_pass'] = (getenv('SOLR_PASSWORD') ?: '');
-    $config['search_api.server.solr']['name'] = 'Solr - Environment: ' . (getenv('SITE_ENVIRONMENT') ?: '');
+    $config['search_api.server.solr']['name'] = 'Solr - Environment: ' . (getenv('DRUPAL_ENVIRONMENT') ?: '');
 }
 
 /**
