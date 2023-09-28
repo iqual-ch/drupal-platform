@@ -153,7 +153,7 @@ composer project:scaffold
 
 3. Make sure to rebuild the container in VS Code so Solr is started (without a core for initial configuration).
 
-4. Add a server in the administration backend of the Drupal Search API module (`/admin/config/search/search-api/add-server`). Use `solr` as host and `site_search` as core.
+4. Add a server in the administration backend of the Drupal Search API module (`/admin/config/search/search-api/add-server`). Use `solr` as server (and system) name, as well as host. Use `site_search` as Solr core name.
 
 5. Download the core configuration and add it to the project repository (e.g. with version `9`):
 
