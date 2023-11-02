@@ -73,9 +73,9 @@ assets/replace/
 │   │       └── upgrade.sh
 │   └── workflows
 │       ├── phpcs.yml.twig
-│       ├── phpunit-functional-testing.yml.yml.twig
-│       ├── phpunit-unit-testing.yml.yml.twig
-│       ├── testing.yml.yml.twig
+│       ├── phpunit-functional-testing.yml.twig
+│       ├── phpunit-unit-testing.yml.twig
+│       ├── testing.yml.twig
 │       ├── upgrade.yml.twig
 │       └── visual-regression-testing.yml.twig
 ├── .vscode

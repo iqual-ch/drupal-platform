@@ -74,6 +74,10 @@ The `.github` directory contains the GitHub Actions workflows for continous inte
 │       ├── rector.php                 # Default/fallback rector config for upgrade.sh
 │       └── upgrade.sh                 # Composite action for installing Drupal
 ├── workflows
+│   ├── phpcs.yml                      # Automated PHPCS Linting
+│   ├── phpunit-functional-testing.yml # Automated PHPUnit Functional Testing
+│   ├── phpunit-unit-testing.yml       # Automated PHPUnit Unit Testing
+│   ├── testing.yml                    # Automated Drupal Testing
 │   ├── update.yml                     # Automated Drupal Update
 │   ├── upgrade.yml                    # Automated Drupal Upgrades
 │   └── visual-regression-testing.yml  # Automated VRT
