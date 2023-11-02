@@ -72,13 +72,17 @@ assets/replace/
 │   │       ├── rector.php
 │   │       └── upgrade.sh
 │   └── workflows
-│       ├── update.yml.twig
+│       ├── phpcs.yml.twig
+│       ├── phpunit-functional-testing.yml.yml.twig
+│       ├── phpunit-unit-testing.yml.yml.twig
+│       ├── testing.yml.yml.twig
 │       ├── upgrade.yml.twig
 │       └── visual-regression-testing.yml.twig
 ├── .vscode
 │   ├── launch.json
 │   └── settings.json.twig
 ├── @app-root
+│   ├── phpunit.xml.dist.twig
 │   ├── drush
 │   │   ├── drush.yml
 │   │   └── sites

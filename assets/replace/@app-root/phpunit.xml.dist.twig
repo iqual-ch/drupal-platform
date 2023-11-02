@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" bootstrap="vendor/weitzman/drupal-test-traits/src/bootstrap.php" colors="true" beStrictAboutTestsThatDoNotTestAnything="true" beStrictAboutOutputDuringTests="true" beStrictAboutChangesToGlobalState="true" failOnWarning="true" printerClass="\Drupal\Tests\Listeners\HtmlOutputPrinter" cacheResult="false" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd">
+  <php>
+    <!-- Set error reporting to E_ALL. -->
+    <ini name="error_reporting" value="32767"/>
+    <!-- Do not limit the amount of memory tests take to run. -->
+    <ini name="memory_limit" value="-1"/>
+    <!-- Example SIMPLETEST_BASE_URL value: http://localhost -->
+    <env name="SIMPLETEST_BASE_URL" value="http://web"/>
+    <!-- Example SIMPLETEST_DB value: mysql://username:password@localhost/databasename#table_prefix -->
+    <env name="SIMPLETEST_DB" value="mysql://drupal:drupal@db/drupal"/>
+    <!-- Example BROWSERTEST_OUTPUT_DIRECTORY value: /path/to/webroot/sites/simpletest/browser_output -->
+    <env name="BROWSERTEST_OUTPUT_DIRECTORY" value="/tmp"/>
+    <!-- To have browsertest output use an alternative base URL. For example if
+     SIMPLETEST_BASE_URL is an internal DDEV URL, you can set this to the
+     external DDev URL so you can follow the links directly.
+    -->
+    <env name="BROWSERTEST_OUTPUT_BASE_URL" value=""/>
+    <env name="DTT_BASE_URL" value="http://web"/>
+    <!-- Specify the default directory screenshots should be placed. -->
+    <env name="DTT_SCREENSHOT_REPORT_DIRECTORY" value="/project/app/public/sites/simpletest/browser_output"/>
+    <env name="DTT_MINK_DRIVER_ARGS" value='["chrome", { "chromeOptions" : { "w3c": false } }, "http://chrome:4444/wd/hub"]'/>
+    <!-- To disable deprecation testing completely uncomment the next line. -->
+    <env name="SYMFONY_DEPRECATIONS_HELPER" value="disabled"/>
+    <!-- Example for changing the driver class for mink tests MINK_DRIVER_CLASS value: 'Drupal\FunctionalJavascriptTests\DrupalSelenium2Driver' -->
+    <env name="MINK_DRIVER_CLASS" value=""/>
+    <!-- Example for changing the driver args to mink tests MINK_DRIVER_ARGS value: '["http://127.0.0.1:8510"]' -->
+    <env name="MINK_DRIVER_ARGS" value=""/>
+    <!-- Example for changing the driver args to webdriver tests MINK_DRIVER_ARGS_WEBDRIVER value: '["chrome", { "chromeOptions": { "w3c": false } }, "http://localhost:4444/wd/hub"]' For using the Firefox browser, replace "chrome" with "firefox" -->
+    <env name="MINK_DRIVER_ARGS_WEBDRIVER" value='["chrome", { "chromeOptions" : { "w3c": false } }, "http://chrome:4444/wd/hub"]'/>
+  </php>
+  <testsuites>
+      <testsuite name="app">
+          <directory>./test*/src</directory>
+      </testsuite>
+      <testsuite name="unit">
+          <directory>./test*/src/Unit</directory>
+          <directory>./public/modules/custom/*/tests/src/Unit</directory>
+          <directory>./vendor/iqual/*-test-suite/tests/src/Unit</directory>
+      </testsuite>
+      <testsuite name="kernel">
+          <directory>./test*/src/Kernel</directory>
+          <directory>./public/modules/custom/*/tests/src/Kernel</directory>
+          <directory>./vendor/iqual/*-test-suite/tests/src/Kernel</directory>
+      </testsuite>
+      <testsuite name="functional">
+          <directory>./test*/src/Functional</directory>
+          <directory>./public/modules/custom/*/tests/src/Functional</directory>
+          <directory>./vendor/iqual/*-test-suite/tests/src/Functional</directory>
+      </testsuite>
+      <testsuite name="functional-javascript">
+          <directory>./test*/src/FunctionalJavascript</directory>
+          <directory>./public/modules/custom/*/tests/src/FunctionalJavascript</directory>
+          <directory>./vendor/iqual/*-test-suite/tests/src/FunctionalJavascript</directory>
+      </testsuite>
+      <testsuite name="existingsite">
+          <directory>./test*/src/ExistingSite</directory>
+          <directory>./public/modules/custom/*/tests/src/ExistingSite</directory>
+          <directory>./vendor/iqual/*-test-suite/tests/src/ExistingSite</directory>
+      </testsuite>
+      <testsuite name="existingsite-javascript">
+          <directory>./test*/src/ExistingSiteJavascript</directory>
+          <directory>./public/modules/custom/*/tests/src/ExistingSiteJavascript</directory>
+          <directory>./vendor/iqual/*-test-suite/tests/src/ExistingSiteJavascript</directory>
+      </testsuite>
+  </testsuites>
+</phpunit>

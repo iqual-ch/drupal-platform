@@ -134,6 +134,11 @@ delete-local: check-in-container-false
 	docker-compose -p $(COMPOSE_PROJECT_NAME) -f ./manifests/local/docker-compose.yml down -v --remove-orphans || exit 1
 	docker volume rm $(COMPOSE_PROJECT_NAME)_{db,web}_storage 2>/dev/null || true
 
+# Tool commands
+tool-%: ## Launch tools
+	@echo -e "Launching tooling: $*"
+	docker-compose -p $(COMPOSE_PROJECT_NAME) --profile $* -f ./manifests/local/docker-compose.yml up -d $*
+
 # PHP commands
 xdebug: check-in-container-true ## Enable XDebug
 	@if [[ "$(DRUPAL_ENVIRONMENT)" == "local" ]]; then
@@ -144,6 +149,56 @@ xdebug-disable: check-in-container-true ## Disable XDebug
 	@if [[ "$(DRUPAL_ENVIRONMENT)" == "local" ]]; then
 		sudo -E disable_xdebug
 	fi
+
+test: validate lint phpunit ## Run tests
+
+test-all: validate lint phpunit-all ## Run all tests (w/ browser)
+
+validate: ## Validate composer file
+	@echo "Validating composer lock file"
+	composer validate -d $(APP_ROOT) $(COMPOSER_FLAGS)
+
+lint: phplint phpcs ## Run linters
+
+phplint:
+	@echo "Running PHP linting"
+	REPO_CODE="$$(git ls-tree -d -r $$(git write-tree) --name-only | grep -E '(themes|modules)/custom/[^/]+$$' | paste -s -)"
+	if [[ -x "$$(command -v parallel-lint)" ]]; then
+		parallel-lint $$REPO_CODE -e php,module,theme,inc,install,profile $(PARALINT_FLAGS)
+	else
+		find $$REPO_CODE \( -name '*.php' -o -name '*.module' -o -name '*.theme' -o -name '*.inc' -o -name '*.install' -o -name '*.profile' \) -exec php -l {} \;
+	fi
+
+phpcs:
+	@[ -z "$(PHPCS_FLAGS)" ] && echo "Running PHPCS code sniffer"
+	pushd $(APP_ROOT) > /dev/null
+	REPO_CODE="$$(git ls-tree -d -r $$(git write-tree) --name-only | grep -E '(themes|modules)/custom/[^/]+$$' | paste -s -)"
+	phpcs --standard=Drupal,DrupalPractice \
+		--extensions=php,module,inc,install,test,profile,theme,css,info,txt,md,yml \
+		--ignore=node_modules,bower_components,vendor,custom.css $(PHPCS_FLAGS) \
+		$$REPO_CODE
+
+phpunit-all: phpunit phpunit-db phpunit-browser
+
+phpunit: ## Run PHPUnit PHP only tests
+	@echo "Running PHPUnit unit tests"
+	PHPUNIT_CONFIG=$${PHPUNIT_CONFIG-$(APP_ROOT)}
+	pushd $(APP_ROOT) > /dev/null
+	phpunit -c $$PHPUNIT_CONFIG --testsuite=unit $(PHPUNIT_FLAGS)
+
+phpunit-db: ## Run PHPUnit tests relying on a database
+	@echo "Running PHPUnit database tests"
+	echo -e " $(MSG_WARNING) Some tests could modify your existing database."
+	PHPUNIT_CONFIG=$${PHPUNIT_CONFIG-$(APP_ROOT)}
+	pushd $(APP_ROOT) > /dev/null
+	phpunit -c $$PHPUNIT_CONFIG --testsuite=kernel,functional,existingsite $(PHPUNIT_FLAGS)
+
+phpunit-browser: ## Run PHPUnit tests relying on a browser
+	@echo "Running PHPUnit browser tests"
+	echo -e " $(MSG_WARNING) Some tests could modify your existing database."
+	PHPUNIT_CONFIG=$${PHPUNIT_CONFIG-$(APP_ROOT)}
+	pushd $(APP_ROOT) > /dev/null
+	phpunit -c $$PHPUNIT_CONFIG --testsuite=functional-javascript,existingsite-javascript $(PHPUNIT_FLAGS)
 
 # Drupal (Drush) commands
 new: check-in-container-true ## Create new Drupal site from repo

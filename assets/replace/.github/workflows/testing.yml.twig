@@ -1,0 +1,102 @@
+{% if workflows.update %}
+{%- verbatim -%}
+name: Drupal testing
+
+env:
+  DOCKER_WEB_PORT: 80:80
+
+on:
+  workflow_dispatch:
+  pull_request:
+    types: [opened, reopened]
+
+concurrency:
+  group: ci-drupal-testing-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build Drupal
+    runs-on: ubuntu-latest
+
+    outputs:
+      browser_testing: ${{ steps.phpunit-tests.outputs.browser_testing }}
+      database_testing: ${{ steps.phpunit-tests.outputs.database_testing }}
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Install Drupal locally
+      uses: ./.github/actions/install-local
+      with:
+        dockerhub_container_registry_user: ${{ secrets.DOCKERHUB_CONTAINER_REGISTRY_USER }}
+        dockerhub_container_registry_password: ${{ secrets.DOCKERHUB_CONTAINER_REGISTRY_PASSWORD }}
+        ssh_key: ${{ secrets.SSH_KEY }}
+        composer_auth: ${{ secrets.COMPOSER_AUTH }}
+        caching: true
+        caching_db_key: ${{ github.event.pull_request.head.sha || github.sha }}
+
+    - name: Detect available tests
+      id: phpunit-tests
+      shell: bash
+      run: |
+        PHPUNIT_TESTS_LIST="${{ runner.temp }}/phpunit-tests.txt"
+        make cli-local COMMAND="cd ./app && phpunit --list-tests" | tee $PHPUNIT_TESTS_LIST
+        if grep -q '\\ExistingSiteJavascript\\' $PHPUNIT_TESTS_LIST; then
+          echo "browser_testing=true" >> $GITHUB_OUTPUT
+        fi
+        if grep -q '\\FunctionalJavascript\\' $PHPUNIT_TESTS_LIST; then
+          echo "browser_testing=true" >> $GITHUB_OUTPUT
+        fi
+        if grep -q '\\ExistingSite\\' $PHPUNIT_TESTS_LIST; then
+          echo "database_testing=true" >> $GITHUB_OUTPUT
+        fi
+        if grep -q '\\Functional\\' $PHPUNIT_TESTS_LIST; then
+          echo "database_testing=true" >> $GITHUB_OUTPUT
+        fi
+        if grep -q '\\Kernel\\' $PHPUNIT_TESTS_LIST; then
+          echo "database_testing=true" >> $GITHUB_OUTPUT
+        fi
+
+    - name: Detect missing config in repository
+      shell: bash
+      run: |
+        make cli-local COMMAND="drush --no config:export --diff" || \
+          (echo 'There is missing configuration that has not been exported to the repository.' && exit 1)
+
+    - name: Validate composer lock file
+      shell: bash
+      run: |
+        composer validate -d ./app --ansi
+
+  lint:
+    name: "PHPCS"
+    uses: ./.github/workflows/phpcs.yml
+    secrets: inherit
+
+  phpunit-unit-tests:
+    name: "PHPUnit"
+    uses: ./.github/workflows/phpunit-unit-testing.yml
+    secrets: inherit
+
+  phpunit-functional-tests:
+    name: "PHPUnit"
+    needs: [build]
+    if: ${{ needs.build.outputs.browser_testing == 'true' || needs.build.outputs.database_testing == 'true' }}
+    uses: ./.github/workflows/phpunit-functional-testing.yml
+    with:
+      database-testing: ${{ needs.build.outputs.browser_testing == 'true'}}
+      browser-testing: ${{ needs.build.outputs.database_testing == 'true'}}
+      database-cache-key: ${{ github.event.pull_request.head.sha || github.sha }}
+    secrets: inherit
+
+  visual-regression-tests:
+    name: "VRT"
+    uses: ./.github/workflows/visual-regression-testing.yml
+    needs: [build]
+    with:
+      database-cache-key: ${{ github.event.pull_request.head.sha || github.sha }}
+    secrets: inherit
+{% endverbatim -%}
+{% endif %}

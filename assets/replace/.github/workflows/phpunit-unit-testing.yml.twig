@@ -1,0 +1,58 @@
+{% if workflows.update %}
+name: PHPUnit unit testing
+
+env:
+  PHP_VERSION: "{{ runtime.php_version }}"
+
+{%- verbatim -%}
+on:
+  workflow_dispatch:
+  workflow_call:
+
+concurrency:
+  group: ci-php-unit-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  phpunit-tests:
+    name: "Unit tests"
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: "Set up PHP"
+      uses: shivammathur/setup-php@v2
+      with:
+        extensions: "gd, imagick, bcmath"
+        php-version: "${{ env.PHP_VERSION }}"
+
+    - name: Prepare environment
+      shell: bash
+      run: |
+        echo "::add-matcher::${{ runner.tool_cache }}/php.json"
+        COMPOSER_AUTH="${{ secrets.COMPOSER_AUTH }}"
+        echo "COMPOSER_AUTH=$COMPOSER_AUTH" >> $GITHUB_ENV
+        echo "::add-mask::$COMPOSER_AUTH"
+
+    - name: "Install dependencies"
+      shell: bash
+      run: |
+        composer install --ansi --no-interaction --no-progress --working-dir="./app"
+        echo "${{ github.workspace }}/app/vendor/bin" >> $GITHUB_PATH
+
+    - name: "Run PHPUnit Unit Tests"
+      shell: bash
+      run: |
+        make phpunit PHPUNIT_CONFIG="${{ github.workspace }}/app" APP_ROOT="${{ github.workspace }}/app" PHPUNIT_FLAGS="--log-junit TEST-phpunit.xml"
+
+    - name: Publish Test Report
+      uses: mikepenz/action-junit-report@v4
+      if: success() || failure()
+      with:
+        report_paths: '**/TEST-*.xml'
+        check_name: "PHPUnit unit report"
+        annotate_only: true
+{% endverbatim -%}
+{% endif %}

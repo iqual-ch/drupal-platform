@@ -28,7 +28,8 @@
             "workflows": {
                 "update": true,
                 "upgrade": true,
-                "vrt": true
+                "vrt": true,
+                "phpunit": false
             },
             "local_domain_suffix": "localdev.iqual.ch",
             "development": [

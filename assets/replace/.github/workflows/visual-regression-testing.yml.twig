@@ -7,8 +7,16 @@ env:
 
 on:
   workflow_dispatch:
+{% if workflows.phpunit %}
+  workflow_call:
+    inputs:
+      database-cache-key:
+        default: "${{ github.sha }}"
+        type: string
+{% else %}
   pull_request:
     types: [opened, reopened]
+{% endif %}
 
 jobs:
   run-vr-tests:
@@ -17,7 +25,7 @@ jobs:
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: Install Drupal locally
       uses: ./.github/actions/install-local
@@ -26,6 +34,8 @@ jobs:
         dockerhub_container_registry_password: ${{ secrets.DOCKERHUB_CONTAINER_REGISTRY_PASSWORD }}
         ssh_key: ${{ secrets.SSH_KEY }}
         composer_auth: ${{ secrets.COMPOSER_AUTH }}
+        caching: true
+        caching_db_key: ${{ inputs.database-cache-key }}
 
     - name: Run Visual regression tests
       uses: ./app/vendor/iqual-ch/ci-pocketknife-installer/.github/actions/visual-regression-tests

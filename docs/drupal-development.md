@@ -107,6 +107,18 @@ XDEBUG_CONFIG="client_host=host.docker.internal"
 
 > On Windows (WSL2) you have to use `host.docker.internal` for the localhost, however on Linux you can use `172.17.0.1`.
 
+## PHPUnit
+
+For running the project specific PHPUnit tests, there are multiple avaiable PHPUnit commands. To run simple unit tests, there is `make phpunit` which will only run the unit testsuite defined in the project's `phpunit.xml` (falls back to `phpunit.xml.dist`). There is also the option to run database test including Drupal Testing Traits (DTT) tests, that could modify your database, with `make phpunit-db`. If [Chrome has been launched as an external tool](#chrome), the browser testing can be executed using `make phpunit-browser`. This will also require DTT and could also modify your existing database.
+
+> `phpunit` has to be required in the project, including DTT.
+
+## PHPCS
+
+For code sniffing there is a make target that will run sniffing according to the Drupal standard on the custom themes & modules in the repository called `make phpcs`. To run both PHPCS and some basic PHP linting first, there is also `make lint`.
+
+> `phpcs` has to be required in the project, including the Drupal and DrupalPractice standards.
+
 ## Email
 
 For debugging emails it is advised to enable the mailtrap integration. This can either be enabled by using the `EMAIL_MAILTRAP_AUTH` environment variable (see [Drupal image variables](https://github.com/iqual-ch/dc-drupal/blob/main/docs/environment-variables.md)) or by using a SMTP Drupal module and setting the SMTP credentials to Mailtrap.
@@ -140,3 +152,10 @@ If multiple environments should be running simultaneously then the repository (i
 ## Database Administration
 
 For database administration during development there is an included VS Code extension called `SQLTools`. It provides basic capability like viewing tables and running queries on the database directly in the sidebar of VS Code.
+
+
+## External Tools
+
+### Chrome
+
+The browser Chrome is available as external tool. It can be launched by using `make tool-chrome`. Chrome can be used for local PHPUnit testing that requires a browser.

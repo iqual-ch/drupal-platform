@@ -50,6 +50,9 @@ The `make` target allows the deployment of the specified environments either loc
 ## Further Documentation
 
 * [Drupal Platform Documentation](https://github.com/iqual-ch/drupal-platform#readme)
+{% if (locations['project-root'] ~ '/tests') is existing_file %}
+* [See `./tests` directory for the documentation of PHPUnit tests](./tests)
+{% endif %}
 {% if (locations['project-root'] ~ '/docs') is existing_file %}
 * [See `./docs` directory for further project documentation](./docs)
 {% endif %}
