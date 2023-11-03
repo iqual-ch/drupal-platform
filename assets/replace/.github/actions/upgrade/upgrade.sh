@@ -118,15 +118,12 @@ for operation in "${OPERATIONS[@]}"; do
       rsh composer remove ${OPTIONS} -n ${DATA} -d ${APP_ROOT}
       ;;
     "require")
-      rsh composer cc
       rsh composer require ${OPTIONS} -n ${DATA} -d ${APP_ROOT}
       ;;
     "update")
-      rsh composer cc
       rsh composer update ${OPTIONS} -n ${DATA} -d ${APP_ROOT}
       ;;
     "bump")
-      rsh composer cc
       rsh composer bump ${PACKAGES} -n -d ${APP_ROOT}
       ;;
     "config")
