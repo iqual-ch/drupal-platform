@@ -18,9 +18,6 @@ return static function (RectorConfig $rectorConfig): void {
         LevelSetList::UP_TO_PHP_81,
     ]);
 
-    // Add backwards compatibility
-    $rectorConfig->phpVersion(PhpVersion::PHP_73);
-
     $parameters = $rectorConfig->parameters();
 
     $drupalFinder = new DrupalFinder();
