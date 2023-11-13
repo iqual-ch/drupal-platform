@@ -5,20 +5,19 @@
 declare(strict_types=1);
 
 use DrupalFinder\DrupalFinder;
-use DrupalRector\Set\Drupal9SetList;
 use Rector\Config\RectorConfig;
-use Rector\Core\Configuration\Option;
-use Rector\Php80\Rector\FunctionLike\UnionTypesRector;
 use Rector\Php81\Rector\Array_\FirstClassCallableRector;
 use Rector\Set\ValueObject\LevelSetList;
-use Rector\Php80\Rector\FunctionLike\MixedTypeRector;
-
+use DrupalRector\Set\Drupal9SetList;
+use DrupalRector\Set\Drupal10SetList;
 
 return static function (RectorConfig $rectorConfig): void {
   // Set desired version support
   $rectorConfig->sets([
     Drupal9SetList::DRUPAL_9,
     LevelSetList::UP_TO_PHP_81,
+    Drupal10SetList::DRUPAL_100,
+    Drupal10SetList::DRUPAL_101,
   ]);
 
   $drupalFinder = new DrupalFinder();
