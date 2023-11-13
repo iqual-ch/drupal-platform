@@ -44,6 +44,7 @@ fi
 
 APP_ROOT=${APP_ROOT:-app}
 COMPOSER_JSON_FILE="${APP_ROOT}/composer.json"
+COMPOSER_PATCHES_JSON_FILE="${APP_ROOT}/composer.patches.json"
 
 if [ ! -f "${COMPOSER_JSON_FILE}" ]; then
   echo "composer.json file not found. Aborting."
@@ -205,7 +206,11 @@ for operation in "${OPERATIONS[@]}"; do
     "patch-remove")
       if grep -q "szeidler/composer-patches-cli" $COMPOSER_JSON_FILE; then
         declare -a "DATA_ARRAY=($DATA)"
+        patch_path=$(jq -r ".patches.\"${DATA_ARRAY[0]}\".\"${DATA_ARRAY[1]}\"" "$COMPOSER_PATCHES_JSON_FILE")
         rsh composer patch-remove ${OPTIONS} -n "${DATA_ARRAY[@]}" -d ${APP_ROOT} || true
+        if [ -f "/project/app/$patch_path" ]; then
+          rm -rf "/project/app/$patch_path"
+        fi
       else
         echo "Warning: missing \"szeidler/composer-patches-cli\" package for patch CLI."
       fi
