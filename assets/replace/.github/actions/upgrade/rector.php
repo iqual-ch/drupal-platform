@@ -21,8 +21,6 @@ return static function (RectorConfig $rectorConfig): void {
     LevelSetList::UP_TO_PHP_81,
   ]);
 
-  $parameters = $rectorConfig->parameters();
-
   $drupalFinder = new DrupalFinder();
   $drupalFinder->locateRoot(__DIR__);
   $drupalRoot = $drupalFinder->getDrupalRoot();
@@ -36,18 +34,11 @@ return static function (RectorConfig $rectorConfig): void {
   $rectorConfig->fileExtensions(['php', 'module', 'theme', 'install', 'profile', 'inc', 'engine']);
   $rectorConfig->importNames(true, false);
   $rectorConfig->importShortClasses(false);
-  $parameters->set('drupal_rector_notices_as_comments', true);
 
-  $parameters->set(
-    Option::SKIP,
-    [
+  $rectorConfig->skip([
       // Don't upgrade array callable to first class callable (not serializable)
       FirstClassCallableRector::class,
-      // These two rules remove @param for whatever reason
-      MixedTypeRector::class,
-      UnionTypesRector::class,
       // Exclude upgrade_status test modules
       '*/upgrade_status/tests/modules/*',
-    ]
-  );
+  ]);
 };
