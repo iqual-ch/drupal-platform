@@ -205,7 +205,11 @@ for operation in "${OPERATIONS[@]}"; do
     "patch-remove")
       if grep -q "szeidler/composer-patches-cli" $COMPOSER_JSON_FILE; then
         declare -a "DATA_ARRAY=($DATA)"
+        patch_path=$(composer patch-list ${DATA_ARRAY[0]} -d ${APP_ROOT} | grep "${DATA_ARRAY[1]}" | awk -F '|' '{gsub(/^[ \t]+|[ \t]+$/, "", $3); print $3}')
         rsh composer patch-remove ${OPTIONS} -n "${DATA_ARRAY[@]}" -d ${APP_ROOT} || true
+        if [ -e "/project/app/$patch_path" ]; then
+          rm -rf "/project/app/$patch_path"
+        fi
       else
         echo "Warning: missing \"szeidler/composer-patches-cli\" package for patch CLI."
       fi
