@@ -16,8 +16,7 @@ return static function (RectorConfig $rectorConfig): void {
   $rectorConfig->sets([
     Drupal9SetList::DRUPAL_9,
     LevelSetList::UP_TO_PHP_81,
-    Drupal10SetList::DRUPAL_100,
-    Drupal10SetList::DRUPAL_101,
+    Drupal10SetList::DRUPAL_10,
   ]);
 
   $drupalFinder = new DrupalFinder();
@@ -35,9 +34,9 @@ return static function (RectorConfig $rectorConfig): void {
   $rectorConfig->importShortClasses(false);
 
   $rectorConfig->skip([
-      // Don't upgrade array callable to first class callable (not serializable)
-      FirstClassCallableRector::class,
-      // Exclude upgrade_status test modules
-      '*/upgrade_status/tests/modules/*',
+    // Don't upgrade array callable to first class callable (not serializable)
+    FirstClassCallableRector::class,
+    // Exclude upgrade_status test modules
+    '*/upgrade_status/tests/modules/*',
   ]);
 };
