@@ -205,7 +205,7 @@ for operation in "${OPERATIONS[@]}"; do
     "patch-remove")
       if grep -q "szeidler/composer-patches-cli" $COMPOSER_JSON_FILE; then
         declare -a "DATA_ARRAY=($DATA)"
-        rsh composer patch-remove ${OPTIONS} -n "${DATA_ARRAY[@]}" -d ${APP_ROOT}
+        rsh composer patch-remove ${OPTIONS} -n "${DATA_ARRAY[@]}" -d ${APP_ROOT} || true
       else
         echo "Warning: missing \"szeidler/composer-patches-cli\" package for patch CLI."
       fi
