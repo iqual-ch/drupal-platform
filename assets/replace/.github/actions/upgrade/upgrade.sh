@@ -44,6 +44,7 @@ fi
 
 APP_ROOT=${APP_ROOT:-app}
 COMPOSER_JSON_FILE="${APP_ROOT}/composer.json"
+COMPOSER_PATCHES_JSON_FILE="${APP_ROOT}/composer.patches.json"
 
 if [ ! -f "${COMPOSER_JSON_FILE}" ]; then
   echo "composer.json file not found. Aborting."
