@@ -137,7 +137,7 @@ for operation in "${OPERATIONS[@]}"; do
     "rector")
       if ! grep -q "palantirnet/drupal-rector" $COMPOSER_JSON_FILE; then
         echo "Rector is not present, installing it temporarily."
-        rsh composer require --dev palantirnet/drupal-rector -n -d ${APP_ROOT}
+        rsh composer require --dev palantirnet/drupal-rector:^0.18.0 -n -d ${APP_ROOT}
         RECTOR_INSTALLED=true
       fi
       RECTOR_CONFIG="${APP_ROOT}/rector.php"
