@@ -1,0 +1,56 @@
+{% if workflows.phpunit %}
+name: PHPCS
+
+env:
+  PHP_VERSION: "{{ runtime.php_version }}"
+
+{% verbatim -%}
+on:
+  workflow_dispatch:
+  workflow_call:
+
+concurrency:
+  group: ci-lint-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    name: "Linting"
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: "Set up PHP"
+      uses: shivammathur/setup-php@v2
+      with:
+        extensions: "gd, imagick, bcmath"
+        php-version: "${{ env.PHP_VERSION }}"
+        tools: parallel-lint, cs2pr
+
+    - name: Prepare environment
+      shell: bash
+      run: |
+        echo "::add-matcher::${{ runner.tool_cache }}/php.json"
+        COMPOSER_AUTH="${{ secrets.COMPOSER_AUTH }}"
+        echo "COMPOSER_AUTH=$COMPOSER_AUTH" >> $GITHUB_ENV
+        echo "::add-mask::$COMPOSER_AUTH"
+
+    - name: "Run PHP parallel lint"
+      shell: bash
+      run: |
+        make phplint PARALINT_FLAGS="--no-progress"
+
+    - name: "Install dependencies"
+      shell: bash
+      run: |
+        composer install --ansi --no-interaction --no-progress --working-dir="./app"
+        echo "${{ github.workspace }}/app/vendor/bin" >> $GITHUB_PATH
+
+    - name: "Run PHPCS"
+      shell: bash
+      run: |
+        make phpcs APP_ROOT="${{ github.workspace }}/app" PHPCS_FLAGS="-q --report=checkstyle" | cs2pr
+{% endverbatim -%}
+{% endif %}

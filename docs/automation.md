@@ -4,11 +4,16 @@ There are multiple GitHub Action workflows for running common automation tasks.
 
 * [Update: Updating Drupal projects](#update-drupal-project)
 * [Upgrade: Upgrading Drupal projects with specific operations](#upgrade-drupal-project)
-* [Visual Regression Testing: Comparing reference website to local test deployment](#visual-regression-testing)
+* [Testing: Test the Drupal project](#testing)
+  * [PHPCS: Linting](#phpcs)
+  * [PHPUnit: Unit Testing](#phpunit-unit-testing)
+  * [PHPUnit: Functional Testing](#phpunit-functional-testing)
+  * [Visual Regression Testing: Comparing reference website to local test deployment](#visual-regression-testing)
 
 ## Update Drupal Project
 
 * Workflow: `update.yml`
+* Config variable: `workflows.update`
 * Runs on:
     * Manual dispatch
 * Inputs
@@ -19,6 +24,7 @@ This workflow will install the project in a GitHub Actions runner environment an
 ## Upgrade Drupal Project
 
 * Workflow: `upgrade.yml`
+* Config variable: `workflows.upgrade`
 * Runs on:
     * Manual dispatch
 * Inputs
@@ -180,12 +186,65 @@ An example operation for removing `dompdf/dompdf` if it is installed and requiri
 
 > In the GitHub web UI you have to make sure to escape double-quotes (e.g. `{\"operations\": [{\"action\": \"config:export\"}]}`).
 
+## Testing
+
+* Workflow: `testing.yml`
+* Config variable: `workflows.phpunit`
+* Runs on:
+    * Manual dispatch
+    * Pull request (re)open
+* Calls:
+    * PHPCS
+    * PHPUnit Unit Testing
+    * PHPUnit Functional Testing
+    * Visual Regression Testing
+
+This workflow runs extensive Drupal testing by running a full build, linting and PHPUnit unit test in parallel. If the build succeeds it will also run PHPUnit database and browser test, as well as visual regression testing. The workflow can be dispatched manually, but will also run on PR creation. When it is run against a PR it will also directly annotate the files that are throwing errors or warnings.
+
+## PHPCS
+
+* Workflow: `phpcs.yml`
+* Config variable: `workflows.phpunit`
+* Runs on:
+    * Manual dispatch
+    * Call from other workflow
+
+This workflow will first run `parallel-lint` to check the syntax of all custom themes & modules in the repository. Afterwards it will run `phpcs` to code sniff according to the Drupal standards.
+
+## PHPUnit Unit Testing
+
+* Workflow: `phpunit-unit-testing.yml`
+* Config variable: `workflows.phpunit`
+* Runs on:
+    * Manual dispatch
+    * Call from other workflow
+
+This workflow will run the "unit" testsuite according to the `phpunit.xml` (fallback to `phpunit.xml.dist`) in the repository. This type of testing doesn't require a full Drupal build and will not use the images defined in `manifests/local`.
+
+## PHPUnit Functional Testing
+
+* Workflow: `phpunit-functional-testing.yml`
+* Config variable: `workflows.phpunit`
+* Runs on:
+    * Manual dispatch
+    * Call from other workflow
+* Inputs
+    * Testing Type: The type of test to run (database or browser)
+
+This workflow will run different testsuites according to the `phpunit.xml` (fallback to `phpunit.xml.dist`) in the repository depending on the input type of test:
+
+* `database`: Run kernel, functional & existingsite testsuite with PHPUnit requiring a database
+* `browser`: Run functional-javascript & existingsite-javascript testsuite with PHPUnit requiring a browser
+
+This workflow requires a full build of Drupal.
 
 ## Visual Regression Testing
 
 * Workflow: `visual-regression-testing.yml`
+* Config variable: `workflows.vrt`
 * Runs on:
     * Manual dispatch
-    * Pull request (re)open
+    * Pull request (re)open (`workflows.phpunit` disabled)
+    * Call from other workflow (`workflows.phpunit` enabled)
 
 This workflow will install the project in a GitHub Actions runner environment and run a visual regression test on it ([iqual-ch/ci-pocketknife-installer](https://github.com/iqual-ch/ci-pocketknife-installer) and [iqual-ch/ci-pocketknife](https://github.com/iqual-ch/ci-pocketknife/)). This workflow requires a `.env.visreg` file setting the test and reference website URLs for testing. The workflow will crawl the website for relevant links. If the test fails (when there are visual differences between the two websites), then it will upload a BackstopJS report as a workflow artifact.

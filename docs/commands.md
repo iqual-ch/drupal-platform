@@ -53,12 +53,30 @@ The following `make` targets are available in the project's `Makefile`. They can
 * `deploy-%`: Deploy the `%` environment (replace `%` with name of environment in `./manifests` folder)
 * `delete-local`: Delete the local deployment with `docker-compose` permanently
 
+### Tool commands
+
+> These commands can only be run outside of the Drupal container
+
+* `tool-%`: Launch the tool `%` (e.g. `tool-chrome`)
+
+See [Drupal development documentation](drupal-development.md#external-tools) for a list of available external tools.
+
 ### PHP commands
 
 > These commands can only be run from within the Drupal container
 
 * `xdebug`: Enable XDebug and restart the web server.
 * `xdebug-disable`: Disable XDebug and restart the web server.
+* `test`: Run basic tests, but only unit tests with PHPUnit
+* `test-all`: Run all available tests, including database and browser tests (requires the `chrome` tool)
+* `validate`: Validate the composer lock file
+* `lint`: Run linters
+* `phplint`: Run a simple PHP syntax lint on custom theme & module files in the repo
+* `phpcs`: Run PHPCS on custom theme & module files in the repo according to the Drupal standards
+* `phpunit-all`: Run all PHPUnit based tests
+* `phpunit`: Run the unit testsuite with PHPUnit
+* `phpunit-db`: Run kernel, functional & existingsite testsuites with PHPUnit requiring a database (_Warning: Can modify your DB_)
+* `phpunit-browser`: Run functional-javascript & existingsite-javascript testsuites with PHPUnit requiring a browser (_Warning: Can modify your DB_)
 
 ## Scripts and aliases
 
