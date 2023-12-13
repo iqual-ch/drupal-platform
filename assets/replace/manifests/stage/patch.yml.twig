@@ -1,3 +1,4 @@
+{% if deployment == "kubernetes" %}
 spec:
   template:
     spec:
@@ -10,4 +11,11 @@ spec:
 {% if runtime.php_memory_limit %}
         - name: PHP_MEMORY_LIMIT
           value: {{ runtime.php_memory_limit }}
+{% endif %}
+{% if runtime.php_upload_limit %}
+        - name: PHP_UPLOAD_MAX_FILESIZE
+          value: {{ runtime.php_upload_limit }}
+        - name: PHP_POST_MAX_SIZE
+          value: {{ runtime.php_upload_limit }}
+{% endif %}
 {% endif %}

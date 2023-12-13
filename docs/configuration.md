@@ -14,7 +14,9 @@ Assets and configuration managed by the Drupal Platform has to be customized usi
 * `name` [`*`]: Code name of the project (e.g. `iqual`)
 * `title` [`~`]: Title of the project (e.g. `iqual AG`)
 * `url` [`*`]: URL to the current remote live deployment (e.g. `https://www.iqual.ch`)
-* `drupal_spot` [`*`]: The drupal single point of truth for asset synchronization (e.g. `prod`)
+* `drupal_spot` [`*`]: The drupal single point of truth for asset synchronization
+  * Kubernetes: name of the target environment, e.g. `prod`
+  * Platform.sh: machine name of the main project branch, e.g. `main-123`
 * Runtime configuration
   * `runtime.base_image`: Base docker image for the Drupal container
   * `runtime.base_image_tag`: Base docker image tag for the Drupal container
@@ -25,6 +27,8 @@ Assets and configuration managed by the Drupal Platform has to be customized usi
   * `runtime.solr_image`: Solr docker image
   * `runtime.solr_image_tag`: Solr image tag
   * `runtime.solr_version`: Solr version of the platform (e.g. `9`)
+  * `runtime.php_memory_limit`: PHP memory limit (e.g. `256M`)
+  * `runtime.php_upload_limit`: PHP upload limit (e.g. `100M`)
 * CI/CD workflow settings
   * `workflows.update`: Enable/Add the Drupal update workflow
   * `workflows.upgrade`: Enable/Add the Drupal upgrade workflow
@@ -33,11 +37,14 @@ Assets and configuration managed by the Drupal Platform has to be customized usi
 * `local_domain_suffix`: The domain suffix for local development
 * Development setup (`development` array)
   * `devcontainer-docker-compose`: Local dev environment with docker-compose and devcontainers
-* `deployment`: Deployment integration type
+* `deployment`: Deployment integration type, see [available remote deployment options](./deployment.md#remote-deployment)
 * Kubernetes contexts
   * `kubernetes_contexts.dev`: Kubernetes development cluster context
   * `kubernetes_contexts.stage`: Kubernetes staging cluster context
   * `kubernetes_contexts.prod`: Kubernetes production cluster context
+* Platform.sh config
+  * `platformsh_config.region`: Deployment region (e.g. `de-2`)
+  * `platformsh_config.project_id`: ID of the project
 
 </details>
 
@@ -59,7 +66,7 @@ Additionally to the environment file there are environment variables defined in 
 
 Local deployment secrets can be stored in a `.env.secrets` file in the root of the project. The file is git-ignored but will be created on environment creation. This can be useful for storing sensitive API credentials as environment variables that can be loaded into the config in a settings file in Drupal (see Credentials in Config section).
 
-Remote deployment secrets can be injected from Kubernetes Secrets as environment variables.
+Remote deployment secrets can be injected from Kubernetes Secrets as environment variables or in the case of Platform.sh using [project or environment variables](#credentials-on-platformsh).
 
 ### SSH Authentication
 
@@ -85,6 +92,16 @@ look for environment variables to configure Drupal (e.g. database settings) and 
 
 So for example for configuring `local` environments, settings can be added to the `local.settings.php` file. For sensitive settings or configuration that should only apply to your local copy of the environment use the `settings.local.php` file.
 
+#### Platform.sh Environment Type
+
+For Platform.sh deployments the environment type (`$PLATFORM_ENVIRONMENT_TYPE`) is mapped to the following Drupal environment (`$DRUPAL_ENVIRONMENT`) equivalents:
+
+* `production`: `prod`
+* `staging`: `stage`
+* `development`: `dev`
+
+Therefore the Platform.sh environment type `production` will still include the `prod.settings.php` settings file.
+
 ### Credentials in Config
 
 Credentials or other sensitive information should not be committed to the project's repository. Instead placeholders should be used in the config and the the config options should then be overriden in a settings file. The settings file can contain the sensitive information if it is git-ignored (i.e. `settings.local.php`) or load the data from an environment variables (e.g. stored in `.env.secrets`).
@@ -101,6 +118,19 @@ $config['mailchimp.settings'] = [
 Then the `MAILCHIMP_API_KEY` and `MAILCHIMP_WEBHOOK_HASH` can be set in the environemnt using the `.env.secrets` file. Alternatively it is still possible to override the variables directly in the `settings.local.php` file.
 
 For more advanced setups use a key management module.
+
+#### Credentials on Platform.sh
+
+Platform.sh allows adding variables to [projects](https://docs.platform.sh/development/variables/set-variables.html#create-project-variables) and [specific environments](https://docs.platform.sh/development/variables/set-variables.html#create-environment-specific-variables). This enables adding sensitive credentials directly for projects or environments. By using specific variable keys, it is also possible to directly override drupal settings or configuration.
+
+Variables that begin with `drupalsettings` or `drupal` get mapped to the $settings array verbatim, even if the value is an array. For example, a variable named `drupalsettings:example-setting` with value `foo` becomes `$settings['example-setting'] = 'foo';`.
+
+Variables that begin with `drupalconfig` get mapped to the `$config` array. Deeply nested variable names, with colon delimiters, get mapped to deeply nested array elements. Array values get added to the end just like a scalar. Variables without both a config object name and property are skipped. Examples:
+
+* Variable `drupalconfig:conf_file:prop` with value `foo` becomes `$config['conf_file']['prop'] = 'foo';`
+* Variable `drupalconfig:conf_file:prop:subprop` with value `foo` becomes `$config['conf_file']['prop']['subprop'] = 'foo';`
+* Variable `drupalconfig:conf_file:prop:subprop` with value `['foo' => 'bar']` becomes `$config['conf_file']['prop']['subprop']['foo'] = 'bar';`
+* Variable `drupalconfig:prop` is ignored.
 
 ### Caching
 

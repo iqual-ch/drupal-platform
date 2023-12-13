@@ -1,0 +1,19 @@
+{% if deployment == "platform.sh" %}
+assert.active = Off
+display_errors = Off
+display_startup_errors = Off
+max_execution_time = 30
+session.use_strict_mode = On
+zend.detect_unicode = Off
+opcache.memory_consumption = 128
+opcache.interned_strings_buffer = 8
+opcache.max_accelerated_files = 4000
+opcache.revalidate_freq = 60
+opcache.fast_shutdown = 1
+opcache.enable_cli = 1
+realpath_cache_ttl = 3600
+session.gc_probability = 0
+max_input_vars = 10000
+upload_max_filesize = {{ runtime.php_upload_limit|default('100M') }}
+post_max_size = {{ runtime.php_upload_limit|default('100M') }}
+{% endif %}

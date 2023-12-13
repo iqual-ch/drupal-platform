@@ -32,6 +32,9 @@ if (getenv('MYSQL_DATABASE_USER')) {
       'driver' => (getenv('MYSQL_DATABASE_DRIVER') ?: 'mysql'),
       'prefix' => (getenv('MYSQL_DATABASE_PREFIX') ?: ''),
       'collation' => (getenv('MYSQL_DATABASE_COLLATION') ?: 'utf8mb4_general_ci'),
+      'init_commands' => [
+        'isolation_level' => 'SET SESSION TRANSACTION ISOLATION LEVEL READ COMMITTED',
+      ],
     ];
 }
 
@@ -166,7 +169,7 @@ if (file_exists($app_root . '/' . $site_path . '/all.services.yml')) {
     $settings['container_yamls'][] = $app_root . '/' . $site_path . '/all.services.yml';
 }
 
-if(getenv('DRUPAL_ENVIRONMENT')){
+if (getenv('DRUPAL_ENVIRONMENT')) {
     // Environment specific settings files.
     if (file_exists($app_root . '/' . $site_path . '/' . getenv('DRUPAL_ENVIRONMENT') . '.settings.php')) {
       include $app_root . '/' . $site_path . '/' . getenv('DRUPAL_ENVIRONMENT') . '.settings.php';
@@ -178,6 +181,33 @@ if(getenv('DRUPAL_ENVIRONMENT')){
     }
 }
 
+if (getenv('PLATFORM_ENVIRONMENT_TYPE')) {
+    $platform_environments = [
+        "production" => "prod",
+        "staging" => "stage",
+        "development" => "dev"
+    ];
+
+    $platform_environment = "dev";
+    if (array_key_exists(getenv('PLATFORM_ENVIRONMENT_TYPE'), $platform_environments)) {
+        $platform_environment = $platform_environments[getenv('PLATFORM_ENVIRONMENT_TYPE')];
+    }
+
+    // Environment specific settings files.
+    if (file_exists($app_root . '/' . $site_path . '/' . $platform_environment . '.settings.php')) {
+      include $app_root . '/' . $site_path . '/' . $platform_environment . '.settings.php';
+    }
+
+    // Environment specific services files.
+    if (file_exists($app_root . '/' . $site_path . '/' . $platform_environment . '.services.yml')) {
+      $settings['container_yamls'][] = $app_root . '/' . $site_path . '/' . $platform_environment . '.services.yml';
+    }
+}
+
+if (file_exists($app_root . '/' . $site_path . '/settings.platformsh.php')) {
+    include $app_root . '/' . $site_path . '/settings.platformsh.php';
+}
+
 if (file_exists($app_root . '/' . $site_path . '/settings.local.php')) {
     include $app_root . '/' . $site_path . '/settings.local.php';
 }
@@ -185,5 +215,3 @@ if (file_exists($app_root . '/' . $site_path . '/settings.local.php')) {
 if (file_exists($app_root . '/' . $site_path . '/services.local.yml')) {
     $settings['container_yamls'][] = $app_root . '/' . $site_path . '/services.local.yml';
 }
-
-#AUTO_GEN_LOCK

@@ -1,0 +1,25 @@
+{% if deployment == "platform.sh" %}
+{%- verbatim -%}
+#!/usr/bin/env bash
+
+set -e
+
+# Generate Drush config for Platform.sh
+php ./drush/platformsh_generate_drush_yml.php
+
+# Deploy custom styles
+if [ -d "./build/public/themes/custom/" ]; then
+  rsync -a ./build/public/themes/custom/ ./public/themes/custom --delete
+fi
+if [ -d "./build/public/modules/custom/" ]; then
+  rsync -a ./build/public/modules/custom/ ./public/modules/custom --delete
+fi
+
+# We don't want to run drush commands if drupal isn't installed.
+if [ -n "$(drush status bootstrap)" ]; then
+  drush deploy
+else
+  echo "Drupal not installed. Skipping standard Drupal deploy steps"
+fi
+{% endverbatim -%}
+{% endif %}
