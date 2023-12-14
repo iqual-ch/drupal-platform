@@ -27,9 +27,9 @@ if ($platformsh->hasRelationship('database')) {
     'host' => $creds['host'],
     'port' => $creds['port'],
     'pdo' => [PDO::MYSQL_ATTR_COMPRESS => !empty($creds['query']['compression'])],
-    'init_commands' => [
+    'init_commands' => array_replace_recursive([
       'isolation_level' => 'SET SESSION TRANSACTION ISOLATION LEVEL READ COMMITTED',
-    ],
+    ], $databases['default']['default']['init_commands'] ?? []),
   ];
 }
 
