@@ -82,7 +82,7 @@ assets/replace/
 │   ├── launch.json
 │   └── settings.json.twig
 ├── @app-root
-│   ├── phpunit.xml.dist.twig
+│   ├── phpunit.xml.dist
 │   ├── drush
 │   │   ├── drush.yml
 │   │   └── sites
