@@ -59,6 +59,18 @@ if (isset($platformsh->branch)) {
   }
 }
 
+// Configure solr if available.
+if ($platformsh->hasRelationship('solr')) {
+  $creds = $platformsh->credentials('solr');
+  $config['search_api.server.solr']['backend_config']['connector_config']['host'] = $creds['host'];
+  $config['search_api.server.solr']['backend_config']['connector_config']['path'] = '/';
+  $config['search_api.server.solr']['backend_config']['connector_config']['port'] = $creds['port'];
+  $config['search_api.server.solr']['backend_config']['connector_config']['http_user'] = $creds['username'];
+  $config['search_api.server.solr']['backend_config']['connector_config']['http']['http_user'] = $creds['username'];
+  $config['search_api.server.solr']['backend_config']['connector_config']['http_pass'] = $creds['password'];
+  $config['search_api.server.solr']['backend_config']['connector_config']['http']['http_pass'] = $creds['password'];
+  $config['search_api.server.solr']['name'] = 'Solr - Environment: ' . ($platformsh->branch ?: '');
+}
 
 // Enable Redis caching.
 if ($platformsh->hasRelationship('redis') && !InstallerKernel::installationAttempted() && extension_loaded('redis') && class_exists('Drupal\redis\ClientFactory')) {
