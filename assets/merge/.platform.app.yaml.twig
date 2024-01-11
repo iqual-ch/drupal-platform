@@ -42,8 +42,14 @@ runtime:
 # The left-hand side is the name of the relationship as it will be exposed
 # to the application in the PLATFORM_RELATIONSHIPS variable. The right-hand
 # side is in the form `<service name>:<endpoint name>`.
+{% if runtime.solr_version is not null and (locations['project-root'] ~ '/solr/site_search/conf/solrconfig.xml') is existing_file %}
 relationships:
     database: 'db:mysql'
+    solr: 'searchsolr:solr'
+{% else %}
+relationships:
+    database: 'db:mysql'
+{% endif %}
 
 # The size of the persistent disk of the application (in MB).
 disk: 2048
@@ -180,6 +186,11 @@ type: 'php:{{ runtime.php_version }}'
 variables:
     php:
         memory_limit: {{ runtime.php_memory_limit }}
+{% endif %}
+{% if runtime.solr_version is not null and (locations['project-root'] ~ '/solr/site_search/conf/solrconfig.xml') is existing_file %}
+relationships:
+    database: 'db:mysql'
+    solr: 'searchsolr:solr'
 {% endif %}
 {% endif %}
 {% endif %}
