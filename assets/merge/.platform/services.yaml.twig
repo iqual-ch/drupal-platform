@@ -1,24 +1,24 @@
 {% if deployment == "platform.sh" %}
 {% if op.new_file == true %}
 db:
-  type: mariadb:{{ runtime.db_version }}
-  disk: 2048
+    type: 'mariadb:{{ runtime.db_version }}'
+    disk: 2048
 
 {% if runtime.solr_version is not null and (locations['project-root'] ~ '/solr/site_search/conf/solrconfig.xml') is existing_file %}
 searchsolr:
-    type: solr:{{ runtime.solr_version }}
+    type: 'solr:{{ runtime.solr_version }}'
     disk: 256
     configuration:
         cores:
             site_search:
-                conf_dir: !archive "../solr/site_search/conf"
+                conf_dir: !archive ../solr/site_search/conf
         endpoints:
             solr:
                 core: site_search
 {% endif %}
 {% else %}
 db:
-  type: mariadb:{{ runtime.db_version }}
+    type: mariadb:{{ runtime.db_version }}
 
 {% if runtime.solr_version is not null and (locations['project-root'] ~ '/solr/site_search/conf/solrconfig.xml') is existing_file %}
 searchsolr:
@@ -26,7 +26,7 @@ searchsolr:
     configuration:
         cores:
             site_search:
-                conf_dir: !archive "../solr/site_search/conf"
+                conf_dir: !archive ../solr/site_search/conf
         endpoints:
             solr:
                 core: site_search
