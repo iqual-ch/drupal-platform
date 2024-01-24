@@ -45,7 +45,7 @@
                 "prod": "do-fra1-prod-cluster-1"
             },
             "platformsh_config": {
-                "region": "de-2",
+                "region": "ch-1",
                 "project_id": ""
             },
             "drupal_spot": "stage",
