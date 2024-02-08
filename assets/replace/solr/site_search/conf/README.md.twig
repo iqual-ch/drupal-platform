@@ -1,0 +1,9 @@
+{% if runtime.solr_version is not null and (locations['project-root'] ~ '/solr/site_search/conf/solrconfig.xml') is not existing_file %}
+# Solr Configuration Directory
+
+In order for the `solr` integration to work properly, you need to add the solr core configuration to this folder. This setup only supports a single `site_search` Solr core.
+
+Make sure to follow the documentation to add the `site_search` Solr configuration. After adding the configuration you have to execute `composer project:scaffold` and reboot your environment.
+
+> This file is removed if a `sorconfig.xml` exists in this directory when `composer project:scaffold` is run.
+{% endif %}

@@ -14,6 +14,10 @@ x-drupal-variables: &drupal-variables
 {% if runtime.php_memory_limit %}
   PHP_MEMORY_LIMIT: {{ runtime.php_memory_limit }}
 {% endif %}
+{% if runtime.solr_version is not null %}
+  SOLR_HOST: solr
+  SOLR_CORE: site_search
+{% endif %}
 
 services:
   db:
@@ -44,6 +48,22 @@ services:
       - localdev-proxied-webapps
       - default
 
+{% if runtime.solr_version is not null %}
+  solr:
+    image: {{ runtime.solr_image }}:{{ runtime.solr_image_tag|replace({'VERSION': runtime.solr_version}) }}
+    ports:
+      - 8983
+    volumes:
+      - solr_storage:/var/solr
+      - ../../solr:/mycores
+{% if (locations['project-root'] ~ '/solr/site_search/conf/solrconfig.xml') is existing_file %}
+    command:
+      - solr-precreate
+      - site_search
+      - /mycores/site_search
+{% endif %}
+
+{% endif %}
   chrome:
     image: selenium/standalone-chrome:106.0
     environment:
@@ -55,6 +75,9 @@ services:
 
 volumes:
   db_storage:
+{% if runtime.solr_version is not null %}
+  solr_storage:
+{% endif %}
 
 networks:
   localdev-proxied-webapps:

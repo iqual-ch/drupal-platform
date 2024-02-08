@@ -9,7 +9,8 @@ The project is structured according to the following top-level layout:
 ├── .github                     # GitHub Actions Workflows
 ├── .vscode                     # VS Code config
 ├── app                         # Drupal app directory
-└── manifests                   # Deployment manifests
+├── manifests                   # Deployment manifests
+└── solr                        # Solr core configuration (optional)
 ```
 
 ## Drupal app directory

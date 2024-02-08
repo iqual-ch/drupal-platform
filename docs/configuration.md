@@ -22,7 +22,9 @@ Assets and configuration managed by the Drupal Platform has to be customized usi
   * `runtime.db_image_tag`: Database docker image tag
   * `runtime.php_version` [`*`]: PHP version of the platform (e.g. `8.2`)
   * `runtime.db_version` [`*`]: Database version of the platform (e.g. `10.6`)
-  * `runtime.php_memory_limit`: PHP memory limit (e.g. `256M`)
+  * `runtime.solr_image`: Solr docker image
+  * `runtime.solr_image_tag`: Solr image tag
+  * `runtime.solr_version`: Solr version of the platform (e.g. `9.2`)
 * CI/CD workflow settings
   * `workflows.update`: Enable/Add the Drupal update workflow
   * `workflows.upgrade`: Enable/Add the Drupal upgrade workflow
@@ -127,3 +129,42 @@ parameters:
     auto_reload: true
     cache: false
 ```
+
+## Solr
+
+If a `runtime.solr_version` is defined (e.g. `9.2` instead of `null`) then an additional Solr service will be deployed. This Solr integration only supports a single core with the name `site_search`. Unless a `sorconfig.xml` exists in the `/solr/site_search/conf/` directory, it will not create a core on start-up.
+
+### Set-up a new Solr core with Search API
+
+In order to create a new Solr core for use with the search API, the following steps have to be followed:
+
+1. Install the Search API Solr module:
+
+```bash
+composer require drupal/search_api_solr
+drush en search_api_solr
+```
+
+2. Enable the Solr integration in the Drupal Platform, and set a version (e.g. Solr version `9.2`, including minor):
+
+```bash
+composer config extra.project-scaffold.runtime --json '{"solr_version": "9.2"}' --merge
+composer project:scaffold
+```
+
+3. Make sure to rebuild the container in VS Code so Solr is started (without a core for initial configuration).
+
+4. Add a server in the administration backend of the Drupal Search API module (`/admin/config/search/search-api/add-server`). Use `solr` as server (and system) name, as well as host. Use `site_search` as Solr core name.
+
+5. Download the core configuration and add it to the project repository (e.g. including major version `9`):
+
+```bash
+drush solr-gsc solr config.zip 9
+unzip /project/app/public/config.zip -d /project/solr/site_search/conf
+rm /project/app/public/config.zip
+composer project:scaffold
+```
+
+6. Make sure to rebuild the container in VS Code so Solr is started. This will create the core as configured.
+
+You should now have a running Solr service with a core created from the configuration in the `solr` directory. Follow the Search API module's documentation on how to create indexes.

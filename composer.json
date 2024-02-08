@@ -23,7 +23,10 @@
                 "db_image": "iqualch/dc-mariadb",
                 "db_image_tag": "VERSION",
                 "php_version": 8.1,
-                "db_version": 10.6
+                "db_version": 10.6,
+                "solr_image": "solr",
+                "solr_image_tag": "VERSION",
+                "solr_version": null
             },
             "workflows": {
                 "update": true,
