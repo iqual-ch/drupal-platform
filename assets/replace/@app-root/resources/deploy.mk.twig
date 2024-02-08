@@ -1,0 +1,93 @@
+# Local Dev Commands
+code: check-in-container-false ## Launch local dev environment
+	@echo "Starting VS Code local development environment"
+	code .
+
+cli: cli-local ## Alias for cli-local
+
+cli-%: check-in-container-false ## Attach to environment %
+	@echo "Attaching to $* environment"
+	EXEC_COMMAND="bash"
+	EXEC_FLAG="-it"
+	if [[ -n "$$COMMAND" ]]; then
+		EXEC_COMMAND="$$COMMAND"
+		EXEC_FLAG=
+	fi
+	if [[ $* == "local" ]]; then
+		if [[ "$$(docker-compose --version --short)" == "2."* ]]; then
+			docker exec $$EXEC_FLAG --user $(REMOTE_USER) --workdir /project $(COMPOSE_PROJECT_NAME)-$(REMOTE_CONTAINER)-1 bash -l -c "$$EXEC_COMMAND"
+		else
+			docker exec $$EXEC_FLAG --user $(REMOTE_USER) --workdir /project $(COMPOSE_PROJECT_NAME)_$(REMOTE_CONTAINER)_1 bash -l -c "$$EXEC_COMMAND"
+		fi
+	else
+		{%~ if deployment == "kubernetes" %}
+		K8S_CONTEXT="$(K8S_$(shell echo $* | tr a-z A-Z)_CONTEXT)"
+		if [[ -z "$$K8S_CONTEXT" ]]; then
+			echo -e " $(MSG_ERROR) Kubectl context K8S_$(shell echo $* | tr a-z A-Z)_CONTEXT does not exist."
+			exit 1;
+		fi
+		kubectl exec --context $$K8S_CONTEXT \
+			-n $*-drpl-$(PROJECT_CODE_NAME) \
+			deploy/$(PROJECT_CODE_NAME)-drpl $$EXEC_FLAG \
+			-- bash -l -c "$$EXEC_COMMAND"
+		{%~ elseif deployment == "platform.sh" %}
+		if [[ $* == "prod" || $* == "main" ]]; then
+			platform ssh -p $(PLATFORMSH_PROJECT_ID) -e $(DRUPAL_SPOT)
+		else
+			platform ssh -p $(PLATFORMSH_PROJECT_ID) -e $*
+		fi
+		{%~ else %}
+		echo -e " $(MSG_ERROR) $* environment does not exist."
+		{%~ endif %}
+	fi
+
+# Deployment commands
+local: deploy-local ## Alias for deploy-local
+
+deploy-%: check-in-container-false ## Deploy environment %
+	@echo "Deploying $* environment"
+	if [[ ! -d ./manifests/$* ]]; then
+		echo -e " $(MSG_ERROR) Environment $* does not exist."
+		exit 1;
+	fi
+	if [[ -f ./manifests/$*/docker-compose.yml ]]; then
+		make deploy-$*-compose
+	{%~ if deployment == "kubernetes" %}
+	elif [[ -f ./manifests/$*/deployment.yml ]]; then
+		make deploy-$*-kubectl
+	elif [[ -f ./manifests/$*/patch.yml ]]; then
+		make deploy-$*-kubectl-patch
+	elif [[ -f ./manifests/$*/kustomization.yml ]]; then
+		make deploy-$*-kustomize
+	{%~ endif %}
+	else
+		echo -e " $(MSG_ERROR) No manifests found for environment $*."
+		exit 1;
+	fi
+
+deploy-%-compose: check-in-container-false env-local
+	@echo "Deploying $* docker-compose manifests"
+	docker-compose -p $(COMPOSE_PROJECT_NAME) -f ./manifests/$*/docker-compose.yml up $(COMPOSE_FLAGS)
+
+{% if deployment == "kubernetes" %}
+deploy-%-kubectl: check-in-container-false
+	@echo "Deploying $* kubernetes manifests"
+	K8S_CONTEXT="$(K8S_$(shell echo $* | tr a-z A-Z)_CONTEXT)"
+	K8S_NAMESPACE="$*-drpl-$(PROJECT_CODE_NAME)"
+	kubectl create namespace $$K8S_NAMESPACE --dry-run=client -o yaml | kubectl apply --context $$K8S_CONTEXT -f -
+	kubectl apply --context $$K8S_CONTEXT -f ./manifests/$*/ -n $$K8S_NAMESPACE
+
+deploy-%-kubectl-patch: check-in-container-false
+	@echo "Patching $* kubernetes manifests"
+	K8S_CONTEXT="$(K8S_$(shell echo $* | tr a-z A-Z)_CONTEXT)"
+	K8S_NAMESPACE="$*-drpl-$(PROJECT_CODE_NAME)"
+	K8S_DEPLOYMENT="$(PROJECT_CODE_NAME)-drpl"
+	kubectl patch --context $$K8S_CONTEXT deployment $$K8S_DEPLOYMENT -p "$$(cat ./manifests/$*/patch.yml)" -n $$K8S_NAMESPACE || exit 1
+	kubectl rollout status --context $$K8S_CONTEXT -w deployment $$K8S_DEPLOYMENT -n $$K8S_NAMESPACE
+{% endif %}
+
+delete-local: check-in-container-false
+	@echo -e " $(MSG_WARNING) This will irreversible delete your local database's and container's data. This will not affect code in the repo."
+	echo -n "Do you want to continue? [n] " && read REPLY && [[ $$REPLY == "y" ]] || exit 1
+	docker-compose -p $(COMPOSE_PROJECT_NAME) -f ./manifests/local/docker-compose.yml down -v --remove-orphans || exit 1
+	docker volume rm $(COMPOSE_PROJECT_NAME)_{db,web}_storage 2>/dev/null || true

@@ -10,7 +10,7 @@
         }
     ],
     "require": {
-        "iqual/project-scaffold": "^1.0"
+        "iqual/project-scaffold": "^1.1"
     },
     "archive": {
         "exclude": ["/docs"]
@@ -43,6 +43,10 @@
                 "dev": "do-fra1-dev-cluster-1",
                 "stage": "do-fra1-dev-cluster-1",
                 "prod": "do-fra1-prod-cluster-1"
+            },
+            "platformsh_config": {
+                "region": "ch-1",
+                "project_id": ""
             },
             "drupal_spot": "stage",
             "assets": {

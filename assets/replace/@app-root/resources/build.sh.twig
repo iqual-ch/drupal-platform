@@ -1,0 +1,17 @@
+{% if deployment == "platform.sh" %}
+{%- verbatim -%}
+#!/usr/bin/env bash
+
+set -e
+
+if [ -d "./public/themes/custom" ]; then
+  mkdir -p ./build/public/themes/custom
+  mv ./public/themes/custom ./build/public/themes/
+fi
+
+if [ -d "./public/modules/custom" ]; then
+  mkdir -p ./build/public/modules/custom
+  mv ./public/modules/custom ./build/public/modules/
+fi
+{% endverbatim -%}
+{% endif %}
