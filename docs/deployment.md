@@ -21,6 +21,7 @@ To deploy the local environment run `make deploy-local`. The command will look f
     * PHP CLI
     * Nginx
 * MariaDB database container
+* Solr search API container (Optional)
 
 ## Remote Deployment (Kubernetes)
 

@@ -91,15 +91,18 @@ assets/replace/
 │           └── settings.php
 ├── Makefile
 ├── README.md.twig
-└── manifests
-    ├── dev
-    │   └── patch.yml.twig
-    ├── stage
-    │   └── patch.yml.twig
-    ├── prod
-    │   └── patch.yml.twig
-    └── local
-        └── docker-compose.yml.twig
+├── manifests
+│   ├── dev
+│   │   └── patch.yml.twig
+│   ├── stage
+│   │   └── patch.yml.twig
+│   ├── prod
+│   │   └── patch.yml.twig
+│   └── local
+│       └── docker-compose.yml.twig
+└── solr
+    └── site_search
+        └── README.md.twig
 ```
 
 </details>
