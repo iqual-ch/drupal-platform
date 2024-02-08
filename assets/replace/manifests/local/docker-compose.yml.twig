@@ -64,6 +64,15 @@ services:
 {% endif %}
 
 {% endif %}
+  chrome:
+    image: selenium/standalone-chrome:106.0
+    environment:
+      - SE_NODE_SESSION_TIMEOUT=700
+    privileged: true
+    shm_size: 2g
+    profiles:
+      - chrome
+
 volumes:
   db_storage:
 {% if runtime.solr_version is not null %}

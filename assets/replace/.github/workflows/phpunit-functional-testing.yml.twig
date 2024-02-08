@@ -1,0 +1,130 @@
+{% if workflows.phpunit %}
+{%- verbatim -%}
+name: PHPUnit functional testing
+
+env:
+  DOCKER_WEB_PORT: 80:80
+
+on:
+  workflow_dispatch:
+    inputs:
+      testing-type:
+        description: 'Type of test to run'
+        default: database
+        required: true
+        type: choice
+        options:
+        - database
+        - browser
+  workflow_call:
+    inputs:
+      database-testing:
+        default: true
+        required: true
+        type: boolean
+      browser-testing:
+        default: true
+        required: true
+        type: boolean
+      database-cache-key:
+        default: "${{ github.sha }}"
+        type: string
+
+concurrency:
+  group: ci-phpunit-functional-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  phpunit-db-tests:
+    name: "Database tests"
+    if: ${{ inputs.database-testing || (inputs.testing-type && inputs.testing-type == 'database') }}
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Install Drupal locally
+      uses: ./.github/actions/install-local
+      with:
+        dockerhub_container_registry_user: ${{ secrets.DOCKERHUB_CONTAINER_REGISTRY_USER }}
+        dockerhub_container_registry_password: ${{ secrets.DOCKERHUB_CONTAINER_REGISTRY_PASSWORD }}
+        ssh_key: ${{ secrets.SSH_KEY }}
+        composer_auth: ${{ secrets.COMPOSER_AUTH }}
+        caching: true
+        caching_db_key: ${{ inputs.database-cache-key }}
+
+    - name: Run PHPUnit database tests
+      shell: bash
+      run: |
+        curl --fail --retry 3 --retry-delay 10 -Lso /dev/null http://localhost || \
+          (echo 'Accessing homepage of Drupal site failed.' && exit 1)
+        make cli-local COMMAND='make phpunit-db PHPUNIT_FLAGS="--log-junit TEST-phpunit.xml"'
+
+    - name: Publish Test Report
+      uses: mikepenz/action-junit-report@v4
+      if: success() || failure()
+      with:
+        report_paths: '**/TEST-*.xml'
+        check_name: "PHPUnit database report"
+        transformers: '[{"searchValue":"project/","replaceValue":""}]'
+        annotate_only: true
+
+    - name: Upload HTML output
+      if: ${{ failure() }}
+      uses: actions/upload-artifact@v3
+      with:
+        name: phpunit-db-report
+        path: ./app/public/sites/simpletest/browser_output
+
+  phpunit-browser-tests:
+    name: "Browser tests"
+    if: ${{ inputs.browser-testing || (inputs.testing-type && inputs.testing-type == 'browser') }}
+    runs-on: ubuntu-latest
+
+    services:
+      chrome:
+        image: selenium/standalone-chrome:106.0
+        options: >-
+          --env SE_NODE_SESSION_TIMEOUT=700
+          --shm-size=2g
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Install Drupal locally
+      uses: ./.github/actions/install-local
+      with:
+        dockerhub_container_registry_user: ${{ secrets.DOCKERHUB_CONTAINER_REGISTRY_USER }}
+        dockerhub_container_registry_password: ${{ secrets.DOCKERHUB_CONTAINER_REGISTRY_PASSWORD }}
+        ssh_key: ${{ secrets.SSH_KEY }}
+        composer_auth: ${{ secrets.COMPOSER_AUTH }}
+        caching: true
+        caching_db_key: ${{ inputs.database-cache-key }}
+
+    - name: Run PHPUnit browser tests
+      shell: bash
+      run: |
+        curl --fail --retry 3 --retry-delay 10 -Lso /dev/null http://localhost || \
+          (echo 'Accessing homepage of Drupal site failed.' && exit 1)
+        docker network connect localdev-proxied-webapps --alias chrome ${{ job.services.chrome.id }}
+        make cli-local COMMAND='make phpunit-browser PHPUNIT_FLAGS="--log-junit TEST-phpunit.xml"'
+
+    - name: Publish Test Report
+      uses: mikepenz/action-junit-report@v4
+      if: success() || failure()
+      with:
+        report_paths: '**/TEST-*.xml'
+        check_name: "PHPUnit browser report"
+        transformers: '[{"searchValue":"project/","replaceValue":""}]'
+        annotate_only: true
+
+    - name: Upload HTML output
+      if: ${{ failure() }}
+      uses: actions/upload-artifact@v3
+      with:
+        name: phpunit-browser-report
+        path: ./app/public/sites/simpletest/browser_output
+{% endverbatim -%}
+{% endif %}
