@@ -138,9 +138,7 @@ web:
                 '\.(jpe?g|png|gif|svgz?|css|js|map|ico|bmp|eot|woff2?|otf|ttf)$':
                     allow: true
                 ^/robots\.txt$:
-                    allow: false
-                    # Handle robots.txt with PHP for multi-domain setup
-                    passthru: /index.php
+                    allow: true
                 ^/sitemap\.xml$:
                     allow: true
 

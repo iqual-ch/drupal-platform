@@ -61,6 +61,8 @@ The `platform.app.yaml` configuration file can be customized, e.g. to add cronjo
 
 #### Multi-Domain Setup
 
+##### Routing
+
 For multi-domain setups the additional domains need to defined in the `.platform/routes.yaml` file. To enable automatic hostname overrides for development environments a `domain.record` can be set in the `attributes` section of the corresponding route. This will be automatically converted into a configuration override in the `settings.platformsh.php` when on a non-production branch.
 
 Example route for an additional domain `www.example.ch` that will override the `hostname` in the `domain.record.example_ch` config to `www.example.ch`:
@@ -82,3 +84,21 @@ Example route for an additional domain `www.example.ch` that will override the `
 ```
 
 > Make sure to also add the respective domain record attributes to the default route.
+
+##### Robots.txt
+
+If the `robots.txt` should be routed through PHP/Drupal then the drupal scaffold's file mapping for the `robots.txt` file has to be disabled and then the file has to be removed from the repository. This is usually required in a multi-domain setup, as there should be different versions of the `robots.txt` per domain.
+
+For example the drupal scaffold file mapping in the `composer.json` could look like this:
+
+```json
+    "drupal-scaffold": {
+        "locations": {
+            "project-root": ".",
+            "web-root": "public"
+        },
+        "file-mapping": {
+            "[web-root]/robots.txt": false
+        }
+    },
+```
