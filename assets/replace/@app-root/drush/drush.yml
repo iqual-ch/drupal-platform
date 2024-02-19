@@ -13,6 +13,7 @@ drush:
     config:
       # Load additional config files. Is silently skipped if not found. Filename must be drush.yml
       # - ${env.HOME}/.drush/config/drush.yml
+      - /project/app/.drush/drush.yml # Allow project specific overrides
     alias-path:
       # - '${env.HOME}/.drush/sites'
       # - /etc/drush/sites
@@ -33,12 +34,12 @@ command:
     script:
       options:
         # Additional folders to search for scripts.
-#       script-path: 'sites/all/scripts:profiles/myprofile/scripts'
+  #       script-path: 'sites/all/scripts:profiles/myprofile/scripts'
   core:
     rsync:
       options:
         # Ensure all rsync commands use verbose output.
-#       verbose: true
+  #       verbose: true
 
   site:
     install:
@@ -53,17 +54,17 @@ sql:
   # You may add specific tables to the existing array or add a new element.
   structure-tables:
     common:
-      - 'cache'
-      - 'cache_*'
-      - 'history'
-      - 'search_*'
-      - 'sessions'
-      - 'watchdog'
-      - 'queue'
-      - 'key_value_expire'
-      - 'field_deleted_data_*'
-      - 'field_deleted_revision_*'
-      - 'webform_submission*'
+      - "cache"
+      - "cache_*"
+      - "history"
+      - "search_*"
+      - "sessions"
+      - "watchdog"
+      - "queue"
+      - "key_value_expire"
+      - "field_deleted_data_*"
+      - "field_deleted_revision_*"
+      - "webform_submission*"
   # List of tables to be omitted entirely from SQL dumps made by the 'sql-dump'
   # and 'sql-sync' commands when the "--skip-tables-key=common" option is
   # provided on the command line.  This is useful if your database contains
@@ -71,15 +72,15 @@ sql:
   # example.  You may add new tables to the existing array or add a new element.
   skip-tables:
     common:
-      - 'migration_*'
-      - '*_bk'
-      - 'old_*'
+      - "migration_*"
+      - "*_bk"
+      - "old_*"
 
 # Non-options.
 ssh:
   # Specify options to pass to ssh.  The default is to prohibit
   # password authentication, and is included here, so you may add additional
   # parameters without losing the default configuration.
-  options: '-p ${env.SSH_PORT} -o PasswordAuthentication=no -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o LogLevel=FATAL'
+  options: "-p ${env.SSH_PORT} -o PasswordAuthentication=no -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o LogLevel=FATAL"
   # This string is valid for Bash shell. Override in case you need something different. See https://github.com/drush-ops/drush/issues/3816.
-  pipefail: 'set -o pipefail; '
+  pipefail: "set -o pipefail; "
