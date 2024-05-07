@@ -44,17 +44,19 @@ if (isset($platformsh->branch)) {
   // Development type environment.
   else {
     $config['system.logging']['error_level'] = 'verbose';
+  }
+}
 
-    // Enable adding domain record hostname overrides for development environments
-    // by setting an "domain.record" attribute on a route.
-    $routes = $platformsh->getUpstreamRoutes();
-    foreach($routes as $route) {
-      if (array_key_exists("attributes", $route) && array_key_exists("domain.record", $route["attributes"])) {
-        $url = $route['url'];
-        $parsedUrl = parse_url($url);
-        $domainRecord = $route["attributes"]["domain.record"];
-        $config['domain.record.' . $domainRecord]['hostname'] = $parsedUrl['host'];
-      }
+// Enable adding domain record hostname overrides for development environments
+// by setting an "domain.record" attribute on a route.
+if (getenv('PLATFORM_ENVIRONMENT_TYPE') != 'production') {
+  $routes = $platformsh->getUpstreamRoutes();
+  foreach($routes as $route) {
+    if (array_key_exists("attributes", $route) && array_key_exists("domain.record", $route["attributes"])) {
+      $url = $route['url'];
+      $parsedUrl = parse_url($url);
+      $domainRecord = $route["attributes"]["domain.record"];
+      $config['domain.record.' . $domainRecord]['hostname'] = $parsedUrl['host'];
     }
   }
 }
