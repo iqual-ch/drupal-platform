@@ -13,5 +13,10 @@ if [ -d "./public/modules/custom" ]; then
   mkdir -p ./build/public/modules/custom
   mv ./public/modules/custom ./build/public/modules/
 fi
+
+if [ -d "./public/sites/default/files/fontyourface" ]; then
+  mkdir -p ./build/public/sites/default/files/fontyourface
+  mv ./public/sites/default/files/fontyourface ./build/public/sites/default/files/
+fi
 {% endverbatim -%}
 {% endif %}
