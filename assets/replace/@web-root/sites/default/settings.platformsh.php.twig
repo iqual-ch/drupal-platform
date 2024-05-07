@@ -47,20 +47,6 @@ if (isset($platformsh->branch)) {
   }
 }
 
-// Enable adding domain record hostname overrides for development environments
-// by setting an "domain.record" attribute on a route.
-if (getenv('PLATFORM_ENVIRONMENT_TYPE') != 'production') {
-  $routes = $platformsh->getUpstreamRoutes();
-  foreach($routes as $route) {
-    if (array_key_exists("attributes", $route) && array_key_exists("domain.record", $route["attributes"])) {
-      $url = $route['url'];
-      $parsedUrl = parse_url($url);
-      $domainRecord = $route["attributes"]["domain.record"];
-      $config['domain.record.' . $domainRecord]['hostname'] = $parsedUrl['host'];
-    }
-  }
-}
-
 // Configure solr if available.
 if ($platformsh->hasRelationship('solr')) {
   $creds = $platformsh->credentials('solr');
@@ -151,6 +137,20 @@ if ($platformsh->inRuntime()) {
 
   // Set the deployment identifier, which is used by some Drupal cache systems.
   $settings['deployment_identifier'] = $settings['deployment_identifier'] ?? $platformsh->treeId;
+
+  // Enable adding domain record hostname overrides for development environments
+  // by setting an "domain.record" attribute on a route.
+  if (getenv('PLATFORM_ENVIRONMENT_TYPE') != 'production') {
+    $routes = $platformsh->getUpstreamRoutes();
+    foreach($routes as $route) {
+      if (array_key_exists("attributes", $route) && array_key_exists("domain.record", $route["attributes"])) {
+        $url = $route['url'];
+        $parsedUrl = parse_url($url);
+        $domainRecord = $route["attributes"]["domain.record"];
+        $config['domain.record.' . $domainRecord]['hostname'] = $parsedUrl['host'];
+      }
+    }
+  }
 }
 
 // The 'trusted_hosts_pattern' setting allows an admin to restrict the Host header values
