@@ -22,7 +22,7 @@ fi
 
 # We don't want to run drush commands if drupal isn't installed.
 if [ -n "$(drush status --fields=bootstrap)" ]; then
-  drush deploy
+  # drush deploy
 else
   echo "Drupal not installed. Skipping standard Drupal deploy steps"
 fi
