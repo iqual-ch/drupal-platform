@@ -35,6 +35,7 @@
                 "phpunit": false
             },
             "local_domain_suffix": "localdev.iqual.ch",
+            "local_domain_aliases": [],
             "development": [
                 "devcontainer-docker-compose"
             ],
