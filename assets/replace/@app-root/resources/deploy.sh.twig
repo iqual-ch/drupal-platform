@@ -4,7 +4,7 @@
 
 set -e
 
-if [ -z "$DRUPAL_NO_DEPLOY" ]; then
+if [ -n "$DRUPAL_NO_DEPLOY" ]; then
   echo "Deployment disabled."
   exit 0
 fi
