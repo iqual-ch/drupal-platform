@@ -4,6 +4,11 @@
 
 set -e
 
+if [ -z "$DRUPAL_NO_DEPLOY" ]; then
+  echo "Deployment disabled."
+  exit 0
+fi
+
 # Generate Drush config for Platform.sh
 php ./drush/platformsh_generate_drush_yml.php
 
@@ -21,7 +26,7 @@ if [ -d "./build/public/sites/default/files/" ]; then
 fi
 
 # We don't want to run drush commands if drupal isn't installed.
-if [ -n "$(drush status --fields=bootstrap)" ] && [ -z "$DRUPAL_NO_DEPLOY" ]; then
+if [ -n "$(drush status --fields=bootstrap)" ] && [ -z "$DRUPAL_NO_DRUSH_DEPLOY" ]; then
   drush deploy
 else
   echo "Drupal not installed. Skipping standard Drupal deploy steps"
