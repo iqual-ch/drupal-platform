@@ -3,7 +3,7 @@ name: PHPUnit functional testing
 
 env:
   DOCKER_WEB_PORT: 80:80
-  DOCKER_NETWORK: {{ project_name|default(name ~ '-sw-project') }}_default
+  DOCKER_WEB_NETWORK: {{ project_name|default(name ~ '-sw-project') }}_default
 
 {% verbatim -%}
 on:
@@ -109,7 +109,7 @@ jobs:
       run: |
         curl --fail --retry 3 --retry-delay 10 -Lso /dev/null http://localhost || \
           (echo 'Accessing homepage of Drupal site failed.' && exit 1)
-        docker network connect ${{ env.DOCKER_NETWORK }} --alias chrome ${{ job.services.chrome.id }}
+        docker network connect ${{ env.DOCKER_WEB_NETWORK }} --alias chrome ${{ job.services.chrome.id }}
         make cli-local COMMAND='make phpunit-browser PHPUNIT_FLAGS="--log-junit TEST-phpunit.xml"'
 
     - name: Publish Test Report
