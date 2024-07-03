@@ -102,3 +102,9 @@ For example the drupal scaffold file mapping in the `composer.json` could look l
         }
     },
 ```
+
+#### Auto-Deployment
+
+Drupal will be built and deployed automatically by default on Platform.sh. This includes running database updates, config imports and cache rebuilds (i.e. `drush deploy`) as well as copying repository assets (e.g. `fontyourface` fonts). On deployment the state from the repository will be deployed. Config changes will be overridden.
+
+> If this is not the desired behavior, set the `DRUPAL_NO_DEPLOY` environment variable in Platform.sh (env/project) so the deployment script doesn't run. If only `drush deploy` should be disabled, use `DRUPAL_NO_DRUSH_DEPLOY`. This can be helpful for restoring backups or automation.
