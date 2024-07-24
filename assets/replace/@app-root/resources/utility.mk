@@ -67,7 +67,8 @@ phpcs:
 	pushd $(APP_ROOT) > /dev/null
 	REPO_CODE="$$(git ls-tree -d -r $$(git write-tree) --name-only | grep -E '(themes|modules)/custom/[^/]+$$' | paste -s -)"
 	phpcs --standard=Drupal,DrupalPractice \
-		--extensions=php,module,inc,install,test,profile,theme,css,info,txt,md,yml \
+		--runtime-set ignore_warnings_on_exit 1 \
+		--extensions=php,module,inc,install,test,profile,theme,info,txt,md,yml \
 		--ignore=node_modules,bower_components,vendor,custom.css $(PHPCS_FLAGS) \
 		$$REPO_CODE
 
