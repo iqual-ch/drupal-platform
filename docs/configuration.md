@@ -35,6 +35,7 @@ Assets and configuration managed by the Drupal Platform has to be customized usi
   * `workflows.phpunit`: Enable/Add the Drupal testing workflow
   * `workflows.vrt`: Enable/Add the visual regression testing workflow
 * `local_domain_suffix`: The domain suffix for local development
+* `local_domain_aliases` array: Additional aliases of the local development domain in the Docker network
 * Development setup (`development` array)
   * `devcontainer-docker-compose`: Local dev environment with docker-compose and devcontainers
 * `deployment`: Deployment integration type, see [available remote deployment options](./deployment.md#remote-deployment)

@@ -113,6 +113,10 @@ For running the project specific PHPUnit tests, there are multiple avaiable PHPU
 
 > `phpunit` has to be required in the project, including DTT.
 
+### Multi-Domain testing
+
+By default only the `web` hostname can be tested against using PHPUnit tests that request the website using curl or Chrome. To add more aliases (subdomains) to be accessible during testing, add a list of aliases to a `local_domain_aliases` array in the `extra.project-scaffold` section of the project's `composer.json` and run `composer project:scaffold`. After rebuilding your VS Code environment, these additional aliases will be accessible within the Docker network (e.g. local domain alias `foo` in a `bar` project will add a `foo.bar-sw-project.localdev.iqual.ch` alias).
+
 ## PHPCS
 
 For code sniffing there is a make target that will run sniffing according to the Drupal standard on the custom themes & modules in the repository called `make phpcs`. To run both PHPCS and some basic PHP linting first, there is also `make lint`.

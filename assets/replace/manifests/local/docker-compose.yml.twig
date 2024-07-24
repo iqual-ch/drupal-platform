@@ -45,8 +45,18 @@ services:
     volumes:
       - ./../..:/project
     networks:
+{% if local_domain_aliases is empty %}
       - localdev-proxied-webapps
       - default
+{% else %}
+      localdev-proxied-webapps:
+      default:
+        aliases:
+          - {{ project_name|default(name ~ '-sw-project') }}.{{ local_domain_suffix }}
+{% for alias in local_domain_aliases %}
+          - {{ alias }}.{{ project_name|default(name ~ '-sw-project') }}.{{ local_domain_suffix }}
+{% endfor %}
+{% endif %}
 
 {% if runtime.solr_version is not null %}
   solr:
