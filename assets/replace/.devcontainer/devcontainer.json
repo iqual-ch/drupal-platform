@@ -17,23 +17,27 @@
     // Set the container user to www-data
     "remoteUser": "www-data",
 
-    // Set *default* container specific settings.json values on container create.
-    "settings": {
-    },
+    "customizations": {
+        "vscode": {
+            // Set *default* container specific settings.json values on container create.
+            "settings": {
+            },
 
-    // Add the IDs of extensions you want installed when the container is created.
-    "extensions": [
-        "eamodio.gitlens",
-        "mtxr.sqltools",
-        "mtxr.sqltools-driver-mysql",
-        "bmewburn.vscode-intelephense-client",
-        "DmitryDorofeev.empty-indent",
-        "DotJoshJohnson.xml",
-        "wongjn.php-sniffer",
-        "michelemelluso.code-beautifier",
-        "neilbrayfield.php-docblocker",
-        "persoderlind.vscode-phpcbf",
-        "xdebug.php-debug",
-        "shaharkazaz.git-merger"
-    ],
+            // Add the IDs of extensions you want installed when the container is created.
+            "extensions": [
+                "eamodio.gitlens",
+                "mtxr.sqltools",
+                "mtxr.sqltools-driver-mysql",
+                "bmewburn.vscode-intelephense-client",
+                "DmitryDorofeev.empty-indent",
+                "DotJoshJohnson.xml",
+                "wongjn.php-sniffer",
+                "michelemelluso.code-beautifier",
+                "neilbrayfield.php-docblocker",
+                "persoderlind.vscode-phpcbf",
+                "xdebug.php-debug",
+                "shaharkazaz.git-merger"
+            ]
+        }
+    }
 }
