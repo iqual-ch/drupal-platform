@@ -25,9 +25,9 @@
         "runtime.php_version": {
             "question": "What <info>PHP version</info> should be installed?",
             "options": [
-                "8.0",
                 "8.1",
-                "8.2"
+                "8.2",
+                "8.3"
             ]
         },
         "runtime.db_version": {
