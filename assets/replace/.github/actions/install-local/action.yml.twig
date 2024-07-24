@@ -37,14 +37,14 @@ runs:
       password: ${{ inputs.dockerhub_container_registry_password }}
 
   - name: Cache Docker images
-    uses: ScribeMD/docker-cache@0.3.6
+    uses: ScribeMD/docker-cache@0.5.0
     with:
       key: ${{ runner.os }}-docker-${{ hashFiles('**/docker-compose.yml') }}
 
   - name: Cache Composer dependency
     if: ${{ inputs.caching == 'true' }}
     id: cache-composer
-    uses: actions/cache@v3
+    uses: actions/cache@v4
     with:
       path: |
         ./.composer
@@ -53,7 +53,7 @@ runs:
   - name: Cache Drupal database
     if: ${{ inputs.caching == 'true' }}
     id: cache-db
-    uses: actions/cache@v3
+    uses: actions/cache@v4
     with:
       path: |
         ./app/backups

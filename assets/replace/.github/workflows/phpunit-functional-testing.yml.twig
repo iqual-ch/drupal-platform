@@ -73,7 +73,7 @@ jobs:
 
     - name: Upload HTML output
       if: ${{ failure() }}
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: phpunit-db-report
         path: ./app/public/sites/simpletest/browser_output
@@ -123,7 +123,7 @@ jobs:
 
     - name: Upload HTML output
       if: ${{ failure() }}
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: phpunit-browser-report
         path: ./app/public/sites/simpletest/browser_output

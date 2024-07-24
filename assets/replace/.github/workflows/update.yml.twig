@@ -35,7 +35,7 @@ jobs:
         make cli-local COMMAND="make update COMPOSER_FLAGS=-n DRUSH_FLAGS=-y"
 
     - name: Create Pull Request
-      uses: peter-evans/create-pull-request@v5
+      uses: peter-evans/create-pull-request@v6
       with:
         token: ${{ github.event.inputs.token || secrets.GITHUB_TOKEN }}
         commit-message: Updated Drupal site
