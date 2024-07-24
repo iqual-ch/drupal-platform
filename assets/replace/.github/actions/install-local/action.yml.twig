@@ -44,7 +44,7 @@ runs:
   - name: Cache Composer dependency
     if: ${{ inputs.caching == 'true' }}
     id: cache-composer
-    uses: actions/cache@v3
+    uses: actions/cache@v4
     with:
       path: |
         ./.composer
@@ -53,7 +53,7 @@ runs:
   - name: Cache Drupal database
     if: ${{ inputs.caching == 'true' }}
     id: cache-db
-    uses: actions/cache@v3
+    uses: actions/cache@v4
     with:
       path: |
         ./app/backups
