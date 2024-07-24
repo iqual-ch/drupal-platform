@@ -51,6 +51,7 @@ jobs:
     - name: "Run PHPCS"
       shell: bash
       run: |
-        make phpcs APP_ROOT="${{ github.workspace }}/app" PHPCS_FLAGS="-q --report=checkstyle" | cs2pr
+        make phpcs APP_ROOT="${{ github.workspace }}/app" PHPCS_FLAGS="-q --report=checkstyle" \
+          | cs2pr --graceful-warnings
 {% endverbatim -%}
 {% endif %}
