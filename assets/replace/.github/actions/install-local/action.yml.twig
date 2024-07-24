@@ -37,7 +37,7 @@ runs:
       password: ${{ inputs.dockerhub_container_registry_password }}
 
   - name: Cache Docker images
-    uses: ScribeMD/docker-cache@0.3.6
+    uses: ScribeMD/docker-cache@0.5.0
     with:
       key: ${{ runner.os }}-docker-${{ hashFiles('**/docker-compose.yml') }}
 
