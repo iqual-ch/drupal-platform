@@ -30,7 +30,7 @@ env-%:
 # Tool commands
 tool-%: ## Launch tools
 	@echo -e "Launching tooling: $*"
-	docker-compose -p $(COMPOSE_PROJECT_NAME) --profile $* -f ./manifests/local/docker-compose.yml up -d $*
+	docker compose -p $(COMPOSE_PROJECT_NAME) --profile $* -f ./manifests/local/docker-compose.yml up -d $*
 
 # PHP commands
 xdebug: check-in-container-true ## Enable XDebug

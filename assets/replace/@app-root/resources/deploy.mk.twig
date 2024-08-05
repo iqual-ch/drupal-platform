@@ -14,11 +14,7 @@ cli-%: check-in-container-false ## Attach to environment %
 		EXEC_FLAG=
 	fi
 	if [[ $* == "local" ]]; then
-		if [[ "$$(docker-compose --version --short)" == "2."* ]]; then
-			docker exec $$EXEC_FLAG --user $(REMOTE_USER) --workdir /project $(COMPOSE_PROJECT_NAME)-$(REMOTE_CONTAINER)-1 bash -l -c "$$EXEC_COMMAND"
-		else
-			docker exec $$EXEC_FLAG --user $(REMOTE_USER) --workdir /project $(COMPOSE_PROJECT_NAME)_$(REMOTE_CONTAINER)_1 bash -l -c "$$EXEC_COMMAND"
-		fi
+		docker exec $$EXEC_FLAG --user $(REMOTE_USER) --workdir /project $(COMPOSE_PROJECT_NAME)-$(REMOTE_CONTAINER)-1 bash -l -c "$$EXEC_COMMAND"
 	else
 		{%~ if deployment == "kubernetes" %}
 		K8S_CONTEXT="$(K8S_$(shell echo $* | tr a-z A-Z)_CONTEXT)"
@@ -67,7 +63,7 @@ deploy-%: check-in-container-false ## Deploy environment %
 
 deploy-%-compose: check-in-container-false env-local
 	@echo "Deploying $* docker-compose manifests"
-	docker-compose -p $(COMPOSE_PROJECT_NAME) -f ./manifests/$*/docker-compose.yml up $(COMPOSE_FLAGS)
+	docker compose -p $(COMPOSE_PROJECT_NAME) -f ./manifests/$*/docker-compose.yml up $(COMPOSE_FLAGS)
 
 {% if deployment == "kubernetes" %}
 deploy-%-kubectl: check-in-container-false
@@ -89,5 +85,5 @@ deploy-%-kubectl-patch: check-in-container-false
 delete-local: check-in-container-false
 	@echo -e " $(MSG_WARNING) This will irreversible delete your local database's and container's data. This will not affect code in the repo."
 	echo -n "Do you want to continue? [n] " && read REPLY && [[ $$REPLY == "y" ]] || exit 1
-	docker-compose -p $(COMPOSE_PROJECT_NAME) -f ./manifests/local/docker-compose.yml down -v --remove-orphans || exit 1
+	docker compose -p $(COMPOSE_PROJECT_NAME) -f ./manifests/local/docker-compose.yml down -v --remove-orphans || exit 1
 	docker volume rm $(COMPOSE_PROJECT_NAME)_{db,web,solr}_storage 2>/dev/null || true
