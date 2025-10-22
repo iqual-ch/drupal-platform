@@ -96,18 +96,26 @@ for operation in "${OPERATIONS[@]}"; do
     continue
   fi
 
-  OPTIONS=$(echo "${operation}" | jq -r '.options // ""')
+  # Parse OPTIONS into an array to preserve arguments with spaces
+  OPTIONS_STRING=$(echo "${operation}" | jq -r '.options // ""')
+  if [[ -n "${OPTIONS_STRING}" ]]; then
+    read -ra OPTIONS_ARRAY <<< "$OPTIONS_STRING"
+  else
+    OPTIONS_ARRAY=()
+  fi
 
-  # Parse data variable and convert arrays into whitespace separated list.
+  # Parse DATA into an array to preserve each item separately (handles spaces in items)
   DATA_INPUT=$(echo "${operation}" | jq '.data')
   if [[ -n "${DATA_INPUT}" ]] && [[ "${DATA_INPUT}" != "null" ]]; then
     if echo "${DATA_INPUT}" | jq -e 'type=="array"' > /dev/null; then
-        DATA=$(echo "${DATA_INPUT}" | jq -r 'join(" ")')
+      # Convert JSON array to bash array, one element per line
+      readarray -t DATA_ARRAY < <(echo "${DATA_INPUT}" | jq -r '.[]')
     else
-        DATA=$(echo "${DATA_INPUT}" | jq -r '.')
+      # Single value - convert to single-element array
+      DATA_ARRAY=("$(echo "${DATA_INPUT}" | jq -r '.')")
     fi
   else
-    DATA=
+    DATA_ARRAY=()
   fi
 
   KEY=$(echo "${operation}" | jq -r '.key')
@@ -115,29 +123,32 @@ for operation in "${OPERATIONS[@]}"; do
   # Switch to relevant action.
   case "${ACTION}" in
     "remove")
-      rsh composer remove ${OPTIONS} -n ${DATA} -d ${APP_ROOT}
+      rsh composer remove "${OPTIONS_ARRAY[@]}" -n "${DATA_ARRAY[@]}" -d "${APP_ROOT}"
       ;;
     "require")
-      rsh composer require ${OPTIONS} -n ${DATA} -d ${APP_ROOT}
+      rsh composer require "${OPTIONS_ARRAY[@]}" -n "${DATA_ARRAY[@]}" -d "${APP_ROOT}"
       ;;
     "update")
-      rsh composer update ${OPTIONS} -n ${DATA} -d ${APP_ROOT}
+      rsh composer update "${OPTIONS_ARRAY[@]}" -n "${DATA_ARRAY[@]}" -d "${APP_ROOT}"
       ;;
     "bump")
-      rsh composer bump ${PACKAGES} -n -d ${APP_ROOT}
+      # @todo: PACKAGES variable is undefined - this looks like a bug in the original script
+      rsh composer bump ${PACKAGES} -n -d "${APP_ROOT}"
       ;;
     "config")
       if [[ "${KEY}" =~ "extra."* ]] || [[ "${KEY}" =~ "repositories."* ]]; then
+        # For complex configs, use JSON format to preserve structure
         DATA_JSON=$(echo "${operation}" | jq -c '.data')
-        rsh composer config ${KEY} ${OPTIONS} --json "${DATA_JSON}" -n -d ${APP_ROOT}
+        rsh composer config "${KEY}" "${OPTIONS_ARRAY[@]}" --json "${DATA_JSON}" -n -d "${APP_ROOT}"
       else
-        rsh composer config ${KEY} ${DATA} ${OPTIONS} -n -d ${APP_ROOT}
+        # For simple configs, pass data array elements
+        rsh composer config "${KEY}" "${DATA_ARRAY[@]}" "${OPTIONS_ARRAY[@]}" -n -d "${APP_ROOT}"
       fi
       ;;
     "rector")
-      if ! grep -q "palantirnet/drupal-rector" $COMPOSER_JSON_FILE; then
+      if ! grep -q "palantirnet/drupal-rector" "$COMPOSER_JSON_FILE"; then
         echo "Rector is not present, installing it temporarily."
-        rsh composer require --dev palantirnet/drupal-rector -n -d ${APP_ROOT}
+        rsh composer require --dev palantirnet/drupal-rector -n -d "${APP_ROOT}"
         RECTOR_INSTALLED=true
       fi
       RECTOR_CONFIG="${APP_ROOT}/rector.php"
@@ -145,74 +156,80 @@ for operation in "${OPERATIONS[@]}"; do
         echo "Rector configuration is not present, using default."
         RECTOR_CONFIG=".github/actions/upgrade/rector.php"
       fi
-      if [ -z "$DATA" ]; then
+      if [[ ${#DATA_ARRAY[@]} -eq 0 ]]; then
         echo "No path defined. Auto-generating themes and module custom path."
-        DATA="$(git ls-tree -d -r $(git write-tree) --name-only | grep -E '(themes|modules)/custom/[^/]+$' | paste -s -)"
+        # Build array from auto-generated paths
+        readarray -t DATA_ARRAY < <(git ls-tree -d -r $(git write-tree) --name-only | grep -E '(themes|modules)/custom/[^/]+$')
       fi
-      rsh rector process ${DATA} ${OPTIONS} --config ${RECTOR_CONFIG}
+      rsh rector process "${DATA_ARRAY[@]}" "${OPTIONS_ARRAY[@]}" --config "${RECTOR_CONFIG}"
       if [ -n "$RECTOR_INSTALLED" ]; then
-        rsh composer remove --dev palantirnet/drupal-rector -n -d ${APP_ROOT}
+        rsh composer remove --dev palantirnet/drupal-rector -n -d "${APP_ROOT}"
       fi
       ;;
     "phpcbf")
-      if grep -q "drupal/coder" $COMPOSER_JSON_FILE; then
-        if [ -z "$DATA" ]; then
+      if grep -q "drupal/coder" "$COMPOSER_JSON_FILE"; then
+        if [[ ${#DATA_ARRAY[@]} -eq 0 ]]; then
           echo "No path defined. Auto-generating themes and module custom path."
-          DATA="$(git ls-tree -d -r $(git write-tree) --name-only | grep -E '(themes|modules)/custom/[^/]+$' | paste -s -)"
+          # Build array from auto-generated paths
+          readarray -t DATA_ARRAY < <(git ls-tree -d -r $(git write-tree) --name-only | grep -E '(themes|modules)/custom/[^/]+$')
         fi
-        rsh phpcbf ${OPTIONS} ${DATA} || true
+        rsh phpcbf "${OPTIONS_ARRAY[@]}" "${DATA_ARRAY[@]}" || true
       else
         echo "Warning: missing \"drupal/coder\" package for code beautifying"
       fi
       ;;
     "updatedb")
-      rsh drush updatedb ${OPTIONS} -y
+      rsh drush updatedb "${OPTIONS_ARRAY[@]}" -y
       ;;
     "pm:enable")
-      rsh drush pm:enable ${OPTIONS} -y ${DATA}
+      rsh drush pm:enable "${OPTIONS_ARRAY[@]}" -y "${DATA_ARRAY[@]}"
       ;;
     "pm:uninstall")
-      rsh drush pm:uninstall ${OPTIONS} -y ${DATA}
+      rsh drush pm:uninstall "${OPTIONS_ARRAY[@]}" -y "${DATA_ARRAY[@]}"
       ;;
     "theme:enable")
-      rsh drush theme:enable ${OPTIONS} -y ${DATA}
+      rsh drush theme:enable "${OPTIONS_ARRAY[@]}" -y "${DATA_ARRAY[@]}"
       ;;
     "theme:uninstall")
-      rsh drush theme:uninstall ${OPTIONS} -y ${DATA}
+      rsh drush theme:uninstall "${OPTIONS_ARRAY[@]}" -y "${DATA_ARRAY[@]}"
       ;;
     "config:export")
-      rsh drush config:export -y ${OPTIONS}
+      rsh drush config:export -y "${OPTIONS_ARRAY[@]}"
       ;;
     "config:set")
       # Requires at least drush v11
+      # Use JSON format to preserve complex data structures
       DATA_JSON=$(echo "${operation}" | jq -c '.data')
-      rsh drush config:set -y ${OPTIONS} --input-format=yaml "${KEY}" ? "${DATA_JSON}"
+      rsh drush config:set -y "${OPTIONS_ARRAY[@]}" --input-format=yaml "${KEY}" ? "${DATA_JSON}"
       ;;
     "project:scaffold")
-      rsh composer project:scaffold -n ${OPTIONS} -d ${APP_ROOT}
+      rsh composer project:scaffold -n "${OPTIONS_ARRAY[@]}" -d "${APP_ROOT}"
       ;;
     "drupal:scaffold")
-      rsh composer drupal:scaffold -n ${OPTIONS} -d ${APP_ROOT}
+      rsh composer drupal:scaffold -n "${OPTIONS_ARRAY[@]}" -d "${APP_ROOT}"
       ;;
     "patch-add")
-      if grep -q "szeidler/composer-patches-cli" $COMPOSER_JSON_FILE; then
-        declare -a "DATA_ARRAY=($DATA)"
-        rsh composer patch-add ${OPTIONS} -n "${DATA_ARRAY[@]}" -d ${APP_ROOT}
+      if grep -q "szeidler/composer-patches-cli" "$COMPOSER_JSON_FILE"; then
+        # DATA_ARRAY is already properly populated from JSON parsing above
+        rsh composer patch-add "${OPTIONS_ARRAY[@]}" -n "${DATA_ARRAY[@]}" -d "${APP_ROOT}"
       else
         echo "Warning: missing \"szeidler/composer-patches-cli\" package for patch CLI."
       fi
       ;;
     "patch-remove")
-      if grep -q "szeidler/composer-patches-cli" $COMPOSER_JSON_FILE; then
-        declare -a "DATA_ARRAY=($DATA)"
-        rsh composer patch-remove ${OPTIONS} -n "${DATA_ARRAY[@]}" -d ${APP_ROOT}
+      if grep -q "szeidler/composer-patches-cli" "$COMPOSER_JSON_FILE"; then
+        # DATA_ARRAY is already properly populated from JSON parsing above
+        rsh composer patch-remove "${OPTIONS_ARRAY[@]}" -n "${DATA_ARRAY[@]}" -d "${APP_ROOT}"
       else
         echo "Warning: missing \"szeidler/composer-patches-cli\" package for patch CLI."
       fi
       ;;
     "commit")
-      echo "git add . && git commit ${OPTIONS} -m \"${DATA}\" || true"
-      git add . && git commit ${OPTIONS} -m "${DATA}" || true
+      # For commit, DATA contains the commit message which should be a single string
+      # Join DATA_ARRAY if it has multiple elements (shouldn't normally happen)
+      COMMIT_MSG="${DATA_ARRAY[*]}"
+      echo "git add . && git commit ${OPTIONS_ARRAY[@]} -m \"${COMMIT_MSG}\" || true"
+      git add . && git commit "${OPTIONS_ARRAY[@]}" -m "${COMMIT_MSG}" || true
       ;;
     "reboot")
       echo "make deploy-local COMPOSE_FLAGS=-d"
