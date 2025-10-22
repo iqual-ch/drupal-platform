@@ -132,8 +132,7 @@ for operation in "${OPERATIONS[@]}"; do
       rsh composer update "${OPTIONS_ARRAY[@]}" -n "${DATA_ARRAY[@]}" -d "${APP_ROOT}"
       ;;
     "bump")
-      # @todo: PACKAGES variable is undefined - this looks like a bug in the original script
-      rsh composer bump ${PACKAGES} -n -d "${APP_ROOT}"
+      rsh composer bump "${OPTIONS_ARRAY[@]}" "${DATA_ARRAY[@]}" -n -d "${APP_ROOT}"
       ;;
     "config")
       if [[ "${KEY}" =~ "extra."* ]] || [[ "${KEY}" =~ "repositories."* ]]; then
