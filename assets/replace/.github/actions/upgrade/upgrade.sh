@@ -180,6 +180,9 @@ for operation in "${OPERATIONS[@]}"; do
     "updatedb")
       rsh drush updatedb "${OPTIONS_ARRAY[@]}" -y
       ;;
+    "cache:rebuild")
+      rsh drush cache:rebuild
+      ;;
     "pm:enable")
       rsh drush pm:enable "${OPTIONS_ARRAY[@]}" -y "${DATA_ARRAY[@]}"
       ;;
