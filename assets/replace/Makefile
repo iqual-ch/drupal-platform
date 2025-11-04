@@ -122,7 +122,7 @@ drupal-fs: ## Import drupal filesystem
 	if [ "$(FS_PULL)" = "true" ]; then
 		ddev drush rsync @spot:%files @self:%files --yes $(DRUSH_FLAGS)
 	else
-		ddev drush en --yes stage_file_proxy || echo -e " $(MSG_WARNING) \"stage_file_proxy\" is unavailable. Skipping Drupal filesystem."
+		ddev drush en --yes iq_stage_file_proxy || echo -e " $(MSG_WARNING) \"iq_stage_file_proxy\" is unavailable. Skipping Drupal filesystem."
 	fi
 
 drupal-deploy: ## Run drupal deployment commands
