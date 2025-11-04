@@ -1,27 +1,21 @@
 # Edit or remove this file as needed.
 # Docs at https://github.com/drush-ops/drush/blob/master/examples/example.site.yml
 
-{% if deployment == "kubernetes" %}
-dev:
-  root: ${env.NGINX_ROOT}
-  user: ${env-name}-drpl-${env.PROJECT_CODE_NAME}_${env.K8S_DEV_CONTEXT}
-  host: ${env.SSH_HOST}
-  uri: https://${env.PROJECT_CODE_NAME}-drpl.docker-${env-name}.iqual.ch
-
-stage:
-  root: ${env.NGINX_ROOT}
-  user: ${env-name}-drpl-${env.PROJECT_CODE_NAME}_${env.K8S_STAGE_CONTEXT}
-  host: ${env.SSH_HOST}
-  uri: https://${env.PROJECT_CODE_NAME}-drpl.docker-${env-name}.iqual.ch
-
-prod:
-  root: ${env.NGINX_ROOT}
-  user: ${env-name}-drpl-${env.PROJECT_CODE_NAME}_${env.K8S_PROD_CONTEXT}
-  host: ${env.SSH_HOST}
-  uri: {{ url }}
-{% elseif deployment == "platform.sh" %}
+{% if deployment == "platform.sh" %}
 # Production
 prod:
+  root: /app/public
+  user: {{ platformsh_config.project_id }}-{{ drupal_spot }}--drupal
+  host: ssh.{{ platformsh_config.region }}.platform.sh
+  uri: {{ url }}
+
+main:
+  root: /app/public
+  user: {{ platformsh_config.project_id }}-{{ drupal_spot }}--drupal
+  host: ssh.{{ platformsh_config.region }}.platform.sh
+  uri: {{ url }}
+
+spot:
   root: /app/public
   user: {{ platformsh_config.project_id }}-{{ drupal_spot }}--drupal
   host: ssh.{{ platformsh_config.region }}.platform.sh

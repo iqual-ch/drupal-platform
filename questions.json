@@ -19,7 +19,7 @@
         },
         "url": {
             "question": "What's the current <info>live URL</info> of the website?",
-            "default": "https://[name].docker-stage.iqual.ch",
+            "default": "https://[name].ddev.site",
             "validation": "https:\\/\\/[^\\/\\s]+"
         },
         "runtime.php_version": {
@@ -27,44 +27,35 @@
             "options": [
                 "8.1",
                 "8.2",
-                "8.3"
+                "8.3",
+                "8.4",
+                "8.5"
             ]
         },
         "runtime.db_version": {
             "question": "What <info>database version</info> should be installed?",
             "options": [
                 "10.3",
-                "10.4",
-                "10.5",
-                "10.6"
+                "10.6",
+                "10.11",
+                "11.4",
+                "11.8"
             ]
         },
         "deployment": {
             "question": "Where should the Drupal <info>deployment</info> be hosted?",
-            "default": "kubernetes",
+            "default": "platform.sh",
             "options": [
-                "kubernetes",
                 "platform.sh",
                 "local-only"
             ]
         },
-        "drupal_spot[0]": {
-            "if": {
-                "deployment": "kubernetes"
-            },
-            "question": "Where is the current Single Point of Truth (<info>SPOT</info>) of the Drupal database?",
-            "default": "stage",
-            "options": [
-                "dev",
-                "stage",
-                "prod"
-            ]
-        },
-        "drupal_spot[1]": {
+        "drupal_spot": {
             "if": {
                 "deployment": "platform.sh"
             },
             "question": "Where is the current Single Point of Truth (<info>SPOT</info>) of the Drupal database (machine name)?",
+            "default": "main-bvxea6i",
             "validation": ".+?-.+"
         },
         "platformsh_config.project_id": {

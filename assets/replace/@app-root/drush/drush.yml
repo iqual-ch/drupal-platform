@@ -80,6 +80,6 @@ ssh:
   # Specify options to pass to ssh.  The default is to prohibit
   # password authentication, and is included here, so you may add additional
   # parameters without losing the default configuration.
-  options: '-p ${env.SSH_PORT} -o PasswordAuthentication=no -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o LogLevel=FATAL'
+  options: '-o PasswordAuthentication=no -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o LogLevel=FATAL'
   # This string is valid for Bash shell. Override in case you need something different. See https://github.com/drush-ops/drush/issues/3816.
   pipefail: 'set -o pipefail; '

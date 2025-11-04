@@ -7,45 +7,61 @@
 This repository contains the software project for the {{ title|default(name) }} Drupal website. It contains a Drupal installation with custom business logic, configuration, themes and styling for the website.
 
 * [Live URL]({{ url }}/)
-* [Local URL](https://{{ project_name|default(name ~ '-sw-project') }}.{{ local_domain_suffix }}/)
+* [Local URL](https://{{ name }}.ddev.site/)
 
-## Usage
 
-To install the project within a working Drupal environment, you can run:
+## Prerequisites
 
-```bash
-make project
-```
+- **WSL2**: For usage with Windows it is required to use WSL2.
+- **Docker**: Required if you wish to use the integrated development environment.
+- **DDEV**: Make sure you have [ddev](https://ddev.readthedocs.io/) installed on your system.
+- **VS Code**: Recommended for developing code with the provided settings and extensions.
+- **Git Access**: To clone the repository and manage version control.
 
-This will retrieve the newest version from the specified git branch and deploy all changes using composer and drush.
+> [!IMPORTANT]
+> _Make sure to install the right version of DDEV for your system. We recommend DDEV on Windows with WSL2 + Docker Desktop ([docs](https://ddev.readthedocs.io/en/stable/users/install/ddev-installation/#windows)). Additionally it is required to set up SSH authentication in DDEV so Drush can access the remote environment using `ddev auth ssh -f $HOME/.ssh/YOUR_SSH_KEY`._
 
-* [See installation documentation](https://github.com/iqual-ch/drupal-platform/blob/main/docs/installation.md)
+## Quick Start
 
-> If you do not already have a working environment see the following sections on either development or deployment.
+1. **Clone the Repository**:
+   Clone the repository from GitHub to your local machine.
 
-## Development
+2. **Install the Project**:
+   ```bash
+   make install
+   ```
+   Starts the DDEV runtimes, builds and deploys Drupal. For development this can also be skipped and executed in VS Code.
 
-To start developing locally you can use use the following command to set-up a local Drupal environment running VS Code:
+3. **Launch the Project**:
+   ```bash
+   make launch
+   ```
+   Opens up your browser on the project's homepage. To directly log into the admin backend, use `make login`.
+
+## Local Development
+
+To start developing locally, you can launch a Visual Studio Code environment customized for this project by running:
 
 ```bash
 make code
 ```
+This will open VS Code configured to work with your local environment.
 
-This will prepare the local environment and launch VS Code in the current workfolder. To start the local deployment you can run `Rebuild and Reopen in Container` using the `Remote-Containers` extension. Check the development documentation for the requirements and further tooling instructions.
+### Useful Commands
 
-* [See development documentation](https://github.com/iqual-ch/drupal-platform/blob/main/docs/drupal-development.md)
+* `make install`: Install the project with runtime locally.
+   > Use `DDEV_SNAPSHOT=latest` flag to restore the latest `ddev` snapshot.
+* `make code`: Start a VS Code dev environment.
+* `make drupal`: Build & deploy Drupal backend locally. Runs daemonized.
+* `make test`: Run project tests (PHPUnit, …).
+* `make lint`: Lint the project (PHPCS, …).
+* `make beauty`: Beautify & fix code in project.
 
-## Deployment
+> [!TIP]
+> _Run `make help` for a list of all available commands. Some commands are also available as tasks in VS Code._
 
-Environments can be deployed using the `make` target `deploy-%`. For example the `dev` environment can be deployed remotely, using the following command:
-
-```bash
-make deploy-dev
-```
-
-The `make` target allows the deployment of the specified environments either locally or remotely, depending on the definitions in the `./manifests` directory.
-
-* [See deployment documentation](https://github.com/iqual-ch/drupal-platform/blob/main/docs/deployment.md)
+> [!TIP]
+> _Use `ddev snapshot` to take database snapshots and run `make install DDEV_SNAPSHOT=latest` to re-install from the latest database snapshots (named snapshots are supported)._
 
 ## Further Documentation
 
