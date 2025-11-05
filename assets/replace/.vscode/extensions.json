@@ -3,7 +3,6 @@
       "eamodio.gitlens",
       "bmewburn.vscode-intelephense-client",
       "damms005.devdb",
-      "DmitryDorofeev.empty-indent",
       "DotJoshJohnson.xml",
       "wongjn.php-sniffer",
       "michelemelluso.code-beautifier",
@@ -12,7 +11,8 @@
       "mblode.twig-language-2",
       "persoderlind.vscode-phpcbf",
       "xdebug.php-debug",
-      "shaharkazaz.git-merger",
+      "editorconfig.editorconfig",
+      "redhat.vscode-yaml",
       "github.copilot",
       "github.copilot-chat"
   ],
