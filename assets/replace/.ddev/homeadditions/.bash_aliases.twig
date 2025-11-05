@@ -84,7 +84,7 @@ if [ -n "$PS1" ]; then
         s="$1"
         if [ -z "$s" ]
         then
-            builtin cd "${APP_ROOT:-.}"
+            builtin cd "${DDEV_COMPOSER_ROOT:-.}"
         elif [ "${s:0:1}" == "@" ] || [ "${s:0:1}" == "%" ]
         then
             d="$(drush drupal:directory ${s##*:} 2>/dev/null)"

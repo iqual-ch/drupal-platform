@@ -42,7 +42,7 @@ if ! jq -e . >/dev/null 2>&1 <<<"$JSON_INPUT"; then
   exit 1
 fi
 
-APP_ROOT=${APP_ROOT:-app}
+APP_ROOT=${DDEV_COMPOSER_ROOT:-app}
 COMPOSER_JSON_FILE="${APP_ROOT}/composer.json"
 
 if [ ! -f "${COMPOSER_JSON_FILE}" ]; then

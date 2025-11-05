@@ -87,10 +87,10 @@ $settings['file_public_path'] = 'sites/default/files';
 /**
  * Private file path:
  */
-if (getenv('APP_ROOT')) {
-    $settings['file_private_path'] = getenv('APP_ROOT') . '/private';
+if (getenv('DDEV_COMPOSER_ROOT')) {
+    $settings['file_private_path'] = getenv('DDEV_COMPOSER_ROOT') . '/private';
 } else {
-$settings['file_private_path'] = '../private';#AUTO_GEN_SETT_0
+    $settings['file_private_path'] = '../private';#AUTO_GEN_SETT_0
 }
 
 /**
