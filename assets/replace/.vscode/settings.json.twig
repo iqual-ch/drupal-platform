@@ -34,20 +34,21 @@
   "files.insertFinalNewline": true,
   "html.format.enable": true,
   "html.format.wrapLineLength": 80,
-  "svg.preview.background": "dark-transparent",
   "redhat.telemetry.enabled": false,
   "git.autofetch": true,
-  "[php]": {
-    "editor.defaultFormatter": "wongjn.php-sniffer"
-  },
 
   /* PHP Intelephense */
-  "php.validate.executablePath": "/usr/bin/env ddev php",
+  "php.validate.executablePath": ".vscode/bin/php",
   "php.suggest.basic": false,
 
-  /* phpSniffer settings */
-  "phpSniffer.executablesFolder": "app/vendor/bin",
-  "phpSniffer.standard": "DrupalPractice,Drupal",
+  /* PHP Sniffer & Beautifier settings */
+  "phpsab.standard": "Drupal,DrupalPractice",
+  "phpsab.executablePathCS": ".vscode/bin/phpcs",
+  "phpsab.executablePathCBF": ".vscode/bin/phpcbf",
+  "phpsab.snifferMode": "onType",
+  "[php]": {
+    "editor.defaultFormatter": "valeryanm.vscode-phpsab"
+  },
 
   /* php-docblocker settings */
   "php-docblocker.gap": true,
