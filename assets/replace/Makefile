@@ -46,7 +46,7 @@ quickhelp:
 .DEFAULT_GOAL := quickhelp
 
 ## Local Dev
-code: ddev-shim ## Launch local dev environment
+code: ## Launch local dev environment
 	@echo "Starting VS Code local development environment"
 	code .
 
@@ -68,7 +68,7 @@ down: stop
 ## Project Installation
 install-safe: git-status install
 
-install: ddev-shim runtime stack ## Install project stack with runtime
+install: runtime stack ## Install project stack with runtime
 
 new: ## Create new project
 	@echo -e " $(MSG_INFO) Creating new project"
@@ -170,9 +170,6 @@ stop: ## Stop local runtime
 destroy: ## Destroy local runtime
 	@echo -e " $(MSG_INFO) Destroying DDEV runtimes"
 	ddev delete
-
-ddev-shim:
-	@chmod +x .vscode/bin/* || true
 
 ## Testing
 test: drupal-test ## Run project tests

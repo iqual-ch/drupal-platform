@@ -15,6 +15,11 @@
     "archive": {
         "exclude": ["/docs"]
     },
+    "bin": [
+        "bin/ddev-shim-php",
+        "bin/ddev-shim-phpcbf-ext",
+        "bin/ddev-shim-phpcs-ext"
+    ],
     "extra": {
         "project-scaffold": {
             "runtime": {
