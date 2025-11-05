@@ -2,6 +2,47 @@
     "version": "2.0.0",
     "tasks": [
         {
+            "label": "Project: Install",
+            "type": "shell",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "command": "make install-safe"
+        },
+        {
+            "label": "Project: Install (force)",
+            "type": "shell",
+            "group": "build",
+            "command": "make install"
+        },
+        {
+            "label": "Drupal: build & deploy",
+            "type": "shell",
+            "group": "build",
+            "command": "make drupal"
+        },
+        {
+            "label": "Project: Start local DDEV runtime",
+            "type": "shell",
+            "command": "make runtime"
+        },
+        {
+            "label": "Project: Run tests",
+            "type": "shell",
+            "group": {
+                "kind": "test",
+                "isDefault": true
+            },
+            "command": "make test"
+        },
+        {
+            "label": "Drupal: Run tests (PHPUnit)",
+            "type": "shell",
+            "group": "test",
+            "command": "make drupal-test"
+        },
+        {
             "label": "DDEV: Enable Xdebug",
             "type": "shell",
             "command": "ddev xdebug on"

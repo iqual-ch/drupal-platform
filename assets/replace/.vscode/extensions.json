@@ -1,0 +1,20 @@
+{
+  "recommendations": [
+      "eamodio.gitlens",
+      "bmewburn.vscode-intelephense-client",
+      "damms005.devdb",
+      "DmitryDorofeev.empty-indent",
+      "DotJoshJohnson.xml",
+      "wongjn.php-sniffer",
+      "michelemelluso.code-beautifier",
+      "neilbrayfield.php-docblocker",
+      "andrewdavidblum.drupal-smart-snippets",
+      "mblode.twig-language-2",
+      "persoderlind.vscode-phpcbf",
+      "xdebug.php-debug",
+      "shaharkazaz.git-merger",
+      "github.copilot",
+      "github.copilot-chat"
+  ],
+  "unwantedRecommendations": []
+}
