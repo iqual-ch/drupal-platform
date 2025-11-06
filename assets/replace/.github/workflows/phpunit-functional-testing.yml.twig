@@ -74,13 +74,6 @@ jobs:
     if: ${{ inputs.browser-testing || (inputs.testing-type && inputs.testing-type == 'browser') }}
     runs-on: ubuntu-latest
 
-    services:
-      chrome:
-        image: selenium/standalone-chrome:106.0
-        options: >-
-          --env SE_NODE_SESSION_TIMEOUT=700
-          --shm-size=2g
-
     steps:
     - name: Checkout
       uses: actions/checkout@v5
@@ -91,6 +84,11 @@ jobs:
         ssh_key: ${{ secrets.SSH_KEY }}
         caching: true
         caching_db_key: ${{ inputs.database-cache-key }}
+
+    - name: Enable Chrome tooling
+      shell: bash
+      run: |
+        make tool-chrome
 
     - name: Run PHPUnit browser tests
       shell: bash

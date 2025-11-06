@@ -19,3 +19,5 @@ web_environment:
     - "DRUPAL_ENVIRONMENT=local"
     - SIMPLETEST_DB=$DDEV_DATABASE_FAMILY://db:db@db/db
     - SIMPLETEST_BASE_URL=$DDEV_PRIMARY_URL
+    - DTT_BASE_URL=$DDEV_PRIMARY_URL
+    - DTT_SCREENSHOT_REPORT_DIRECTORY=/var/www/html/app/public/sites/simpletest/browser_output

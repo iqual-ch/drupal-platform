@@ -45,7 +45,7 @@ quickhelp:
 
 .DEFAULT_GOAL := quickhelp
 
-## Local Dev
+## Local Development
 code: ## Launch local dev environment
 	@echo "Starting VS Code local development environment"
 	code .
@@ -175,6 +175,17 @@ destroy: ## Destroy local runtime
 	@echo -e " $(MSG_INFO) Destroying DDEV runtimes"
 	ddev delete
 
+## Tooling
+tool-chrome: ## Install DDEV Chrome extension
+	@if [ "$(REMOVE)" = "true" ]; then
+		ddev add-on remove ddev/ddev-selenium-standalone-chrome || echo -e " $(MSG_WARNING) No existing DDEV Chrome extension to remove."
+	else
+		echo -e " $(MSG_INFO) Installing DDEV Chrome extension"
+		echo -e " $(MSG_WARNING) Extension will be gitignored locally."
+		ddev add-on get ddev/ddev-selenium-standalone-chrome --version 2.1.0
+	fi
+	ddev restart
+
 ## Testing
 test: drupal-validate drupal-lint drupal-analysis drupal-test-unit ## Run project tests
 
@@ -198,6 +209,7 @@ drupal-test-db: ## Run Drupal db tests
 
 drupal-test-browser: ## Run Drupal browser tests
 	@echo -e " $(MSG_INFO) Running browser tests"
+	echo -e " $(MSG_WARNING) Make sure that the chrome tool is installed."
 	echo -e " $(MSG_WARNING) Some tests could modify your existing database."
 	ddev phpunit -c ./app --testsuite=functional-javascript,existingsite-javascript $(PHPUNIT_FLAGS)
 
