@@ -1,5 +1,8 @@
 # Drupal Development
 
+> [!CAUTION]
+> This documentation is **deprecated** and updating is in progress.
+
 [Check the in-depth step-by-step guide on the initial setup](https://support-iqual.atlassian.net/wiki/spaces/ID/pages/2532704262/Initial+setup+G)
 
 ## Requirements

@@ -1,5 +1,8 @@
 # App Installation
 
+> [!CAUTION]
+> This documentation is **deprecated** and updating is in progress.
+
 To install the app (Drupal) in a running environment it is possible to use `make project`. This will do some checks and then run `make install` installing Drupal. The detailed steps are documented below.
 
 > An installation will override existing config. Make sure to export the live config to the repository before running an installation, if desired.

@@ -1,5 +1,8 @@
 # Service Deployment
 
+> [!CAUTION]
+> This documentation is **deprecated** and updating is in progress.
+
 A service deployment sets up the app's runtime environment (e.g. PHP, Nginx, etc.). After deploying the services the app needs to be installed to complete a full deployment. See the [App Installation documentation](./installation.md) for the latter.
 
 ## Requirements

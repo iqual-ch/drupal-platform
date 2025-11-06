@@ -1,5 +1,8 @@
 # Configuration
 
+> [!CAUTION]
+> This documentation is **deprecated** and updating is in progress.
+
 The project setup allows a lot of customization using multiple configuration options. The runtime and Drupal environment can be modified for project needs, even on a per-environment basis.
 
 ## Drupal Platform Package Variables

@@ -1,5 +1,8 @@
 # Project Commands (Makefile)
 
+> [!CAUTION]
+> This documentation is **deprecated** and updating is in progress.
+
 ## Make targets
 
 The following `make` targets are available in the project's `Makefile`. They can be executed in the project root using `make TARGET`.
