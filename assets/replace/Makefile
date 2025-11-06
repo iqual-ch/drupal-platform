@@ -29,7 +29,7 @@ help: ## Show this help message
 	}
 	/^[0-9A-Za-z_.-]+:.*?##/ {
 		# Print a target line with its description
-		printf "  \033[36m%-15s\033[0m %s\n", $$1, $$2
+		printf "  \033[36m%-20s\033[0m %s\n", $$1, $$2
 	}' $(MAKEFILE_LIST)
 	echo -e "\n\033[1mQuick start\033[0m: make \033[36minstall\033[0m"
 
@@ -38,10 +38,10 @@ quickhelp:
 	echo -e "\033[1mUsage\033[0m: make \033[36m[target]\033[0m"
 	echo -e "\033[1mQuick Start\033[0m: make \033[36minstall\033[0m\n"
 	echo -e "Essential Commands:"
-	echo -e "  \033[36minstall\033[0m      Setup and install the project"
-	echo -e "  \033[36mlaunch\033[0m       Open project in browser"
-	echo -e "  \033[36mcode\033[0m         Start coding in VS Code"
-	echo -e "  \033[36mhelp\033[0m         Show all available commands"
+	echo -e "  \033[36minstall\033[0m          Setup and install the project"
+	echo -e "  \033[36mlaunch\033[0m           Open project in browser"
+	echo -e "  \033[36mcode\033[0m             Start coding in VS Code"
+	echo -e "  \033[36mhelp\033[0m             Show all available commands"
 
 .DEFAULT_GOAL := quickhelp
 
@@ -185,6 +185,11 @@ drupal-test-list: ## List Drupal tests
 drupal-test-unit: ## Run Drupal unit tests
 	@echo -e " $(MSG_INFO) Testing Drupal"
 	ddev phpunit -c ./app --testsuite=unit $(PHPUNIT_FLAGS)
+
+drupal-test-func: ## Run Drupal functional tests
+	@echo -e " $(MSG_INFO) Running functional tests"
+	echo -e " $(MSG_WARNING) Some tests could modify your existing database."
+	ddev phpunit -c ./app --testsuite=unit,kernel,functional,functional-javascript $(PHPUNIT_FLAGS)
 
 drupal-test-db: ## Run Drupal db tests
 	@echo -e " $(MSG_INFO) Running database tests"
