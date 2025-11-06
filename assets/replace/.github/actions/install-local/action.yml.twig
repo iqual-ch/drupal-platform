@@ -20,6 +20,7 @@ runs:
       echo "EXECUTION_DATE=$(date --rfc-3339=date)" >> $GITHUB_ENV
 
   - name: Setup SSH key
+    shell: bash
     run: |
       mkdir -p .ddev/homeadditions/.ssh
       echo "${{ inputs.ssh_key }}" > .ddev/homeadditions/.ssh/id_rsa
