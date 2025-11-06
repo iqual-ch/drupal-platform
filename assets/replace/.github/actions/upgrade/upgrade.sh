@@ -54,11 +54,17 @@ if [[ -n "$RSH" && "$RSH" == "make-cli" ]]; then
   echo "Using remote shell: make cli"
 fi
 
+if [[ -n "$RSH" && "$RSH" == "ddev" ]]; then
+  echo "Using remote shell: ddev"
+fi
+
 function rsh {
   echo "$@"
   if [[ -n "$RSH" && "$RSH" == "make-cli" ]]; then
     # Make sure the arguments' value is quoted in a format that can be reused as input.
     COMMAND="${*@Q}" make cli
+  elif [[ -n "$RSH" && "$RSH" == "ddev" ]]; then
+    ddev exec -- "${*@Q}"
   else
     eval "${*@Q}"
   fi

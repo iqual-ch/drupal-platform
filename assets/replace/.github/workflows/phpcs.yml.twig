@@ -20,7 +20,7 @@ jobs:
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
 
     - name: "Set up PHP"
       uses: shivammathur/setup-php@v2
@@ -33,14 +33,12 @@ jobs:
       shell: bash
       run: |
         echo "::add-matcher::${{ runner.tool_cache }}/php.json"
-        COMPOSER_AUTH="${{ secrets.COMPOSER_AUTH }}"
-        echo "COMPOSER_AUTH=$COMPOSER_AUTH" >> $GITHUB_ENV
-        echo "::add-mask::$COMPOSER_AUTH"
+        echo "REPO_CODE=$(git ls-tree -d -r $(git write-tree) --name-only | grep -E '(themes|modules)/custom/[^/]+$$' | paste -s -)" >> $GITHUB_ENV
 
     - name: "Run PHP parallel lint"
       shell: bash
       run: |
-        make phplint PARALINT_FLAGS="--no-progress"
+        parallel-lint ${REPO_CODE} -e php,module,theme,inc,install,profile --no-progress
 
     - name: "Install dependencies"
       shell: bash
@@ -51,7 +49,13 @@ jobs:
     - name: "Run PHPCS"
       shell: bash
       run: |
-        make phpcs APP_ROOT="${{ github.workspace }}/app" PHPCS_FLAGS="-q --report=checkstyle" \
+        phpcs \
+          --standard=./app/phpcs.xml.dist \
+          --runtime-set ignore_warnings_on_exit 1 \
+          --report=checkstyle \
+          --quiet \
+          ${REPO_CODE} \
           | cs2pr --graceful-warnings
+
 {% endverbatim -%}
 {% endif %}

@@ -131,19 +131,23 @@ drupal-deploy: ## Run drupal deployment commands
 
 ## Maintenance
 update: ## Update Drupal site
-	@echo "Updating Drupal"
-	composer update $(COMPOSER_FLAGS)
-	drush cr
-	drush updb $(DRUSH_FLAGS)
-	drush cex $(DRUSH_FLAGS)
+	@echo -e " $(MSG_INFO) Updating Drupal"
+	$(MAKE) drupal-update
+
+drupal-update:
+	@echo -e " $(MSG_INFO) Updating Drupal"
+	ddev composer update $(COMPOSER_FLAGS)
+	ddev drush cr
+	ddev ddev drush updb $(ddev DRUSH_FLAGS)
+	ddev drush cex $(DRUSH_FLAGS)
 
 upgrade: ## Upgrade Drupal site
-	@echo "Upgrading Drupal"
+	@echo -e " $(MSG_INFO) Upgrading project"
 	if [ -z "$$JSON_INPUT" ]; then
 		echo -e " $(MSG_ERROR) Missing upgrade operations JSON_INPUT."
 		exit 1
 	fi
-	RSH="make-cli"
+	RSH="ddev"
 	bash ./.github/actions/upgrade/upgrade.sh
 
 ## Utility
@@ -172,35 +176,51 @@ destroy: ## Destroy local runtime
 	ddev delete
 
 ## Testing
-test: drupal-test ## Run project tests
+test: drupal-validate drupal-lint drupal-analysis drupal-test-unit ## Run project tests
 
-drupal-test: ## Test Drupal
+drupal-test-list: ## List Drupal tests
+	@echo -e " $(MSG_INFO) Listing Drupal tests"
+	ddev phpunit -c ./app --list-tests
+
+drupal-test-unit: ## Run Drupal unit tests
 	@echo -e " $(MSG_INFO) Testing Drupal"
-	ddev phpunit
+	ddev phpunit -c ./app --testsuite=unit $(PHPUNIT_FLAGS)
+
+drupal-test-db: ## Run Drupal db tests
+	@echo -e " $(MSG_INFO) Running database tests"
+	echo -e " $(MSG_WARNING) Some tests could modify your existing database."
+	ddev phpunit -c ./app --testsuite=kernel,functional,existingsite $(PHPUNIT_FLAGS)
+
+drupal-test-browser: ## Run Drupal browser tests
+	@echo -e " $(MSG_INFO) Running browser tests"
+	echo -e " $(MSG_WARNING) Some tests could modify your existing database."
+	ddev phpunit -c ./app --testsuite=functional-javascript,existingsite-javascript $(PHPUNIT_FLAGS)
 
 ## Linting
-lint: drupal-validate drupal-analysis drupal-lint ## Lint project
+lint: drupal-validate drupal-lint drupal-analysis ## Lint project
 
 drupal-validate: ## Validate Drupal
 	@echo -e " $(MSG_INFO) Validating composer lock file"
 	ddev composer validate
 
-drupal-analysis: ## Static analysis of Drupal
-	@echo -e " $(MSG_INFO) Static analysis Drupal"
-	ddev phpstan
-
 drupal-lint: ## Lint Drupal
 	@echo -e " $(MSG_INFO) Linting Drupal"
 	REPO_CODE="$$(git ls-tree -d -r $$(git write-tree) --name-only | grep -E '(themes|modules)/custom/[^/]+$$' | paste -s -)"
-	ddev parallel-lint $${REPO_CODE/drupal\//} -e php,module,theme,inc,install,profile $(PARALINT_FLAGS)
-	ddev phpcs
+	ddev lint $${REPO_CODE}
+	ddev phpcs $${REPO_CODE} --standard=./app/phpcs.xml.dist
+
+drupal-analysis: ## Static analysis of Drupal
+	@echo -e " $(MSG_INFO) Running static analysis of Drupal"
+	REPO_CODE="$$(git ls-tree -d -r $$(git write-tree) --name-only | grep -E '(themes|modules)/custom/[^/]+$$' | paste -s -)"
+	ddev phpstan --configuration=app/phpstan.neon analyse $${REPO_CODE}
 
 ## Beautifying
 beauty: drupal-beauty ## Beautify & fix code in project
 
 drupal-beauty: ## Beautify & fix Drupal
 	@echo -e " $(MSG_INFO) Beautify & fixing Drupal"
-	ddev phpcbf
+	REPO_CODE="$$(git ls-tree -d -r $$(git write-tree) --name-only | grep -E '(themes|modules)/custom/[^/]+$$' | paste -s -)"
+	ddev phpcbf $${REPO_CODE} --standard=./app/phpcs.xml.dist
 
 # Helper Commands
 git-status:

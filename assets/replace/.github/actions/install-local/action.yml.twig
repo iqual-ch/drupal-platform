@@ -3,13 +3,7 @@
 name: Install Drupal locally
 description: Checkout, configure, deploy and install a local drupal project
 inputs:
-  dockerhub_container_registry_user:
-    required: true
-  dockerhub_container_registry_password:
-    required: true
   ssh_key:
-    required: true
-  composer_auth:
     required: true
   caching:
     required: false
@@ -20,86 +14,33 @@ inputs:
 runs:
   using: composite
   steps:
-  - name: Import environment variables from a file
-    shell: bash
-    run: |
-      grep -v '^#' .env | grep . >> $GITHUB_ENV
-
   - name: Generate dynamic env variables
     shell: bash
     run: |
       echo "EXECUTION_DATE=$(date --rfc-3339=date)" >> $GITHUB_ENV
 
-  - name: Login to Docker Hub
-    uses: docker/login-action@v3
-    with:
-      username: ${{ inputs.dockerhub_container_registry_user }}
-      password: ${{ inputs.dockerhub_container_registry_password }}
+  - name: Setup DDEV
+    uses: ddev/github-action-setup-ddev@v1
 
-  - name: Cache Docker images
-    uses: ScribeMD/docker-cache@0.5.0
-    with:
-      key: ${{ runner.os }}-docker-${{ hashFiles('**/docker-compose.yml') }}
-
-  - name: Cache Composer dependency
-    if: ${{ inputs.caching == 'true' }}
-    id: cache-composer
-    uses: actions/cache@v4
-    with:
-      path: |
-        ./.composer
-      key: ${{ runner.os }}-build-drupal-composer-${{ hashFiles('**/composer.lock') }}
-
-  - name: Cache Drupal database
-    if: ${{ inputs.caching == 'true' }}
-    id: cache-db
-    uses: actions/cache@v4
-    with:
-      path: |
-        ./app/backups
-      key: ${{ runner.os }}-build-drupal-db-${{ inputs.caching_db_key }}
-
-  - name: Deploy local environment
+  - name: Setup SSH
     shell: bash
     env:
       SSH_KEY: ${{ inputs.ssh_key }}
-      COMPOSER_AUTH: ${{ inputs.composer_auth }}
     run: |
-      make deploy-local COMPOSE_FLAGS=-d
+      mkdir -p ~/.ssh
+      echo "$SSH_KEY" > ~/.ssh/id_rsa
+      chmod 600 ~/.ssh/id_rsa
+      ddev auth ssh -f ~/.ssh/id_rsa
 
-  - name: Restore composer dependency cache
-    if: ${{ inputs.caching == 'true' && steps.cache-composer.outputs.cache-hit == 'true' }}
+  - name: Deploy local environment
     shell: bash
     run: |
-      [ -d ".composer" ] && make cli-local COMMAND='cp -r .composer/. $$(composer config -d ./app cache-files-dir)'
+      make runtime
 
   - name: Install local environment
     if: ${{ inputs.caching != 'true' || steps.cache-db.outputs.cache-hit != 'true' }}
     shell: bash
     run: |
-      make cli-local COMMAND="make project COMPOSER_FLAGS=\"--ansi --no-interaction --no-progress\""
-
-  - name: Install local environment from backup
-    if: ${{ inputs.caching == 'true' && steps.cache-db.outputs.cache-hit == 'true' }}
-    shell: bash
-    run: |
-      [ "$(compgen -G "./app/backups/*.sql.gz" | wc -l)" -eq 0 ] && exit 1
-      cp ./app/backups/*.sql.gz ./app/resources
-      make cli-local COMMAND="make new COMPOSER_FLAGS=\"--ansi --no-interaction --no-progress\""
-      make cli-local COMMAND="drush cache:rebuild && drush deploy:hook"
-
-  - name: Create composer dependency cache
-    if: ${{ inputs.caching == 'true' && steps.cache-composer.outputs.cache-hit != 'true' }}
-    shell: bash
-    run: |
-        make cli-local COMMAND="mkdir -p .composer"
-        make cli-local COMMAND='cp -r $$(composer config -d ./app cache-files-dir)/. .composer'
-
-  - name: Create Drupal database cache
-    if: ${{ inputs.caching == 'true' && steps.cache-db.outputs.cache-hit != 'true' }}
-    shell: bash
-    run: |
-      make cli-local COMMAND="drush sql-sanitize -y"
-      make cli-local COMMAND="make db-backup"
+      make stack COMPOSER_FLAGS="--ansi --no-interaction --no-progress"
 {% endverbatim -%}
 {% endif %}

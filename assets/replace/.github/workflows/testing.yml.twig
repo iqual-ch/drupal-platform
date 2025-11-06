@@ -2,9 +2,6 @@
 {%- verbatim -%}
 name: Drupal testing
 
-env:
-  DOCKER_WEB_PORT: 80:80
-
 on:
   workflow_dispatch:
   pull_request:
@@ -25,15 +22,12 @@ jobs:
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
 
     - name: Install Drupal locally
       uses: ./.github/actions/install-local
       with:
-        dockerhub_container_registry_user: ${{ secrets.DOCKERHUB_CONTAINER_REGISTRY_USER }}
-        dockerhub_container_registry_password: ${{ secrets.DOCKERHUB_CONTAINER_REGISTRY_PASSWORD }}
         ssh_key: ${{ secrets.SSH_KEY }}
-        composer_auth: ${{ secrets.COMPOSER_AUTH }}
         caching: true
         caching_db_key: ${{ github.event.pull_request.head.sha || github.sha }}
 
@@ -42,7 +36,7 @@ jobs:
       shell: bash
       run: |
         PHPUNIT_TESTS_LIST="${{ runner.temp }}/phpunit-tests.txt"
-        make cli-local COMMAND="cd ./app && phpunit --list-tests" | tee $PHPUNIT_TESTS_LIST
+        make drupal-test-list | tee $PHPUNIT_TESTS_LIST
         if grep -q '\\ExistingSiteJavascript\\' $PHPUNIT_TESTS_LIST; then
           echo "browser_testing=true" >> $GITHUB_OUTPUT
         fi
@@ -62,13 +56,13 @@ jobs:
     - name: Detect missing config in repository
       shell: bash
       run: |
-        make cli-local COMMAND="drush --no config:export --diff" || \
+        ddev drush --no config:export --diff || \
           (echo 'There is missing configuration that has not been exported to the repository.' && exit 1)
 
     - name: Validate composer lock file
       shell: bash
       run: |
-        composer validate -d ./app --ansi
+        make drupal-validate
 
   lint:
     name: "PHPCS"

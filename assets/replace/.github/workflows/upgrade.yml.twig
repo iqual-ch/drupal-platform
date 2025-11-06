@@ -39,7 +39,7 @@ jobs:
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
 
     - name: Generate Input
       shell: bash
@@ -91,21 +91,17 @@ jobs:
     - name: Install Drupal locally
       uses: ./.github/actions/install-local
       with:
-        dockerhub_container_registry_user: ${{ secrets.DOCKERHUB_CONTAINER_REGISTRY_USER }}
-        dockerhub_container_registry_password: ${{ secrets.DOCKERHUB_CONTAINER_REGISTRY_PASSWORD }}
         ssh_key: ${{ secrets.SSH_KEY }}
-        composer_auth: ${{ secrets.COMPOSER_AUTH }}
 
     - name: Run Drupal upgrades script
       shell: bash
       env:
-        RSH: "make-cli"
-        COMPOSER_AUTH: ${{ secrets.COMPOSER_AUTH }}
+        RSH: "ddev"
       run: |
         make upgrade
 
     - name: Create Pull Request
-      uses: peter-evans/create-pull-request@v6
+      uses: peter-evans/create-pull-request@v7
       with:
         token: ${{ github.event.inputs.token || secrets.GITHUB_TOKEN }}
         commit-message: Upgraded Drupal site
