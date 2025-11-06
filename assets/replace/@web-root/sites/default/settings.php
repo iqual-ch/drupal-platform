@@ -87,10 +87,10 @@ $settings['file_public_path'] = 'sites/default/files';
 /**
  * Private file path:
  */
-if (getenv('APP_ROOT')) {
-    $settings['file_private_path'] = getenv('APP_ROOT') . '/private';
+if (getenv('DDEV_COMPOSER_ROOT')) {
+    $settings['file_private_path'] = getenv('DDEV_COMPOSER_ROOT') . '/private';
 } else {
-$settings['file_private_path'] = '../private';#AUTO_GEN_SETT_0
+    $settings['file_private_path'] = '../private';#AUTO_GEN_SETT_0
 }
 
 /**
@@ -214,4 +214,10 @@ if (file_exists($app_root . '/' . $site_path . '/settings.local.php')) {
 
 if (file_exists($app_root . '/' . $site_path . '/services.local.yml')) {
     $settings['container_yamls'][] = $app_root . '/' . $site_path . '/services.local.yml';
+}
+
+// Automatically generated include for settings managed by ddev.
+$ddev_settings = __DIR__ . '/settings.ddev.php';
+if (getenv('IS_DDEV_PROJECT') == 'true' && is_readable($ddev_settings)) {
+  require $ddev_settings;
 }

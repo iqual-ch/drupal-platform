@@ -1,0 +1,8 @@
+#!/bin/bash
+
+if [ "$IS_DDEV_PROJECT" != "true" ]; then
+  command="ddev exec php "$@""
+else
+  command="php "$@""
+fi
+$command

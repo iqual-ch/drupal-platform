@@ -1,0 +1,110 @@
+if [ -n "$PS1" ]; then
+    PROMPT_ENV="\[\033[49m\][local]\[\033[0m\]"
+    PROMPT_HOSTNAME="{{ name }}-drpl"
+
+    # Generate PS1 prompt
+    PS1="\[\033[01;32m\]${PROMPT_HOSTNAME}\[\033[00m\]${PROMPT_ENV:-}:\[\033[01;34m\]\w\[\033[00m\]\$ "
+
+    alias ll='ls -alF'
+    alias la='ls -A'
+    alias l='ls -CF'
+
+    # Aliases for git
+    alias g='git'
+    alias gs='git status'
+    alias gss='git status -s'
+    alias ga='git add'
+    alias gap='git add -p'
+    alias gb='git branch'
+    alias gba='git branch -av'
+    alias gc='git commit -v'
+    alias gcm='git commit -v -m'
+    alias gco='git checkout'
+    alias gcob='git checkout -b'
+    alias gd='git diff'
+    alias gf='git fetch'
+    alias gm='git merge'
+    alias gp='git push'
+    alias gpl='git pull'
+
+    # Aliases for git logging
+    alias glog='git log'
+    alias gg='git log --graph --pretty=format:'\''%C(bold)%h%Creset%C(magenta)%d%Creset %s %C(yellow)<%an> %C(cyan)(%cr)%Creset'\'' --abbrev-commit --date=relative'
+    alias ggf='git log --graph --date=short --pretty=format:'\''%C(auto)%h %Cgreen%an%Creset %Cblue%cd%Creset %C(auto)%d %s'\'''
+    alias ggs='gg --stat'
+    alias gnew='git log HEAD@{1}..HEAD@{0}'
+    alias gwc='git whatchanged'
+
+    # Aliases for common Drush commands that work in a global context.
+    alias dr='drush'
+    alias ddd='drush drupal:directory'
+    alias ev='drush php:eval'
+    alias sa='drush site:alias'
+    alias st='drush core:status'
+    alias use='drush site:set'
+
+    # Aliases for Drush commands that work on the current drupal site
+    alias cr='drush cache:rebuild'
+    alias en='drush pm:enable'
+    alias pml='drush pm:list'
+    alias pmu='drush pm:uninstall'
+    alias updb='drush updatedb'
+    alias q='drush sql:query'
+    alias sqlc='drush sql:cli'
+    alias cex='drush config:export'
+    alias cim='drush config:import'
+    alias cst='drush config:status'
+    alias dbsync='drush sql:sync'
+    alias fssync='drush core:rsync'
+    alias scr='drush php:script'
+    alias ws='drush watchdog:show'
+    alias uli='drush user:login'
+
+    # This alias allows `dssh @site` to work like `drush @site ssh`.
+    # Ssh commands, such as `dssh @site ls /tmp`, are also supported.
+    function dssh() {
+        d="$1"
+        if [ ${d:0:1} == "@" ]
+        then
+            if [ "$#" -gt 1 ]
+            then
+            drush "$d" ssh "${@:2}"
+            else
+            drush "$d" ssh --tty "bash -l"
+            fi
+        else
+            "ssh" "$@"
+        fi
+    }
+
+    # This alias allows `cdd %files` to work like `cd $(drush drupal:directory $1)`
+    # Change directory to a drupal directory (e.g. `%files`, `%modules`)
+    # Also works with remote site: `cdd @remote-site` works like `ssh @remote-site`
+    function cdd() {
+        s="$1"
+        if [ -z "$s" ]
+        then
+            builtin cd "${DDEV_COMPOSER_ROOT:-.}"
+        elif [ "${s:0:1}" == "@" ] || [ "${s:0:1}" == "%" ]
+        then
+            d="$(drush drupal:directory ${s##*:} 2>/dev/null)"
+            rh="$(drush sa ${s%%:*} --fields=host --format=list 2>/dev/null)"
+            if [ -z "$rh" ]
+            then
+            echo "cd $d"
+            builtin cd "$d"
+            else
+            if [ -n "$d" ]
+            then
+                c="cd \"${d##*:}\"; bash"
+                echo "cd ${s%%:*}:${d}"
+                drush ${s%%:*} ssh --tty "$c"
+            else
+                drush ssh ${s%%:*}
+            fi
+            fi
+        else
+            builtin cd "$s"
+        fi
+    }
+fi

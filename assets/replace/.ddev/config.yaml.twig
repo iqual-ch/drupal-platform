@@ -1,0 +1,19 @@
+name: {{ name }}
+type: drupal11
+docroot: app/public
+php_version: "{{ runtime.php_version }}"
+webserver_type: nginx-fpm
+xdebug_enabled: false
+additional_hostnames: []
+additional_fqdns: []
+database:
+    type: mariadb
+    version: "{{ runtime.db_version }}"
+composer_root: app
+use_dns_when_possible: true
+timezone: Europe/Zurich
+composer_version: "2"
+corepack_enable: true
+ddev_version_constraint: '>= 1.24.0'
+web_environment:
+    - "DRUPAL_ENVIRONMENT=local"

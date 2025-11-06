@@ -1,29 +1,23 @@
 {
   "window.title": "{{ project_name|default(name ~ '-sw-project') }}${separator}${dirty}${activeEditorMedium}${separator}${appName}",
-  "terminal.integrated.profiles.linux": {
-    "bash": {
-      "path": "/bin/bash",
-      "icon": "terminal-bash"
-    }
-  },
-  "terminal.integrated.defaultProfile.linux": "bash",
-  "terminal.integrated.cwd": "${workspaceFolder}",
-  "terminal.integrated.allowChords": false,
-  "sqltools.connections": [
-    {
-      "mysqlOptions": {
-        "authProtocol": "default"
-      },
-      "previewLimit": 50,
-      "server": "db",
-      "port": 3306,
-      "driver": "MariaDB",
-      "name": "db",
-      "database": "drupal",
-      "username": "drupal",
-      "password": "drupal"
-    }
+  "breadcrumbs.enabled": true,
+  "css.validate": true,
+  "diffEditor.ignoreTrimWhitespace": false,
+  "editor.tabSize": 2,
+  "editor.autoIndent": "full",
+  "editor.insertSpaces": true,
+  "editor.formatOnPaste": true,
+  "editor.formatOnSave": false,
+  "editor.renderWhitespace": "boundary",
+  "editor.wordWrapColumn": 80,
+  "editor.wordWrap": "off",
+  "editor.detectIndentation": true,
+  "editor.rulers": [
+    80
   ],
+  "emmet.includeLanguages": {
+    "twig": "html"
+  },
   "files.associations": {
     "*.inc": "php",
     "*.module": "php",
@@ -33,12 +27,39 @@
     "*.tpl.php": "php",
     "*.test": "php",
     "*.php": "php",
-    "*.info": "ini"
+    "*.info": "ini",
+    "*.html": "twig"
   },
+  "files.trimTrailingWhitespace": true,
+  "files.insertFinalNewline": true,
+  "html.format.enable": true,
+  "html.format.wrapLineLength": 80,
+  "redhat.telemetry.enabled": false,
   "git.autofetch": true,
+
+  /* PHP Intelephense */
+  "php.validate.executablePath": "app/vendor/bin/ddev-shim-php",
+  "php.suggest.basic": false,
+
+  /* PHP Sniffer & Beautifier settings */
+  "phpsab.standard": "Drupal,DrupalPractice",
+  "phpsab.executablePathCS": "app/vendor/bin/ddev-shim-phpcs-ext",
+  "phpsab.executablePathCBF": "app/vendor/bin/ddev-shim-phpcbf-ext",
+  "phpsab.snifferMode": "onType",
   "[php]": {
-    "editor.defaultFormatter": "wongjn.php-sniffer"
+    "editor.defaultFormatter": "valeryanm.vscode-phpsab"
   },
-  "phpcs.executablePath": "/project/app/vendor/bin/phpcs",
-  "phpSniffer.standard": "/project/app/vendor/drupal/coder/coder_sniffer/DrupalPractice,/project/app/vendor/drupal/coder/coder_sniffer/Drupal"
+
+  /* php-docblocker settings */
+  "php-docblocker.gap": true,
+  "php-docblocker.useShortNames": true,
+
+  // Allow searching files that are in .gitignore
+  "search.useIgnoreFiles": false,
+
+  // Configure glob patterns for excluding files and folders in fulltext searches and quick open. Inherits all glob patterns from the `files.exclude` setting.
+  "search.exclude": {
+    "**/vendor": true,
+  },
+  "workbench.startupEditor": "readme",
 }

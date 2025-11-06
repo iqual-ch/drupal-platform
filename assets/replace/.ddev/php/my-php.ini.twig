@@ -1,0 +1,4 @@
+[PHP]
+max_input_vars = 10000
+upload_max_filesize = {{ runtime.php_upload_limit|default('100M') }}
+post_max_size = {{ runtime.php_upload_limit|default('100M') }}
