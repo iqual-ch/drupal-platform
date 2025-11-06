@@ -17,8 +17,10 @@
     },
     "bin": [
         "bin/ddev-shim-php",
-        "bin/ddev-shim-phpcbf-ext",
-        "bin/ddev-shim-phpcs-ext"
+        "bin/ddev-shim-phpcbf",
+        "bin/ddev-shim-phpcs",
+        "bin/ddev-shim-phpstan",
+        "bin/ddev-shim-phpunit"
     ],
     "extra": {
         "project-scaffold": {

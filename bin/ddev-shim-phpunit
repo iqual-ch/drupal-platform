@@ -1,0 +1,8 @@
+#!/bin/bash
+
+if [ "$IS_DDEV_PROJECT" != "true" ]; then
+  command="ddev exec phpunit "$@""
+else
+  command="phpunit "$@""
+fi
+$command
