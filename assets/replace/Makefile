@@ -167,6 +167,10 @@ theme: ## Compile Drupal theme
 	drush iqsc:compile 2>/dev/null || true
 	drush cr
 
+config-pull: drupal-build ## Pull Drupal configuration
+	@echo -e " $(MSG_SUCCESS) Pulling Drupal configuration"
+	ddev drush config:pull @spot @self --yes $(DRUSH_FLAGS)
+
 stop: ## Stop local runtime
 	@echo -e " $(MSG_INFO) Stopping DDEV runtimes"
 	ddev stop
