@@ -19,18 +19,15 @@ runs:
     run: |
       echo "EXECUTION_DATE=$(date --rfc-3339=date)" >> $GITHUB_ENV
 
+  - name: Setup SSH key
+    run: |
+      mkdir -p .ddev/homeadditions/.ssh
+      echo "${{ inputs.ssh_key }}" > .ddev/homeadditions/.ssh/id_rsa
+      chmod 700 .ddev/homeadditions/.ssh
+      chmod 600 .ddev/homeadditions/.ssh/id_rsa
+
   - name: Setup DDEV
     uses: ddev/github-action-setup-ddev@v1
-
-  - name: Setup SSH
-    shell: bash
-    env:
-      SSH_KEY: ${{ inputs.ssh_key }}
-    run: |
-      mkdir -p ~/.ssh
-      echo "$SSH_KEY" > ~/.ssh/id_rsa
-      chmod 600 ~/.ssh/id_rsa
-      ddev auth ssh -f ~/.ssh/id_rsa
 
   - name: Deploy local environment
     shell: bash
