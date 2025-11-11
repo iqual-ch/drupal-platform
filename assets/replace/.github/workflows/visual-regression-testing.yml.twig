@@ -27,8 +27,27 @@ jobs:
         caching: true
         caching_db_key: ${{ inputs.database-cache-key || github.sha }}
 
+    - name: Setup Bun
+      uses: oven-sh/setup-bun@v1
+
+    - name: Install Playwright VRT dependencies
+      shell: bash
+      run: |
+        bunx playwright install chromium
+
     - name: Run Visual regression tests
-      uses: ./app/vendor/iqual-ch/ci-pocketknife-installer/.github/actions/visual-regression-tests
+      shell: bash
+      run: |
+        bunx @iqual/playwright-vrt run \
+          --config playwright-vrt.config.json \
+          --verbose
+
+    - name: Upload VRT report
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: vrt-report
+        path: playwright-report/
 {% endverbatim -%}
 {% else %}
 {% verbatim -%}
@@ -51,8 +70,27 @@ jobs:
       with:
         ssh_key: ${{ secrets.SSH_KEY }}
 
+    - name: Setup Bun
+      uses: oven-sh/setup-bun@v1
+
+    - name: Install Playwright VRT dependencies
+      shell: bash
+      run: |
+        bunx playwright install chromium
+
     - name: Run Visual regression tests
-      uses: ./app/vendor/iqual-ch/ci-pocketknife-installer/.github/actions/visual-regression-tests
+      shell: bash
+      run: |
+        bunx @iqual/playwright-vrt run \
+          --config playwright-vrt.config.json \
+          --verbose
+
+    - name: Upload VRT report
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: vrt-report
+        path: playwright-report/
 {% endverbatim -%}
 {% endif %}
 {% endif %}
