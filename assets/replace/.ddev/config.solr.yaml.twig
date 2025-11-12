@@ -1,0 +1,7 @@
+{% if runtime.solr_version is not null %}
+web_environment:
+    - SOLR_BASE_IMAGE=solr:{{ runtime.solr_version }}
+{% if (locations['project-root'] ~ '/solr/site_search/conf/solrconfig.xml') is existing_file %}
+    - SOLR_CORENAME=site_search
+{% endif %}
+{% endif %}

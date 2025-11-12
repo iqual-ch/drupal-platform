@@ -184,6 +184,13 @@ destroy: ## Destroy local runtime
 	@echo -e " $(MSG_INFO) Destroying DDEV runtimes"
 	ddev delete
 
+## Services
+service-solr: ## Install DDEV Solr service
+	@echo -e " $(MSG_INFO) Installing DDEV Solr service"
+	ddev composer config extra.project-scaffold.runtime --json '{"solr_version": "9.9"}' --merge
+	ddev composer project:scaffold
+	ddev restart
+
 ## Tooling
 tool-chrome: ## Install DDEV Chrome extension
 	@if [ "$(REMOVE)" = "true" ]; then

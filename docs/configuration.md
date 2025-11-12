@@ -179,18 +179,15 @@ composer require drupal/search_api_solr
 drush en search_api_solr
 ```
 
-2. Enable the Solr integration in the Drupal Platform, and set a version (e.g. Solr version `9.2`, including minor):
+2. Enable the Solr integration in the Drupal Platform, and set a version (e.g. Solr version `9.9`, including minor):
 
 ```bash
-composer config extra.project-scaffold.runtime --json '{"solr_version": "9.2"}' --merge
-composer project:scaffold
+make service-solr
 ```
 
-3. Make sure to rebuild the container in VS Code so Solr is started (without a core for initial configuration).
+3. Add a server in the administration backend of the Drupal Search API module (`/admin/config/search/search-api/add-server`). Use `solr` as server (and system) name, as well as host. Use `site_search` as Solr core name.
 
-4. Add a server in the administration backend of the Drupal Search API module (`/admin/config/search/search-api/add-server`). Use `solr` as server (and system) name, as well as host. Use `site_search` as Solr core name.
-
-5. Download the core configuration and add it to the project repository (e.g. including major version `9`):
+4. Download the core configuration and add it to the project repository (e.g. including major version `9`):
 
 ```bash
 drush solr-gsc solr config.zip 9
@@ -199,6 +196,10 @@ rm /project/app/public/config.zip
 composer project:scaffold
 ```
 
-6. Make sure to rebuild the container in VS Code so Solr is started. This will create the core as configured.
+5. Make sure to restart DDEV. This will create the core as configured.
+
+```bash
+ddev restart
+```
 
 You should now have a running Solr service with a core created from the configuration in the `solr` directory. Follow the Search API module's documentation on how to create indexes.
