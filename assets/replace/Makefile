@@ -78,7 +78,7 @@ runtime: ## Start local runtime
 	@echo -e " $(MSG_INFO) Starting DDEV runtimes"
 	ddev start
 	if [ -n "$(DDEV_SNAPSHOT)" ]; then
-    echo -e " $(MSG_INFO) Restoring Drupal snapshot: $(DDEV_SNAPSHOT)"
+		echo -e " $(MSG_INFO) Restoring Drupal snapshot: $(DDEV_SNAPSHOT)"
 		if [ "$(DDEV_SNAPSHOT)" = "latest" ]; then
 			ddev snapshot restore --latest
 		else
