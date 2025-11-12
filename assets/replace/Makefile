@@ -127,6 +127,10 @@ drupal-fs: ## Import drupal filesystem
 
 drupal-deploy: ## Run drupal deployment commands
 	@echo -e " $(MSG_INFO) Running Drupal deployment commands"
+	if [ "$(DRUPAL_NO_DEPLOY)" = "true" ]; then
+		echo "Deployment disabled."
+		exit 0
+	fi
 	ddev drush deploy
 
 ## Maintenance

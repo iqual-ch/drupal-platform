@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
   workflow_call:
     inputs:
-      database-cache-key:
+      cache_key:
         default: "${{ github.sha }}"
         type: string
 
@@ -25,7 +25,14 @@ jobs:
       with:
         ssh_key: ${{ secrets.SSH_KEY }}
         caching: true
-        caching_db_key: ${{ inputs.database-cache-key || github.sha }}
+        cache_key: ${{ inputs.cache_key || github.sha }}
+
+    - name: Restore VRT baseline cache
+      uses: actions/cache@v4
+      with:
+        path: playwright-snapshots
+        key: vrt-baseline-${{ inputs.cache_key || github.sha }}-${{ hashFiles('playwright-vrt.config.json') }}
+        restore-keys: vrt-baseline-
 
     - name: Setup Bun
       uses: oven-sh/setup-bun@v1
@@ -69,6 +76,13 @@ jobs:
       uses: ./.github/actions/install-local
       with:
         ssh_key: ${{ secrets.SSH_KEY }}
+
+    - name: Restore VRT baseline cache
+      uses: actions/cache@v4
+      with:
+        path: playwright-snapshots
+        key: vrt-baseline-${{ github.sha }}-${{ hashFiles('playwright-vrt.config.json') }}
+        restore-keys: vrt-baseline-
 
     - name: Setup Bun
       uses: oven-sh/setup-bun@v1

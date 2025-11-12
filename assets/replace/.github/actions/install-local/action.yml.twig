@@ -8,7 +8,7 @@ inputs:
   caching:
     required: false
     default: false
-  caching_db_key:
+  cache_key:
     required: false
     default: "${{ github.sha }}"
 runs:
@@ -18,6 +18,33 @@ runs:
     shell: bash
     run: |
       echo "EXECUTION_DATE=$(date --rfc-3339=date)" >> $GITHUB_ENV
+
+  - name: Cache Composer dependency
+    id: cache-composer
+    uses: actions/cache@v4
+    with:
+      path: .composer
+      key: ${{ runner.os }}-build-drupal-composer-${{ hashFiles('**/composer.lock') }}
+
+  - name: Cache Drupal database
+    if: ${{ inputs.caching == 'true' }}
+    id: cache-db
+    uses: actions/cache@v4
+    with:
+      path: .ddev/db_snapshots
+      key: ${{ runner.os }}-build-drupal-db-${{ inputs.cache_key }}
+
+  - name: Setup CI DDEV config
+    shell: bash
+    run: |
+      cat <<EOF > .ddev/config.ci.yaml
+      web_environment:
+          - COMPOSER_NO_INTERACTION=1
+          - COMPOSER_DISCARD_CHANGES=1
+          - COMPOSER_FUND=0
+          - COMPOSER_NO_AUDIT=1
+          - COMPOSER_CACHE_DIR=.composer
+      EOF
 
   - name: Setup SSH key
     shell: bash
@@ -33,12 +60,28 @@ runs:
   - name: Deploy local environment
     shell: bash
     run: |
+      if [ "${{ inputs.caching }}" == "true" ] && [ "${{ steps.cache-db.outputs.cache-hit }}" == "true" ]; then
+        echo "Restoring Drupal database from cache..."
+        export DDEV_SNAPSHOT=ci
+      fi
       make runtime
 
   - name: Install local environment
-    if: ${{ inputs.caching != 'true' || steps.cache-db.outputs.cache-hit != 'true' }}
     shell: bash
     run: |
+      if [ "${{ inputs.caching }}" == "true" ] && [ "${{ steps.cache-db.outputs.cache-hit }}" == "false" ]; then
+        export DRUPAL_NO_DEPLOY=true
+      fi
       make stack COMPOSER_FLAGS="--ansi --no-interaction --no-progress"
+
+  - name: Create Drupal database cache
+    if: ${{ inputs.caching == 'true' && steps.cache-db.outputs.cache-hit == 'false' }}
+    shell: bash
+    run: |
+      echo "Caching Drupal database..."
+      ddev drush sql:sanitize -y
+      ddev snapshot --name ci
+      make drupal-deploy
+
 {% endverbatim -%}
 {% endif %}

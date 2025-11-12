@@ -29,7 +29,7 @@ jobs:
       with:
         ssh_key: ${{ secrets.SSH_KEY }}
         caching: true
-        caching_db_key: ${{ github.event.pull_request.head.sha || github.sha }}
+        cache_key: ${{ github.event.pull_request.head.sha || github.sha }}
 
     - name: Detect available tests
       id: phpunit-tests
@@ -82,7 +82,7 @@ jobs:
     with:
       database-testing: ${{ needs.build.outputs.browser_testing == 'true'}}
       browser-testing: ${{ needs.build.outputs.database_testing == 'true'}}
-      database-cache-key: ${{ github.event.pull_request.head.sha || github.sha }}
+      cache_key: ${{ github.event.pull_request.head.sha || github.sha }}
     secrets: inherit
 
   visual-regression-tests:
@@ -90,7 +90,7 @@ jobs:
     uses: ./.github/workflows/visual-regression-testing.yml
     needs: [build]
     with:
-      database-cache-key: ${{ github.event.pull_request.head.sha || github.sha }}
+      cache_key: ${{ github.event.pull_request.head.sha || github.sha }}
     secrets: inherit
 {% endverbatim -%}
 {% endif %}

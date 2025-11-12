@@ -23,7 +23,7 @@ on:
         default: true
         required: true
         type: boolean
-      database-cache-key:
+      cache_key:
         default: "${{ github.sha }}"
         type: string
 
@@ -46,7 +46,7 @@ jobs:
       with:
         ssh_key: ${{ secrets.SSH_KEY }}
         caching: true
-        caching_db_key: ${{ inputs.database-cache-key }}
+        cache_key: ${{ inputs.cache_key }}
 
     - name: Run PHPUnit database tests
       shell: bash
@@ -83,7 +83,7 @@ jobs:
       with:
         ssh_key: ${{ secrets.SSH_KEY }}
         caching: true
-        caching_db_key: ${{ inputs.database-cache-key }}
+        cache_key: ${{ inputs.cache_key }}
 
     - name: Enable Chrome tooling
       shell: bash
