@@ -69,13 +69,13 @@ runs:
   - name: Install local environment
     shell: bash
     run: |
-      if [ "${{ inputs.caching }}" == "true" ] && [ "${{ steps.cache-db.outputs.cache-hit }}" == "false" ]; then
+      if [ "${{ inputs.caching }}" == "true" ] && [ "${{ steps.cache-db.outputs.cache-hit }}" != "true" ]; then
         export DRUPAL_NO_DEPLOY=true
       fi
       make stack COMPOSER_FLAGS="--ansi --no-interaction --no-progress"
 
   - name: Create Drupal database cache
-    if: ${{ inputs.caching == 'true' && steps.cache-db.outputs.cache-hit == 'false' }}
+    if: ${{ inputs.caching == 'true' && steps.cache-db.outputs.cache-hit != 'true' }}
     shell: bash
     run: |
       echo "Caching Drupal database..."
