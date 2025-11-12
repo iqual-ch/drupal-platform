@@ -191,8 +191,8 @@ make service-solr
 
 ```bash
 drush solr-gsc solr config.zip 9
-unzip /project/app/public/config.zip -d /project/solr/site_search/conf
-rm /project/app/public/config.zip
+unzip ./app/public/config.zip -d ./solr/site_search/conf
+rm ./app/public/config.zip
 composer project:scaffold
 ```
 
