@@ -30,6 +30,9 @@ jobs:
       shell: bash
       run: |
         make update COMPOSER_FLAGS=-n DRUSH_FLAGS=-y
+        if [ -f .ddev/homeadditions/.ssh/id_rsa ]; then
+          rm .ddev/homeadditions/.ssh/id_rsa
+        fi
 
     - name: Create Pull Request
       uses: peter-evans/create-pull-request@v7
