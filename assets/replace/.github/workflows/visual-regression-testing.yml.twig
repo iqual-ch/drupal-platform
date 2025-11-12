@@ -1,16 +1,13 @@
 {% if workflows.vrt %}
 name: Visual Regression testing
 
-env:
-  DOCKER_WEB_PORT: 80:80
-
 {% if workflows.phpunit %}
 {% verbatim -%}
 on:
   workflow_dispatch:
   workflow_call:
     inputs:
-      database-cache-key:
+      cache_key:
         default: "${{ github.sha }}"
         type: string
 
@@ -21,20 +18,42 @@ jobs:
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
 
     - name: Install Drupal locally
       uses: ./.github/actions/install-local
       with:
-        dockerhub_container_registry_user: ${{ secrets.DOCKERHUB_CONTAINER_REGISTRY_USER }}
-        dockerhub_container_registry_password: ${{ secrets.DOCKERHUB_CONTAINER_REGISTRY_PASSWORD }}
         ssh_key: ${{ secrets.SSH_KEY }}
-        composer_auth: ${{ secrets.COMPOSER_AUTH }}
         caching: true
-        caching_db_key: ${{ inputs.database-cache-key || github.sha }}
+        cache_key: ${{ inputs.cache_key || github.sha }}
+
+    - name: Restore VRT baseline cache
+      uses: actions/cache@v4
+      with:
+        path: playwright-snapshots
+        key: vrt-baseline-${{ inputs.cache_key || github.sha }}-${{ hashFiles('playwright-vrt.config.json') }}
+
+    - name: Setup Bun
+      uses: oven-sh/setup-bun@v1
+
+    - name: Install Playwright VRT dependencies
+      shell: bash
+      run: |
+        bunx playwright install chromium
 
     - name: Run Visual regression tests
-      uses: ./app/vendor/iqual-ch/ci-pocketknife-installer/.github/actions/visual-regression-tests
+      shell: bash
+      run: |
+        bunx @iqual/playwright-vrt run \
+          --config playwright-vrt.config.json \
+          --verbose
+
+    - name: Upload VRT report
+      uses: actions/upload-artifact@v5
+      if: always()
+      with:
+        name: vrt-report
+        path: playwright-report/
 {% endverbatim -%}
 {% else %}
 {% verbatim -%}
@@ -50,18 +69,40 @@ jobs:
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
 
     - name: Install Drupal locally
       uses: ./.github/actions/install-local
       with:
-        dockerhub_container_registry_user: ${{ secrets.DOCKERHUB_CONTAINER_REGISTRY_USER }}
-        dockerhub_container_registry_password: ${{ secrets.DOCKERHUB_CONTAINER_REGISTRY_PASSWORD }}
         ssh_key: ${{ secrets.SSH_KEY }}
-        composer_auth: ${{ secrets.COMPOSER_AUTH }}
+
+    - name: Restore VRT baseline cache
+      uses: actions/cache@v4
+      with:
+        path: playwright-snapshots
+        key: vrt-baseline-${{ github.sha }}-${{ hashFiles('playwright-vrt.config.json') }}
+
+    - name: Setup Bun
+      uses: oven-sh/setup-bun@v1
+
+    - name: Install Playwright VRT dependencies
+      shell: bash
+      run: |
+        bunx playwright install chromium
 
     - name: Run Visual regression tests
-      uses: ./app/vendor/iqual-ch/ci-pocketknife-installer/.github/actions/visual-regression-tests
+      shell: bash
+      run: |
+        bunx @iqual/playwright-vrt run \
+          --config playwright-vrt.config.json \
+          --verbose
+
+    - name: Upload VRT report
+      uses: actions/upload-artifact@v5
+      if: always()
+      with:
+        name: vrt-report
+        path: playwright-report/
 {% endverbatim -%}
 {% endif %}
 {% endif %}

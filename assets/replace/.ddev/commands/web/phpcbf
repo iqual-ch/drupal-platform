@@ -1,0 +1,9 @@
+#!/bin/bash
+
+## Description: Run phpcbf inside the web container.
+## Usage: phpcbf [args]
+## Example: "ddev phpcbf"
+## HostWorkingDir: true
+## ExecRaw: true
+
+phpcbf "$@"

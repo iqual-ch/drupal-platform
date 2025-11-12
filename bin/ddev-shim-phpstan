@@ -1,0 +1,8 @@
+#!/bin/bash
+
+if [ "$IS_DDEV_PROJECT" != "true" ]; then
+  command="ddev exec phpstan "$@""
+else
+  command="phpstan "$@""
+fi
+$command

@@ -93,3 +93,17 @@ app/backups/
 
 # Ignore maintenance file
 maintenance_*.html
+
+# Ignore DDEV Secrets and CI config
+.ddev/homeadditions/.ssh
+.ddev/config.ci.yaml
+
+# Ignore DDEV chrome add-on
+.ddev/addon-metadata/*chrome/manifest.yaml
+.ddev/*-chrome.yaml
+.ddev/*-chrome_extras.yaml
+
+# Ignore Playwright folders
+playwright-report/
+playwright-snapshots/
+playwright-tmp/

@@ -1,0 +1,12 @@
+#!/bin/bash
+
+## Description: Run PHP Linting
+## Usage: lint [path]
+## Example: "ddev lint public/modules/custom/foobar"
+## HostWorkingDir: true
+
+if [[ -x "$(command -v parallel-lint)" ]]; then
+  parallel-lint "$@" -e php,module,theme,inc,install,profile
+else
+  find "$@" \( -name '*.php' -o -name '*.module' -o -name '*.theme' -o -name '*.inc' -o -name '*.install' -o -name '*.profile' \) -exec php -l {} \;
+fi

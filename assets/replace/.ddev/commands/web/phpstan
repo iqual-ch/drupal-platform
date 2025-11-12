@@ -1,0 +1,9 @@
+#!/bin/bash
+
+## Description: Run PHPStan
+## Usage: phpstan [flags] [args]
+## Example: "ddev phpstan --configuration=./app/phpstan.neon analyse app/public/modules/custom/foobar"
+## HostWorkingDir: true
+## ExecRaw: true
+
+phpstan "$@"

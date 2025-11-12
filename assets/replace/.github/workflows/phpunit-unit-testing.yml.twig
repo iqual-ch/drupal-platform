@@ -32,9 +32,6 @@ jobs:
       shell: bash
       run: |
         echo "::add-matcher::${{ runner.tool_cache }}/php.json"
-        COMPOSER_AUTH="${{ secrets.COMPOSER_AUTH }}"
-        echo "COMPOSER_AUTH=$COMPOSER_AUTH" >> $GITHUB_ENV
-        echo "::add-mask::$COMPOSER_AUTH"
 
     - name: "Install dependencies"
       shell: bash
@@ -45,10 +42,10 @@ jobs:
     - name: "Run PHPUnit Unit Tests"
       shell: bash
       run: |
-        make phpunit PHPUNIT_CONFIG="${{ github.workspace }}/app" APP_ROOT="${{ github.workspace }}/app" PHPUNIT_FLAGS="--log-junit TEST-phpunit.xml"
+        phpunit -c ./app --testsuite=unit --log-junit TEST-phpunit.xml
 
     - name: Publish Test Report
-      uses: mikepenz/action-junit-report@v4
+      uses: mikepenz/action-junit-report@v6
       if: success() || failure()
       with:
         report_paths: '**/TEST-*.xml'

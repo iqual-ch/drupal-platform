@@ -29,7 +29,7 @@ help: ## Show this help message
 	}
 	/^[0-9A-Za-z_.-]+:.*?##/ {
 		# Print a target line with its description
-		printf "  \033[36m%-15s\033[0m %s\n", $$1, $$2
+		printf "  \033[36m%-20s\033[0m %s\n", $$1, $$2
 	}' $(MAKEFILE_LIST)
 	echo -e "\n\033[1mQuick start\033[0m: make \033[36minstall\033[0m"
 
@@ -38,14 +38,14 @@ quickhelp:
 	echo -e "\033[1mUsage\033[0m: make \033[36m[target]\033[0m"
 	echo -e "\033[1mQuick Start\033[0m: make \033[36minstall\033[0m\n"
 	echo -e "Essential Commands:"
-	echo -e "  \033[36minstall\033[0m      Setup and install the project"
-	echo -e "  \033[36mlaunch\033[0m       Open project in browser"
-	echo -e "  \033[36mcode\033[0m         Start coding in VS Code"
-	echo -e "  \033[36mhelp\033[0m         Show all available commands"
+	echo -e "  \033[36minstall\033[0m          Setup and install the project"
+	echo -e "  \033[36mlaunch\033[0m           Open project in browser"
+	echo -e "  \033[36mcode\033[0m             Start coding in VS Code"
+	echo -e "  \033[36mhelp\033[0m             Show all available commands"
 
 .DEFAULT_GOAL := quickhelp
 
-## Local Dev
+## Local Development
 code: ## Launch local dev environment
 	@echo "Starting VS Code local development environment"
 	code .
@@ -78,6 +78,7 @@ runtime: ## Start local runtime
 	@echo -e " $(MSG_INFO) Starting DDEV runtimes"
 	ddev start
 	if [ -n "$(DDEV_SNAPSHOT)" ]; then
+		echo -e " $(MSG_INFO) Restoring Drupal snapshot: $(DDEV_SNAPSHOT)"
 		if [ "$(DDEV_SNAPSHOT)" = "latest" ]; then
 			ddev snapshot restore --latest
 		else
@@ -127,23 +128,31 @@ drupal-fs: ## Import drupal filesystem
 
 drupal-deploy: ## Run drupal deployment commands
 	@echo -e " $(MSG_INFO) Running Drupal deployment commands"
+	if [ "$(DRUPAL_NO_DEPLOY)" = "true" ]; then
+		echo -e " $(MSG_WARNING) Deployment disabled."
+		exit 0
+	fi
 	ddev drush deploy
 
 ## Maintenance
 update: ## Update Drupal site
-	@echo "Updating Drupal"
-	composer update $(COMPOSER_FLAGS)
-	drush cr
-	drush updb $(DRUSH_FLAGS)
-	drush cex $(DRUSH_FLAGS)
+	@echo -e " $(MSG_INFO) Updating Drupal"
+	$(MAKE) drupal-update
+
+drupal-update:
+	@echo -e " $(MSG_INFO) Updating Drupal"
+	ddev composer update $(COMPOSER_FLAGS)
+	ddev drush cr
+	ddev drush updb $(ddev DRUSH_FLAGS)
+	ddev drush cex $(DRUSH_FLAGS)
 
 upgrade: ## Upgrade Drupal site
-	@echo "Upgrading Drupal"
+	@echo -e " $(MSG_INFO) Upgrading project"
 	if [ -z "$$JSON_INPUT" ]; then
 		echo -e " $(MSG_ERROR) Missing upgrade operations JSON_INPUT."
 		exit 1
 	fi
-	RSH="make-cli"
+	RSH="ddev"
 	bash ./.github/actions/upgrade/upgrade.sh
 
 ## Utility
@@ -163,6 +172,10 @@ theme: ## Compile Drupal theme
 	drush iqsc:compile 2>/dev/null || true
 	drush cr
 
+config-pull: drupal-build ## Pull Drupal configuration
+	@echo -e " $(MSG_SUCCESS) Pulling Drupal configuration"
+	ddev drush config:pull @spot @self --yes $(DRUSH_FLAGS)
+
 stop: ## Stop local runtime
 	@echo -e " $(MSG_INFO) Stopping DDEV runtimes"
 	ddev stop
@@ -171,36 +184,69 @@ destroy: ## Destroy local runtime
 	@echo -e " $(MSG_INFO) Destroying DDEV runtimes"
 	ddev delete
 
-## Testing
-test: drupal-test ## Run project tests
+## Tooling
+tool-chrome: ## Install DDEV Chrome extension
+	@if [ "$(REMOVE)" = "true" ]; then
+		ddev add-on remove ddev/ddev-selenium-standalone-chrome || echo -e " $(MSG_WARNING) No existing DDEV Chrome extension to remove."
+	else
+		echo -e " $(MSG_INFO) Installing DDEV Chrome extension"
+		echo -e " $(MSG_WARNING) Extension will be gitignored locally."
+		ddev add-on get ddev/ddev-selenium-standalone-chrome --version 2.1.0
+	fi
+	ddev restart
 
-drupal-test: ## Test Drupal
+## Testing
+test: drupal-validate drupal-lint drupal-analysis drupal-test-unit ## Run project tests
+
+drupal-test-list: ## List Drupal tests
+	@echo -e " $(MSG_INFO) Listing Drupal tests"
+	ddev phpunit -c ./app --list-tests
+
+drupal-test-unit: ## Run Drupal unit tests
 	@echo -e " $(MSG_INFO) Testing Drupal"
-	ddev phpunit
+	ddev phpunit -c ./app --testsuite=unit $(PHPUNIT_FLAGS)
+
+drupal-test-func: ## Run Drupal functional tests
+	@echo -e " $(MSG_INFO) Running functional tests"
+	echo -e " $(MSG_WARNING) Some tests could modify your existing database."
+	ddev phpunit -c ./app --testsuite=unit,kernel,functional,functional-javascript $(PHPUNIT_FLAGS)
+
+drupal-test-db: ## Run Drupal db tests
+	@echo -e " $(MSG_INFO) Running database tests"
+	echo -e " $(MSG_WARNING) Some tests could modify your existing database."
+	ddev phpunit -c ./app --testsuite=kernel,functional,existingsite $(PHPUNIT_FLAGS)
+
+drupal-test-browser: ## Run Drupal browser tests
+	@echo -e " $(MSG_INFO) Running browser tests"
+	echo -e " $(MSG_WARNING) Make sure that the chrome tool is installed."
+	echo -e " $(MSG_WARNING) Some tests could modify your existing database."
+	ddev phpunit -c ./app --testsuite=functional-javascript,existingsite-javascript $(PHPUNIT_FLAGS)
 
 ## Linting
-lint: drupal-validate drupal-analysis drupal-lint ## Lint project
+lint: drupal-validate drupal-lint drupal-analysis ## Lint project
 
 drupal-validate: ## Validate Drupal
 	@echo -e " $(MSG_INFO) Validating composer lock file"
 	ddev composer validate
 
-drupal-analysis: ## Static analysis of Drupal
-	@echo -e " $(MSG_INFO) Static analysis Drupal"
-	ddev phpstan
-
 drupal-lint: ## Lint Drupal
 	@echo -e " $(MSG_INFO) Linting Drupal"
 	REPO_CODE="$$(git ls-tree -d -r $$(git write-tree) --name-only | grep -E '(themes|modules)/custom/[^/]+$$' | paste -s -)"
-	ddev parallel-lint $${REPO_CODE/drupal\//} -e php,module,theme,inc,install,profile $(PARALINT_FLAGS)
-	ddev phpcs
+	ddev lint $${REPO_CODE}
+	ddev phpcs $${REPO_CODE} --standard=./app/phpcs.xml.dist
+
+drupal-analysis: ## Static analysis of Drupal
+	@echo -e " $(MSG_INFO) Running static analysis of Drupal"
+	REPO_CODE="$$(git ls-tree -d -r $$(git write-tree) --name-only | grep -E '(themes|modules)/custom/[^/]+$$' | paste -s -)"
+	ddev phpstan --configuration=app/phpstan.neon analyse $${REPO_CODE}
 
 ## Beautifying
 beauty: drupal-beauty ## Beautify & fix code in project
 
 drupal-beauty: ## Beautify & fix Drupal
 	@echo -e " $(MSG_INFO) Beautify & fixing Drupal"
-	ddev phpcbf
+	REPO_CODE="$$(git ls-tree -d -r $$(git write-tree) --name-only | grep -E '(themes|modules)/custom/[^/]+$$' | paste -s -)"
+	ddev phpcbf $${REPO_CODE} --standard=./app/phpcs.xml.dist
 
 # Helper Commands
 git-status:

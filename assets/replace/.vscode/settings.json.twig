@@ -42,9 +42,11 @@
   "php.suggest.basic": false,
 
   /* PHP Sniffer & Beautifier settings */
-  "phpsab.standard": "Drupal,DrupalPractice",
-  "phpsab.executablePathCS": "app/vendor/bin/ddev-shim-phpcs-ext",
-  "phpsab.executablePathCBF": "app/vendor/bin/ddev-shim-phpcbf-ext",
+  "phpsab.standard": "app/phpcs.xml.dist",
+  "phpsab.autoRulesetSearch": false,
+  "phpsab.composerJsonPath": "app/composer.json",
+  "phpsab.executablePathCS": "app/vendor/bin/ddev-shim-phpcs",
+  "phpsab.executablePathCBF": "app/vendor/bin/ddev-shim-phpcbf",
   "phpsab.snifferMode": "onType",
   "[php]": {
     "editor.defaultFormatter": "valeryanm.vscode-phpsab"

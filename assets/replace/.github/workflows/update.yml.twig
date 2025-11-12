@@ -19,23 +19,23 @@ jobs:
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
 
     - name: Install Drupal locally
       uses: ./.github/actions/install-local
       with:
-        dockerhub_container_registry_user: ${{ secrets.DOCKERHUB_CONTAINER_REGISTRY_USER }}
-        dockerhub_container_registry_password: ${{ secrets.DOCKERHUB_CONTAINER_REGISTRY_PASSWORD }}
         ssh_key: ${{ secrets.SSH_KEY }}
-        composer_auth: ${{ secrets.COMPOSER_AUTH }}
 
     - name: Run Drupal updates
       shell: bash
       run: |
-        make cli-local COMMAND="make update COMPOSER_FLAGS=-n DRUSH_FLAGS=-y"
+        make update COMPOSER_FLAGS=-n DRUSH_FLAGS=-y
+        if [ -f .ddev/homeadditions/.ssh/id_rsa ]; then
+          rm .ddev/homeadditions/.ssh/id_rsa
+        fi
 
     - name: Create Pull Request
-      uses: peter-evans/create-pull-request@v6
+      uses: peter-evans/create-pull-request@v7
       with:
         token: ${{ github.event.inputs.token || secrets.GITHUB_TOKEN }}
         commit-message: Updated Drupal site

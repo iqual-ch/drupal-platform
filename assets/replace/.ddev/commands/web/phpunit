@@ -1,0 +1,9 @@
+#!/bin/bash
+
+## Description: Run PHPUnit
+## Usage: phpunit [flags] [args]
+## Example: "ddev phpunit --testsuite=unit" or "ddev phpunit public/modules/custom/foobar"
+## HostWorkingDir: true
+## ExecRaw: true
+
+phpunit "$@"

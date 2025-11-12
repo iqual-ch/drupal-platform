@@ -1,0 +1,20 @@
+parameters:
+  level: 5
+  paths:
+    - %currentWorkingDirectory%/public/modules/custom
+    - %currentWorkingDirectory%/public/themes/custom
+  excludePaths:
+    - *node_modules/*
+    - *.twig
+  fileExtensions:
+    - php
+    - module
+    - inc
+    - install
+    - test
+    - profile
+    - theme
+  reportUnmatchedIgnoredErrors: false
+  ignoreErrors:
+    - '#^Unsafe usage of new static#'
+  treatPhpDocTypesAsCertain: false
