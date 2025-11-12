@@ -61,8 +61,10 @@ runs:
     shell: bash
     run: |
       if [ "${{ inputs.caching }}" == "true" ] && [ "${{ steps.cache-db.outputs.cache-hit }}" == "true" ]; then
-        echo "Restoring Drupal database from cache..."
-        export DDEV_SNAPSHOT=ci
+        if [ -f ".ddev/db_snapshots/ci-"* ]; then
+          echo "Restoring Drupal database from existing snapshot..."
+          export DDEV_SNAPSHOT=ci
+        fi
       fi
       make runtime
 
