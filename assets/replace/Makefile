@@ -78,6 +78,7 @@ runtime: ## Start local runtime
 	@echo -e " $(MSG_INFO) Starting DDEV runtimes"
 	ddev start
 	if [ -n "$(DDEV_SNAPSHOT)" ]; then
+    echo -e " $(MSG_INFO) Restoring Drupal snapshot: $(DDEV_SNAPSHOT)"
 		if [ "$(DDEV_SNAPSHOT)" = "latest" ]; then
 			ddev snapshot restore --latest
 		else
@@ -128,7 +129,7 @@ drupal-fs: ## Import drupal filesystem
 drupal-deploy: ## Run drupal deployment commands
 	@echo -e " $(MSG_INFO) Running Drupal deployment commands"
 	if [ "$(DRUPAL_NO_DEPLOY)" = "true" ]; then
-		echo "Deployment disabled."
+		echo -e " $(MSG_WARNING) Deployment disabled."
 		exit 0
 	fi
 	ddev drush deploy
