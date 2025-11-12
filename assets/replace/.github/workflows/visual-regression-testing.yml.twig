@@ -32,7 +32,6 @@ jobs:
       with:
         path: playwright-snapshots
         key: vrt-baseline-${{ inputs.cache_key || github.sha }}-${{ hashFiles('playwright-vrt.config.json') }}
-        restore-keys: vrt-baseline-
 
     - name: Setup Bun
       uses: oven-sh/setup-bun@v1
@@ -82,7 +81,6 @@ jobs:
       with:
         path: playwright-snapshots
         key: vrt-baseline-${{ github.sha }}-${{ hashFiles('playwright-vrt.config.json') }}
-        restore-keys: vrt-baseline-
 
     - name: Setup Bun
       uses: oven-sh/setup-bun@v1
