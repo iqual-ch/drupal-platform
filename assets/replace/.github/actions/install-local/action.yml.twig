@@ -43,7 +43,7 @@ runs:
           - COMPOSER_DISCARD_CHANGES=1
           - COMPOSER_FUND=0
           - COMPOSER_NO_AUDIT=1
-          - COMPOSER_CACHE_DIR=.composer
+          - COMPOSER_CACHE_DIR=/var/www/html/.composer
       EOF
 
   - name: Setup SSH key
