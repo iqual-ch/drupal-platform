@@ -54,7 +54,7 @@ jobs:
         make drupal-test-db PHPUNIT_FLAGS="--log-junit TEST-phpunit.xml"
 
     - name: Publish Test Report
-      uses: mikepenz/action-junit-report@v4
+      uses: mikepenz/action-junit-report@v6
       if: success() || failure()
       with:
         report_paths: '**/TEST-*.xml'
@@ -64,7 +64,7 @@ jobs:
 
     - name: Upload HTML output
       if: ${{ failure() }}
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v5
       with:
         name: phpunit-db-report
         path: ./app/public/sites/simpletest/browser_output
@@ -96,7 +96,7 @@ jobs:
         make drupal-test-browser PHPUNIT_FLAGS="--log-junit TEST-phpunit.xml"
 
     - name: Publish Test Report
-      uses: mikepenz/action-junit-report@v4
+      uses: mikepenz/action-junit-report@v6
       if: success() || failure()
       with:
         report_paths: '**/TEST-*.xml'
@@ -106,7 +106,7 @@ jobs:
 
     - name: Upload HTML output
       if: ${{ failure() }}
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v5
       with:
         name: phpunit-browser-report
         path: ./app/public/sites/simpletest/browser_output
