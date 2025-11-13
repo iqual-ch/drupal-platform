@@ -4,7 +4,8 @@ docroot: app/public
 php_version: "{{ runtime.php_version }}"
 webserver_type: nginx-fpm
 xdebug_enabled: false
-additional_hostnames: []
+additional_hostnames:
+  - "*.{{ name }}"
 additional_fqdns: []
 database:
     type: mariadb
