@@ -1,6 +1,5 @@
 {% if runtime.solr_version is not null %}
 web_environment:
-    - SOLR_BASE_IMAGE=solr:{{ runtime.solr_version }}
     - SOLR_HOST=solr
     - SOLR_CORE=site_search
     - SOLR_CORENAME=site_search

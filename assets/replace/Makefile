@@ -187,7 +187,7 @@ destroy: ## Destroy local runtime
 ## Services
 service-solr: ## Install DDEV Solr service
 	@echo -e " $(MSG_INFO) Installing DDEV Solr service"
-	ddev composer config extra.project-scaffold.runtime --json '{"solr_version": "9.9"}' --merge
+	ddev composer config extra.project-scaffold.runtime --json '{"solr_version": "9.2"}' --merge
 	ddev composer project:scaffold
 	ddev restart
 

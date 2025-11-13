@@ -69,7 +69,7 @@ services:
 
     # The odd need to use $$SOLR_CORENAME here is explained in
     # https://stackoverflow.com/a/48189916/215713
-    entrypoint: 'bash -c "VERBOSE=yes [ -d /var/solr/data/site_search/conf ] && cp /solr-conf/conf/* /var/solr/data/site_search/conf; solr-precreate site_search /solr-conf"'
+    entrypoint: 'bash -c "VERBOSE=yes mkdir -p /var/solr/data; [ -d /var/solr/data/site_search/conf ] && cp /solr-conf/conf/* /var/solr/data/site_search/conf; solr-precreate site_search /solr-conf"'
 {% endif %}
 
     external_links:
