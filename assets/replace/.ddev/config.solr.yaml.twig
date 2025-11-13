@@ -1,0 +1,6 @@
+{% if runtime.solr_version is not null %}
+web_environment:
+    - SOLR_HOST=solr
+    - SOLR_CORE=site_search
+    - SOLR_CORENAME=site_search
+{% endif %}

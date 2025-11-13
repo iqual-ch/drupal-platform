@@ -172,33 +172,37 @@ If a `runtime.solr_version` is defined (e.g. `9.2` instead of `null`) then an ad
 
 In order to create a new Solr core for use with the search API, the following steps have to be followed:
 
+> [!WARNING]
+> The `solr` setup has only been tested with `solr` version `8.11` and `9.2`.
+
 1. Install the Search API Solr module:
 
 ```bash
-composer require drupal/search_api_solr
-drush en search_api_solr
+ddev composer require drupal/search_api_solr
+ddev drush en search_api_solr
 ```
 
 2. Enable the Solr integration in the Drupal Platform, and set a version (e.g. Solr version `9.2`, including minor):
 
 ```bash
-composer config extra.project-scaffold.runtime --json '{"solr_version": "9.2"}' --merge
-composer project:scaffold
+make service-solr
 ```
 
-3. Make sure to rebuild the container in VS Code so Solr is started (without a core for initial configuration).
+3. Add a server in the administration backend of the Drupal Search API module (`/admin/config/search/search-api/add-server`). Use `solr` as server (and system) name, as well as host. Use `site_search` as Solr core name.
 
-4. Add a server in the administration backend of the Drupal Search API module (`/admin/config/search/search-api/add-server`). Use `solr` as server (and system) name, as well as host. Use `site_search` as Solr core name.
-
-5. Download the core configuration and add it to the project repository (e.g. including major version `9`):
+4. Download the core configuration and add it to the project repository (e.g. including major version `9.2`):
 
 ```bash
-drush solr-gsc solr config.zip 9
-unzip /project/app/public/config.zip -d /project/solr/site_search/conf
-rm /project/app/public/config.zip
-composer project:scaffold
+ddev drush solr-gsc solr config.zip 9.2
+unzip ./app/public/config.zip -d ./solr/site_search/conf
+rm ./app/public/config.zip
+ddev composer project:scaffold
 ```
 
-6. Make sure to rebuild the container in VS Code so Solr is started. This will create the core as configured.
+5. Make sure to restart DDEV. This will create the core as configured.
+
+```bash
+ddev restart
+```
 
 You should now have a running Solr service with a core created from the configuration in the `solr` directory. Follow the Search API module's documentation on how to create indexes.
