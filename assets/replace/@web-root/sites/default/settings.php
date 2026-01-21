@@ -220,4 +220,10 @@ if (file_exists($app_root . '/' . $site_path . '/services.local.yml')) {
 $ddev_settings = __DIR__ . '/settings.ddev.php';
 if (getenv('IS_DDEV_PROJECT') == 'true' && is_readable($ddev_settings)) {
   require $ddev_settings;
+
+  // Set Stage File Proxy origin if provided.
+  if (getenv('DRUPAL_SPOT_ORIGIN')) {
+    $config['iq_stage_file_proxy.settings']['remote_instance'] = getenv('DRUPAL_SPOT_ORIGIN');
+    $config['stage_file_proxy.settings']['origin'] = getenv('DRUPAL_SPOT_ORIGIN');
+  }
 }
