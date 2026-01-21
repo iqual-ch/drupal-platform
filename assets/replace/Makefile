@@ -152,8 +152,11 @@ upgrade: ## Upgrade Drupal site
 		echo -e " $(MSG_ERROR) Missing upgrade operations JSON_INPUT."
 		exit 1
 	fi
-	RSH="ddev"
-	bash ./.github/actions/upgrade/upgrade.sh
+	UPGRADE_SCRIPT="./.github/actions/upgrade/upgrade.sh"
+	TEMP_SCRIPT=$$(mktemp)
+	trap "rm -f $$TEMP_SCRIPT" EXIT
+	cp "$$UPGRADE_SCRIPT" "$$TEMP_SCRIPT"
+	RSH="ddev" bash "$$TEMP_SCRIPT"
 
 ## Utility
 launch: ## Launch project
