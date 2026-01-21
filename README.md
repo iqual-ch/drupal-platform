@@ -103,7 +103,7 @@ assets/replace/
 │   │   │   └── action.yml.twig
 │   │   └── upgrade
 │   │       ├── rector.php
-│   │       └── upgrade.sh
+│   │       └── upgrader.sh
 │   └── workflows
 │       ├── phpcs.yml.twig
 │       ├── phpunit-functional-testing.yml.twig
