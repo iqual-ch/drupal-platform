@@ -60,6 +60,9 @@ This workflow will install the project in a GitHub Actions runner environment an
 * `drupal:scaffold`: Scaffolding drupal assets with `composer drupal:scaffold`.
 * `patch-add`: Adding patches to composer with `composer patch-add`.
 * `patch-remove`: Removing patches from composer with `composer patch-remove`.
+* `patch-remove-all`: Removing all patches from a single composer packages by looping `composer patch-remove`.
+* `patch-remote-to-local`: Download all remote patches and store them in the given directory.
+* `patch-migrate-config`: Migrate the composer patches configuration from 1 to 2.
 * `commit`: Committing changes between operation actions with `git commit`.
 * `reboot`: Rebooting/restarting the local deployment between operation actions (e.g. when changing images).
 

@@ -101,6 +101,20 @@ function drupal_extension_installed {
   [ -n "${RESULT}" ]
 }
 
+# Return JSON of composer patches, if any.
+function composer_patch_json {
+  # look for `extra.patches` or `extra.composer-patches.patches` in composer.json
+  PATCHES_JSON=$(jq -c '.extra.patches // .extra["composer-patches"].patches // {}' "${COMPOSER_JSON_FILE}")
+  # If empty, look for `extra.patches-file` or `extra.composer-patches.patches-file` and read that file.
+  if [ "${PATCHES_JSON}" == "{}" ]; then
+    PATCHES_FILE=$(jq -r '.extra["patches-file"] // .extra["composer-patches"]["patches-file"] // ""' "${COMPOSER_JSON_FILE}")
+    if [ -n "${PATCHES_FILE}" ] && [ -f "${APP_ROOT}/${PATCHES_FILE}" ]; then
+      PATCHES_JSON=$(jq -c '.patches' "${APP_ROOT}/${PATCHES_FILE}")
+    fi
+  fi
+  echo "${PATCHES_JSON}"
+}
+
 # Read operations into a bash array
 readarray -t OPERATIONS < <(echo "${JSON_INPUT}" | jq -c '.operations[]')
 
@@ -294,6 +308,40 @@ for operation in "${OPERATIONS[@]}"; do
       if grep -q "szeidler/composer-patches-cli" "$COMPOSER_JSON_FILE"; then
         # DATA_ARRAY is already properly populated from JSON parsing above
         rsh composer patch-remove "${OPTIONS_ARRAY[@]}" -n "${DATA_ARRAY[@]}" -d "${APP_ROOT}"
+      else
+        echo "Warning: missing \"szeidler/composer-patches-cli\" package for patch CLI."
+      fi
+      ;;
+    "patch-remove-all")
+      if grep -q "szeidler/composer-patches-cli" "$COMPOSER_JSON_FILE"; then
+        if [ ${#DATA_ARRAY[@]} -eq 1 ]; then
+          composer_patch_json=$(composer_patch_json)
+          mapfile -t PATCH_NAMES < <(echo "${composer_patch_json}" | jq -r '."'"${DATA_ARRAY[0]}"'" | keys[]')
+          if [ ${#PATCH_NAMES[@]} -eq 0 ]; then
+            echo "No patches found for package: ${DATA_ARRAY[0]}"
+            continue
+          fi
+          for PATCH_NAME in "${PATCH_NAMES[@]}"; do
+            rsh composer patch-remove "${OPTIONS_ARRAY[@]}" -n "${DATA_ARRAY[0]}" "${PATCH_NAME}" -d "${APP_ROOT}"
+          done
+          continue
+        else
+          echo "Warning: patch-remove-all action does not support multiple data arguments. Skipping."
+        fi
+      else
+        echo "Warning: missing \"szeidler/composer-patches-cli\" package for patch CLI."
+      fi
+      ;;
+    "patch-remote-to-local")
+      if grep -q "szeidler/composer-patches-cli" "$COMPOSER_JSON_FILE"; then
+        rsh composer patch-remote-to-local "${OPTIONS_ARRAY[@]}" -n "${DATA_ARRAY[@]}" -d "${APP_ROOT}"
+      else
+        echo "Warning: missing \"szeidler/composer-patches-cli\" package for patch CLI."
+      fi
+      ;;
+    "patch-migrate-config")
+      if grep -q "szeidler/composer-patches-cli" "$COMPOSER_JSON_FILE"; then
+        rsh composer patch-migrate-config "${OPTIONS_ARRAY[@]}" -n -d "${APP_ROOT}"
       else
         echo "Warning: missing \"szeidler/composer-patches-cli\" package for patch CLI."
       fi
