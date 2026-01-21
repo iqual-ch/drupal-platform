@@ -69,12 +69,18 @@ A JSON payload has to follow this structure:
 
 * `operations`: Operations Array (`array`)
    * Operation object
-      * `match`: (optional) Matching a requirement (key) in the `require` or `require-dev` of the `composer.json` (`string`)
-      * `matchInverse`: (optional) Inverse matching a requirement (key) in the `require` or `require-dev` of the `composer.json` (`string`)
       * `action`: The desired action (e.g. `require`) (`string`)
       * `data`: (optional) The data for the action (e.g. `dompdf/dompdf`) (`string`|`array`)
       * `options`: (optional) Options for the action (e.g. `--dev`) (`string`)
       * `key`: (required for `config` and `config:set` actions) The configuration key to set (e.g. `platform.php`) (`string`)
+      * `match`: (optional) Matching a requirement (key) in the `require` or `require-dev` of the `composer.json` (`string`)
+      * `matchInverse`: (optional) Inverse matching a requirement (key) in the `require` or `require-dev` of the `composer.json` (`string`)
+      * `matchLock`: (optional) Matching a installed package in the `composer.lock` (`string`)
+      * `matchLockInverse`: (optional) Inverse matching a installed package in the `composer.lock` (`string`)
+      * `matchName`: (optional) Matching the `name` (key) in the `composer.json` (`string`)
+      * `matchNameInverse`: (optional) Inverse matching the `name` (key) in the `composer.json` (`string`)
+      * `matchExtension`: (optional) Matching the name of a module or theme in the `core.extension.yml` of the Drupal config (`string`)
+      * `matchExtensionInverse`: (optional) Inverse matching the name of a module or theme in the `core.extension.yml` of the Drupal config (`string`)
 
 An example operation for removing `dompdf/dompdf` if it is installed and requiring `iqual/iq_barrio` and `drupal/antibot:^2.0` and updating all depedencies would look like this:
 
