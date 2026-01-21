@@ -71,9 +71,33 @@ function rsh {
 }
 
 # Check if the the string is a key in the composer requirements.
-function match_exists {
+function package_required {
   MATCH_VALUE=$1
   RESULT=$(jq -r ".require + .[\"require-dev\"] | select(.\"${MATCH_VALUE}\")" "${COMPOSER_JSON_FILE}")
+  [ -n "${RESULT}" ]
+}
+
+# Check if the string is an installed package (composer.lock).
+function package_installed {
+  PACKAGE_VALUE=$1
+  RESULT=$(jq -r ".packages[] | select(.name==\"${PACKAGE_VALUE}\")" "${COMPOSER_JSON_FILE/.json/.lock}")
+  [ -n "${RESULT}" ]
+}
+
+# Check if the the string is a key in the composer requirements.
+function name_matches {
+  NAME_VALUE=$1
+  RESULT=$(jq -r "select(.name==\"${NAME_VALUE}\") | .name" "${COMPOSER_JSON_FILE}")
+  [ -n "${RESULT}" ]
+}
+
+# Check if the the string is an installed drupal extension.
+function drupal_extension_installed {
+  EXTENSION_VALUE=$1
+  CORE_EXTENSION_FILE="$(find "${APP_ROOT}/" -maxdepth 8 -type f -name "core.extension.yml"| head -n 1)"
+  if [ -n "${CORE_EXTENSION_FILE}" ]; then
+    RESULT=$(grep -E "^\s*${EXTENSION_VALUE}:" "${CORE_EXTENSION_FILE}")
+  fi
   [ -n "${RESULT}" ]
 }
 
@@ -85,20 +109,62 @@ for operation in "${OPERATIONS[@]}"; do
   ACTION=$(echo "${operation}" | jq -r '.action')
   MATCH=$(echo "${operation}" | jq -r '.match // ""')
   MATCH_INVERSE=$(echo "${operation}" | jq -r '.matchInverse // ""')
+  MATCH_LOCK=$(echo "${operation}" | jq -r '.matchLock // ""')
+  MATCH_LOCK_INVERSE=$(echo "${operation}" | jq -r '.matchLockInverse // ""')
+  MATCH_NAME=$(echo "${operation}" | jq -r '.matchName // ""')
+  MATCH_NAME_INVERSE=$(echo "${operation}" | jq -r '.matchNameInverse // ""')
+  MATCH_EXTENSION=$(echo "${operation}" | jq -r '.matchExtension // ""')
+  MATCH_EXTENSION_INVERSE=$(echo "${operation}" | jq -r '.matchExtensionInverse // ""')
 
   echo -e "---------------------------------------------------"
   echo -e "\tRunning action: ${ACTION}"
   echo -e "---------------------------------------------------"
 
   # Check if operation matches composer requirements.
-  if [ -n "${MATCH}" ] && ! match_exists "${MATCH}"; then
-    echo "Didn't match \"${MATCH}\". Skipping operation."
+  if [ -n "${MATCH}" ] && ! package_required "${MATCH}"; then
+    echo "Didn't match \"${MATCH}\" in composer.json. Skipping operation."
     continue
   fi
 
   # Check if operation doesn't match composer requirements.
-  if [ -n "${MATCH_INVERSE}" ] && match_exists "${MATCH_INVERSE}"; then
-    echo "Matched \"${MATCH_INVERSE}\". Skipping operation."
+  if [ -n "${MATCH_INVERSE}" ] && package_required "${MATCH_INVERSE}"; then
+    echo "Matched \"${MATCH_INVERSE}\" in composer.json. Skipping operation."
+    continue
+  fi
+
+  # Check if operation matches composer requirements.
+  if [ -n "${MATCH_LOCK}" ] && ! package_installed "${MATCH_LOCK}"; then
+    echo "Didn't match \"${MATCH_LOCK}\" in composer.lock. Skipping operation."
+    continue
+  fi
+
+  # Check if operation doesn't match composer requirements.
+  if [ -n "${MATCH_LOCK_INVERSE}" ] && package_installed "${MATCH_LOCK_INVERSE}"; then
+    echo "Matched \"${MATCH_LOCK_INVERSE}\" in composer.lock. Skipping operation."
+    continue
+  fi
+
+  # Check if operation matches composer project name.
+  if [ -n "${MATCH_NAME}" ] && ! name_matches "${MATCH_NAME}"; then
+    echo "Didn't match \"${MATCH_NAME}\" name in composer.json. Skipping operation."
+    continue
+  fi
+
+  # Check if operation doesn't match composer project name.
+  if [ -n "${MATCH_NAME_INVERSE}" ] && name_matches "${MATCH_NAME_INVERSE}"; then
+    echo "Matched \"${MATCH_NAME_INVERSE}\" name in composer.json. Skipping operation."
+    continue
+  fi
+
+  # Check if operation matches installed drupal extensions.
+  if [ -n "${MATCH_EXTENSION}" ] && ! drupal_extension_installed "${MATCH_EXTENSION}"; then
+    echo "Didn't match \"${MATCH_EXTENSION}\" in core.extension.yml. Skipping operation."
+    continue
+  fi
+
+  # Check if operation doesn't match installed drupal extensions.
+  if [ -n "${MATCH_EXTENSION_INVERSE}" ] && drupal_extension_installed "${MATCH_EXTENSION_INVERSE}"; then
+    echo "Matched \"${MATCH_EXTENSION_INVERSE}\" in core.extension.yml. Skipping operation."
     continue
   fi
 
