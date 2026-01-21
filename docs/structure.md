@@ -80,8 +80,8 @@ The `.github` directory contains the GitHub Actions workflows for continous inte
 │   ├── install-local
 │   │   └── action.yml                 # Composite action for installing Drupal
 │   └── upgrade
-│       ├── rector.php                 # Default/fallback rector config for upgrade.sh
-│       └── upgrade.sh                 # Composite action for installing Drupal
+│       ├── rector.php                 # Default/fallback rector config for upgrader.sh
+│       └── upgrader.sh                 # Composite action for installing Drupal
 ├── workflows
 │   ├── phpcs.yml                      # Automated PHPCS Linting
 │   ├── phpunit-functional-testing.yml # Automated PHPUnit Functional Testing

@@ -6,10 +6,10 @@
 # Also requires a JSON_INPUT as either env var, stdin or file
 #
 # Usage:
-#       ./upgrade.sh operation.json
+#       ./upgrader.sh operation.json
 # Alt:
-#       cat operations.json | ./upgrade.sh
-#       echo '{"operations":[{"action":"config:export"}]}' | ./upgrade.sh
+#       cat operations.json | ./upgrader.sh
+#       echo '{"operations":[{"action":"config:export"}]}' | ./upgrader.sh
 
 set -eo pipefail
 
@@ -30,8 +30,8 @@ fi
 
 if [[ -z "$JSON_INPUT" ]]; then
   echo "No input given!"
-  echo "Usage: ./upgrade.sh operation.json"
-  echo "Or by piping: cat operations.json | ./upgrade.sh"
+  echo "Usage: ./upgrader.sh operation.json"
+  echo "Or by piping: cat operations.json | ./upgrader.sh"
   exit 1
 fi
 
