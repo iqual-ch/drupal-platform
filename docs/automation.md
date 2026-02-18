@@ -4,6 +4,7 @@ There are multiple GitHub Action workflows for running common automation tasks.
 
 * [Update: Updating Drupal projects](#update-drupal-project)
 * [Upgrade: Upgrading Drupal projects with specific operations](#upgrade-drupal-project)
+* [Config: Pull remote config](#config-pull)
 * [Testing: Test the Drupal project](#testing)
    * [PHPCS: Linting](#phpcs)
    * [PHPUnit: Unit Testing](#phpunit-unit-testing)
@@ -198,6 +199,21 @@ An example operation for removing `dompdf/dompdf` if it is installed and requiri
 </details>
 
 > In the GitHub web UI you have to make sure to escape double-quotes (e.g. `{\"operations\": [{\"action\": \"config:export\"}]}`).
+
+## Config Pull
+
+Pulls the remote environments' Drupal configuration without fully deploying a environment locally. This works by running a `drush config:pull` and commiting directly to the branch that the workflow was triggered on.
+
+* Workflow: `config-pull.yml`
+* Runs on:
+   * Manual dispatch
+   * Call from other workflow
+
+* Inputs
+  * Environment: Config pull source (Default: SPOT)
+
+> [!WARNING]
+> This workflow will lead to deployments since it pulls configuration from the specified source of truth and commit it to the selected branch (e.g. `main` and thus production).
 
 ## Testing
 
