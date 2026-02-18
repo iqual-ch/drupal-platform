@@ -49,10 +49,16 @@ jobs:
     - name: "Setup SSH key"
       shell: bash
       run: |
-        mkdir -p /home/runner/.ssh
-        echo "${{ inputs.ssh_key }}" > /home/runner/.ssh/id_rsa
-        chmod 700 /home/runner/.ssh
-        chmod 600 /home/runner/.ssh/id_rsa
+        mkdir -p "$HOME/.ssh"
+        echo "${{ secrets.SSH_KEY }}" > "$HOME/.ssh/id_rsa"
+        chmod 700 "$HOME/.ssh"
+        chmod 600 "$HOME/.ssh/id_rsa"
+
+        eval "$(ssh-agent -s)"
+        ssh-add "$HOME/.ssh/id_rsa"
+
+        echo "SSH_AUTH_SOCK=$SSH_AUTH_SOCK" >> "$GITHUB_ENV"
+        echo "SSH_AGENT_PID=$SSH_AGENT_PID" >> "$GITHUB_ENV"
 
     - name: Pull config from ${{ github.event.inputs.environment || 'SPOT' }}
       shell: bash
@@ -64,7 +70,7 @@ jobs:
         else
           drush config:pull @spot @self
         fi
-        rm /home/runner/.ssh/id_rsa
+        rm "$HOME/.ssh/id_rsa"
 
     - name: Commit config changes
       uses: stefanzweifel/git-auto-commit-action@v7
