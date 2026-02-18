@@ -1,0 +1,73 @@
+name: Pull remote config
+
+env:
+  PHP_VERSION: "{{ runtime.php_version }}"
+
+{% verbatim -%}
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        required: false
+        type: string
+        description: 'Config pull source (Default: SPOT)'
+  workflow_call:
+
+concurrency:
+  group: ci-drupal-pull-config-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  config-pull:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v5
+      with:
+        token: ${{ secrets.PAT || secrets.GITHUB_TOKEN }}
+
+    - name: "Set up PHP"
+      uses: shivammathur/setup-php@v2
+      with:
+        extensions: "gd, imagick, bcmath"
+        php-version: "${{ env.PHP_VERSION }}"
+
+    - name: "Prepare environment"
+      shell: bash
+      run: |
+        echo "::add-matcher::${{ runner.tool_cache }}/php.json"
+
+    - name: "Install dependencies"
+      shell: bash
+      run: |
+        composer install --ansi --no-interaction --no-progress --working-dir="./app"
+        echo "${{ github.workspace }}/app/vendor/bin" >> $GITHUB_PATH
+
+    - name: "Setup SSH key"
+      shell: bash
+      run: |
+        mkdir -p /home/runner/.ssh
+        echo "${{ inputs.ssh_key }}" > /home/runner/.ssh/id_rsa
+        chmod 700 /home/runner/.ssh
+        chmod 600 /home/runner/.ssh/id_rsa
+
+    - name: Pull config from ${{ github.event.inputs.environment || 'SPOT' }}
+      shell: bash
+      run: |
+        if [[ -n '${{ github.event.inputs.environment }}' ]]; then
+          echo "Validating environment input variable."
+          [[ '${{ github.event.inputs.environment }}' =~ ^[a-z0-9\-]{3,25}$ ]] || exit 1
+          drush config:pull "@${{ github.event.inputs.environment }}" @self
+        else
+          drush config:pull @spot @self
+        fi
+        rm /home/runner/.ssh/id_rsa
+
+    - name: Commit config changes
+      uses: stefanzweifel/git-auto-commit-action@v7
+      with:
+        commit_message: "Synced config from ${{ github.event.inputs.environment || 'SPOT' }}"
+{% endverbatim -%}
