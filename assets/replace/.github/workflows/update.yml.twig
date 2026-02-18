@@ -3,7 +3,7 @@
 name: Update Drupal Project
 
 env:
-  DOCKER_WEB_PORT: 80:80
+  DDEV_VERSION: ${{ vars.DDEV_VERSION || 'latest' }}
 
 on:
   workflow_dispatch:
@@ -11,8 +11,19 @@ on:
       token:
         required: false
         type: string
-        description: 'If you want pull requests created by this action to trigger an on: push or on: pull_request workflow then you cannot use the default GITHUB_TOKEN and need a Personal Access Token. If you want to use the GITHUB_TOKEN, then leave this field blank.'
-
+        description: 'Personal Access Token for code write permissions and pull requests created by this workflow to trigger other workflows.'
+      labels:
+        required: false
+        type: string
+        description: "Comma-separated list of labels to apply to the pull request."
+      id:
+        required: false
+        type: string
+        description: "Optional identifier (e.g. Jira ID) to distinguish this workflow run in the commit message and pull request title (default: timestamp)."
+      branch:
+        required: false
+        type: string
+        description: "Optional branch name for the pull request (default: misc/update-<timestamp>)."
 jobs:
   update:
     runs-on: ubuntu-latest
@@ -35,11 +46,12 @@ jobs:
         fi
 
     - name: Create Pull Request
-      uses: peter-evans/create-pull-request@v7
+      uses: peter-evans/create-pull-request@v8
+      if: ${{ github.event.inputs.branch != 'main' }}
       with:
         token: ${{ github.event.inputs.token || secrets.GITHUB_TOKEN }}
-        commit-message: Updated Drupal site
-        title: Update Drupal site (${{ env.EXECUTION_DATE }})
+        commit-message: "${{ github.event.inputs.id && format('{0}: Updated Drupal site', github.event.inputs.id) || 'Updated Drupal site' }}"
+        title: "${{ github.event.inputs.id && format('{0}: Update Drupal site', github.event.inputs.id) || format('Update Drupal site ({0})', env.EXECUTION_DATE) }}"
         body: |
           Automatically generated Drupal update (${{ env.EXECUTION_DATE }}):
 
@@ -53,6 +65,6 @@ jobs:
           - [ ] Deploy update to live website
 
           Check the logs in the [Github Actions workflow run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) for more information about the update.
-        branch: misc/update-${{ env.EXECUTION_DATE }}
+        branch: "${{ github.event.inputs.branch || format('misc/update-{0}', env.EXECUTION_DATE) }}"
 {% endverbatim -%}
 {% endif %}

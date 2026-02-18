@@ -20,6 +20,9 @@ There are multiple GitHub Action workflows for running common automation tasks.
 
 * Inputs
    * Token: GitHub Personal Access Token
+   * Labels: Comma-separated list of labels to apply to the pull request
+   * ID: Optional identifier (e.g. Jira ID) to distinguish this workflow run in the commit message and pull request title (default: timestamp)
+   * Branch: Optional branch name for the pull request (default: `misc/update-<timestamp>`).
 
 This workflow will install the project in a GitHub Actions runner environment and run the Drupal update process on it (`make update`). If successful it will create a pull request with the changes. If a token is provided then the pull request created by this workflow will trigger other workflows running on push or pull request triggers.
 
@@ -37,6 +40,9 @@ This workflow will install the project in a GitHub Actions runner environment an
    * Enable: Enable a module or list of modules with Drush
    * Uninstall: Uninstall a module or list of modules with Drush
    * Payload: JSON encoded operation payload for advanced usage
+   * Labels: Comma-separated list of labels to apply to the pull request
+   * ID: Optional identifier (e.g. Jira ID) to distinguish this workflow run in the commit message and pull request title (default: timestamp)
+   * Branch: Optional branch name for the pull request (default: `misc/upgrade-<timestamp>`).
 
 This workflow will install the project in a GitHub Actions runner environment and run the Drupal upgrade process on it (`make upgrade`) using either the provided `require`, `remove`, `enable` and `uninstall` inputs or the provided `payload` (`payload` always overrides other inputs). If successful it will create a pull request with the changes. If a token is provided then the pull request created by this workflow will trigger other workflows running on push or pull request triggers.
 
