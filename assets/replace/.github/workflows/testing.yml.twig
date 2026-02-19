@@ -2,6 +2,9 @@
 {%- verbatim -%}
 name: Drupal testing
 
+env:
+  DDEV_VERSION: ${{ vars.DDEV_VERSION || 'latest' }}
+
 on:
   workflow_dispatch:
   pull_request:
