@@ -30,33 +30,11 @@ jobs:
         caching: true
         cache_key: ${{ inputs.cache_key || github.sha }}
 
-    - name: Restore VRT baseline cache
-      uses: actions/cache@v4
+    - name: Visual Regression Tests
+      uses: iqual-ch/playwright-vrt@v0
       with:
-        path: playwright-snapshots
-        key: vrt-baseline-${{ inputs.cache_key || github.sha }}-${{ hashFiles('playwright-vrt.config.json') }}
-
-    - name: Setup Bun
-      uses: oven-sh/setup-bun@v1
-
-    - name: Install Playwright VRT dependencies
-      shell: bash
-      run: |
-        bunx playwright install chromium
-
-    - name: Run Visual regression tests
-      shell: bash
-      run: |
-        bunx @iqual/playwright-vrt run \
-          --config playwright-vrt.config.json \
-          --verbose
-
-    - name: Upload VRT report
-      uses: actions/upload-artifact@v5
-      if: always()
-      with:
-        name: vrt-report
-        path: playwright-report/
+        config: playwright-vrt.config.json
+        cache-key: ${{ inputs.cache_key || github.sha }}
 {% endverbatim -%}
 {% else %}
 {% verbatim -%}
@@ -82,33 +60,11 @@ jobs:
       with:
         ssh_key: ${{ secrets.SSH_KEY }}
 
-    - name: Restore VRT baseline cache
-      uses: actions/cache@v4
+    - name: Visual Regression Tests
+      uses: iqual-ch/playwright-vrt@v0
       with:
-        path: playwright-snapshots
-        key: vrt-baseline-${{ github.sha }}-${{ hashFiles('playwright-vrt.config.json') }}
-
-    - name: Setup Bun
-      uses: oven-sh/setup-bun@v1
-
-    - name: Install Playwright VRT dependencies
-      shell: bash
-      run: |
-        bunx playwright install chromium
-
-    - name: Run Visual regression tests
-      shell: bash
-      run: |
-        bunx @iqual/playwright-vrt run \
-          --config playwright-vrt.config.json \
-          --verbose
-
-    - name: Upload VRT report
-      uses: actions/upload-artifact@v5
-      if: always()
-      with:
-        name: vrt-report
-        path: playwright-report/
+        config: playwright-vrt.config.json
+        cache-key: ${{ github.sha }}
 {% endverbatim -%}
 {% endif %}
 {% endif %}
