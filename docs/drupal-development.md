@@ -56,7 +56,7 @@ Check the [official XDebug documentation](https://xdebug.org/docs/) for more adv
 
 ### Enabling and Disabling XDebug
 
-VS Code will automatically toggle XDebug when using the debug launch configuration (F5). XDebug can also be manually toggled:
+VS Code will automatically toggle XDebug when using the debug launch configuration (`F5`). XDebug can also be manually toggled:
 
 ```bash
 ddev xdebug on
@@ -78,6 +78,12 @@ For running the project specific PHPUnit tests, there are multiple available com
 * `make drupal-test-func`: Run functional tests (unit, kernel, functional, functional-javascript)
 * `make drupal-test-db`: Run database tests (kernel, functional, existingsite) — _Warning: can modify your DB_
 * `make drupal-test-browser`: Run browser tests (requires [Chrome tool](#chrome)) — _Warning: can modify your DB_
+
+It is also possible to run PHPUnit directly using `ddev`, for example running the unit test from the root of the project:
+
+```bash
+ddev phpunit -c ./app --testsuite=unit
+```
 
 > `phpunit` and Drupal Testing Traits (DTT) have to be required in the project. Javascript tests also require a browser, see [Chrome tool](#chrome).
 

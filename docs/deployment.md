@@ -32,6 +32,8 @@ The deployment option is set via the `deployment` package variable in the `compo
 
 The project can be deployed to [Upsun](https://upsun.com/) (formerly Platform.sh). In this case a `project_id` is required, as well as setting the `drupal_spot` to the machine name of the main, production branch of the Upsun project (i.e. `platform environment:info machine_name`).
 
+> [!INFO]
+> To enable auto-deployment when changes are pushed to the repository make sure to set up the [GitHub source integration](https://fixed.docs.upsun.com/integrations/source/github.html) on the Upsun project.
 
 #### Customization
 
@@ -86,4 +88,4 @@ For example the drupal scaffold file mapping in the `composer.json` could look l
 
 Drupal will be built and deployed automatically by default on Upsun. This includes running database updates, config imports and cache rebuilds (i.e. `drush deploy`) as well as copying repository assets (e.g. `fontyourface` fonts). On deployment the state from the repository will be deployed. Config changes will be overridden.
 
-> If this is not the desired behavior, set the `DRUPAL_NO_DEPLOY` environment variable in Upsun (env/project) so the deployment script doesn't run. If only `drush deploy` should be disabled, use `DRUPAL_NO_DRUSH_DEPLOY`. This can be helpful for restoring backups or automation.
+> If this is not the desired behavior, set the `DRUPAL_NO_DEPLOY` environment variable in Upsun (env/project) so the deployment script doesn't run. If only `drush deploy` should be disabled, use `DRUPAL_NO_DRUSH_DEPLOY`. This can be helpful for restoring backups or automation. There is also an option for manual deployments on Upsun, if a push to the repository should automatically deploy.

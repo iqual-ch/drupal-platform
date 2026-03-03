@@ -284,4 +284,6 @@ This workflow requires a full build of Drupal.
    * Pull request (re)open (`workflows.phpunit` disabled)
    * Call from other workflow (`workflows.phpunit` enabled)
 
-This workflow will install the project in a GitHub Actions runner environment and run a visual regression test on it ([iqual-ch/ci-pocketknife-installer](https://github.com/iqual-ch/ci-pocketknife-installer) and [iqual-ch/ci-pocketknife](https://github.com/iqual-ch/ci-pocketknife/)). This workflow requires a `.env.visreg` file setting the test and reference website URLs for testing. The workflow will crawl the website for relevant links. If the test fails (when there are visual differences between the two websites), then it will upload a BackstopJS report as a workflow artifact.
+This workflow will install the project in a GitHub Actions runner environment and run a visual regression test using the node package [`iqual/playwright-vrt`](https://github.com/iqual-ch/playwright-vrt). The workflow will look for the website's sitemap, and fall back to crawling to gather relevant links. If the test fails (when there are visual differences between the local and live/reference version), then it will upload a Playwright report as a workflow artifact.
+
+The VRT configuration can be customized in the `playwright-vrt.config.json` file in the root of the project.

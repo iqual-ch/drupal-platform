@@ -2,7 +2,7 @@
 
 ## Single point of truth
 
-There is always a single point of truth (referred to as "SPOT") for certain elements of the project. In the SPOT the original version of the data is located and all other locations are copies of this controlling (master) version.
+There is always a single point of truth (referred to as "SPOT") for certain elements of the project. In the SPOT the original version of the data is located and all other locations are copies of this controlling (reference) version.
 
 There is only one environment that can be the SPOT for non-code data (e.g. `prod`).
 

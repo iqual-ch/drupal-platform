@@ -13,21 +13,20 @@ The project includes a `Makefile` with predefined targets for common project tas
 
 ## Project Installation
 
-* `install`: Install the project stack with runtime (starts DDEV, builds and deploys Drupal)
+* `install`: Install the project stack with runtime, runs:
+    * `runtime`: Start the local DDEV runtimes (`ddev start`)
+    * `drupal`: Build and deploy Drupal locally, runs:
+        * `drupal-build`: Build the Drupal app (`composer install`, create required directories)
+        * `drupal-data`: Import Drupal data (database and filesystem), runs:
+            * `drupal-db`: Import the Drupal database from the SPOT (skips if database already exists unless `FORCE=true`)
+            * `drupal-fs`: Import the Drupal filesystem (uses `iq_stage_file_proxy` by default, or `drush rsync` if `FS_PULL=true`)
+        * `drupal-deploy`: Run Drupal deployment commands (`drush deploy`, skipped if `DRUPAL_NO_DEPLOY=true`)
+
 * `install-safe`: Same as `install` but first checks for uncommitted git changes
 * `new`: Create a new Drupal project (runs `install` with `NEW_PROJECT=true`, which runs `drush site:install` or imports a database backup from `app/resources`)
-* `runtime`: Start the local DDEV runtimes (`ddev start`)
 
-> Use `DDEV_SNAPSHOT=latest` to restore the latest DDEV snapshot during `make runtime`, or specify a named snapshot with `DDEV_SNAPSHOT=<name>`.
-
-## Drupal
-
-* `drupal`: Build and deploy Drupal locally, runs:
-    * `drupal-build`: Build the Drupal app (`composer install`, create required directories)
-    * `drupal-data`: Import Drupal data (database and filesystem), runs:
-        * `drupal-db`: Import the Drupal database from the SPOT (skips if database already exists unless `FORCE=true`)
-        * `drupal-fs`: Import the Drupal filesystem (uses `iq_stage_file_proxy` by default, or `drush rsync` if `FS_PULL=true`)
-    * `drupal-deploy`: Run Drupal deployment commands (`drush deploy`, skipped if `DRUPAL_NO_DEPLOY=true`)
+> [!TIP]
+> Use `DDEV_SNAPSHOT=latest` to restore the latest DDEV snapshot during `make runtime` (or `make install`), or specify a named snapshot with `DDEV_SNAPSHOT=<name>`.
 
 ## Maintenance
 

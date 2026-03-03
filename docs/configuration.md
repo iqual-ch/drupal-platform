@@ -35,7 +35,7 @@ Assets and configuration managed by the Drupal Platform have to be customized us
 
 ## Environment
 
-## Environment Variables
+### Environment Variables
 
 General project environment variables for the local environment are configured in `.ddev/config.yaml` under `web_environment`. This includes the `DRUPAL_ENVIRONMENT`, `DRUPAL_SPOT`, `DRUPAL_SPOT_ORIGIN`, and testing-related variables (`SIMPLETEST_DB`, `SIMPLETEST_BASE_URL`, etc.).  To add non-sensistive environment variables, create a `.ddev/config.custom.yaml` file with custom entries under `web_environment`. After running `ddev start` these will be merged into the base configuration and become available in the runtime environment.
 
@@ -43,13 +43,13 @@ General project environment variables for the local environment are configured i
 > The `.ddev/config.yaml` is managed by the Drupal Platform and should not be modified manually.
 
 > [!WARNING]
-> The `.env` file in the root of the project is not supported by default. Neither DDEV nor the remote deployment on Upsun will pick up the file's contents by default.
+> The `.env` file in the root of the project is not supported by default. Neither DDEV nor the remote deployment on Upsun will pick up the file's contents.
 
-## Secrets
+### Secrets
 
 Local development secrets can be stored in `.ddev/.env` (git-ignored). This can be useful for storing sensitive API credentials as environment variables that can be loaded into the config in a settings file in Drupal (see Credentials in Config section).
 
-Remote deployment secrets on Platform.sh can be injected using [project or environment variables](#credentials-on-platformsh).
+Remote deployment secrets on Platform.sh can be injected using [project or environment variables](#credentials-on-upsun).
 
 ### SSH Authentication
 
@@ -83,15 +83,15 @@ So for example for configuring `local` environments, settings can be added to th
 > [!TIP]
 > For sensitive settings or configuration that should only apply to your local copy of the environment use the `settings.local.php` file. This file is git ignored by default and won't be committed and therefore configuration won't apply to other developers' environments.
 
-#### Platform.sh Environment Type
+#### Upsun Environment Type
 
-For Platform.sh deployments the environment type (`$PLATFORM_ENVIRONMENT_TYPE`) is mapped to the following Drupal environment (`$DRUPAL_ENVIRONMENT`) equivalents:
+For Upsun deployments the environment type (`$PLATFORM_ENVIRONMENT_TYPE`) is mapped to the following Drupal environment (`$DRUPAL_ENVIRONMENT`) equivalents:
 
 * `production`: `prod`
 * `staging`: `stage`
 * `development`: `dev`
 
-Therefore the Platform.sh environment type `production` will still include the `prod.settings.php` settings file.
+Therefore the Upsun environment type `production` will still include the `prod.settings.php` settings file.
 
 ### Credentials in Config
 
