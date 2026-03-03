@@ -1,60 +1,36 @@
 # Service Deployment
 
-> [!CAUTION]
-> This documentation is **deprecated** and updating is in progress.
+A service deployment sets up the app's runtime environment (e.g. PHP, database, etc.). After deploying the services the app needs to be installed to complete a full deployment. See the [App Installation documentation](./installation.md) for the latter.
 
-A service deployment sets up the app's runtime environment (e.g. PHP, Nginx, etc.). After deploying the services the app needs to be installed to complete a full deployment. See the [App Installation documentation](./installation.md) for the latter.
+## Local Deployment (DDEV)
 
-## Requirements
+The local development environment is powered by [DDEV](https://ddev.com/). To start the local environment run `make runtime` (or `ddev start`). This will start all required services for the project's Drupal environment.
 
-The deployment environments generally require a GNU/Linux environment with Docker installed. Authentication to the Docker hub has to be provided in order to retrieve the iqual Docker images from the private image registry.
-
-There are three deployment types available: Docker Compose, Kubernetes and Platform.sh. Locally and for automation a Docker Compose deployment provides all services required for the project's Drupal environment. Remotely the project is deployed to either a Kubernetes cluster which is managed by the operations team or to managed service by Platform.sh.
-
-The deployment definitions/manifests are kept in the projects repository in the `./manifests` folder for Docker Compose and Kubernetes. Platform.sh confiugration is in the `.platform.app.yaml` file and `.platform` folder.
-
-## Local deployment (Docker Compose)
-
-To deploy the local environment run `make deploy-local`. The command will look for the `docker-compose.yml` file in the `./manifests/local` folder and make sure that the environment is correctly set-up before deploying locally.
+To fully install the project (runtime + Drupal), run `make install`.
 
 ### Services
 
-* Drupal container
+* **Web container** (DDEV web)
     * PHP-FPM
-    * PHP CLI
     * Nginx
-* MariaDB database container
-* Solr search API container (Optional)
+    * Composer, Drush, Node.js (via Corepack)
+* **MariaDB database container**
+* **Solr search API container** (optional, see [Solr configuration](./configuration.md#solr))
 
 ## Remote Deployment
 
-Currently there are two remote deployment options available, additionally to not deploying to remote at all. The deployment options are:
+Currently there are two remote deployment options available:
 
-* Kubernetes: `kubernetes`
-* Platform.sh: `platform.sh`
-* No deployment: `local-only`
+* **Upsun** (formerly Platform.sh): `platform.sh`
+* **No remote deployment**: `local-only`
 
-### Kubernetes Deployment
+The deployment option is set via the `deployment` package variable in the `composer.json`'s `extra.project-scaffold` section.
 
-The default remote deployment into a Kubernetes cluster is currently done using Rancher/Helm. See the [prod deployment](https://support-iqual.atlassian.net/wiki/spaces/ID/pages/1864073238/Prod-Instance+Rancher) and [dev/staging deployment guide](https://support-iqual.atlassian.net/wiki/spaces/ID/pages/1863942165/Dev-Instance+Staging+Rancher) for more details.
+### Upsun Deployment
 
-#### Patching existing deployments
+> The Upsun (formerly Platform.sh) integration requires the `platformsh/config-reader` package. This needs to be required in the project.
 
-A patch to an existing deployment can be applied using the `make deploy-%` targets (e.g. `make deploy-prod` for a production patch). The patch includes the currently set image and environment variables (`DRUPAL_ENVIRONMENT` and optionally PHP configuration variables).
-
-> The command will re-deploy existing pods and wait for a successful roll-out.
-
-#### Non-default Kubernetes contexts
-
-If a project is being deployed into a non-default cluster context, then the context variable has to be overriden. The default contexts can be found in the `kubernetes_contexts` variables in the [`composer.json`](../composer.json).
-
-For example if the `prod` Kubernetes cluster context ist `example-cluster-1` then the `kubernetes_contexts.prod` has to be set to that value in the `composer.json`'s `extra.project-scaffold` section.
-
-### Platform.sh Deployment
-
-> The Platform.sh integration requires the `platformsh/config-reader` package. This needs to be required in the project.
-
-Alternatively to the deployment into Kubernetes there is also the option to deploy the repository to [Platform.sh](https://platform.sh/). In this case a `project_id` is required, as well as setting the `drupal_spot` to the machine name of the main, production branch of the Platform.sh project (i.e. `platform environment:info machine_name`).
+The project can be deployed to [Upsun](https://upsun.com/) (formerly Platform.sh). In this case a `project_id` is required, as well as setting the `drupal_spot` to the machine name of the main, production branch of the Upsun project (i.e. `platform environment:info machine_name`).
 
 
 #### Customization
@@ -108,6 +84,6 @@ For example the drupal scaffold file mapping in the `composer.json` could look l
 
 #### Auto-Deployment
 
-Drupal will be built and deployed automatically by default on Platform.sh. This includes running database updates, config imports and cache rebuilds (i.e. `drush deploy`) as well as copying repository assets (e.g. `fontyourface` fonts). On deployment the state from the repository will be deployed. Config changes will be overridden.
+Drupal will be built and deployed automatically by default on Upsun. This includes running database updates, config imports and cache rebuilds (i.e. `drush deploy`) as well as copying repository assets (e.g. `fontyourface` fonts). On deployment the state from the repository will be deployed. Config changes will be overridden.
 
-> If this is not the desired behavior, set the `DRUPAL_NO_DEPLOY` environment variable in Platform.sh (env/project) so the deployment script doesn't run. If only `drush deploy` should be disabled, use `DRUPAL_NO_DRUSH_DEPLOY`. This can be helpful for restoring backups or automation.
+> If this is not the desired behavior, set the `DRUPAL_NO_DEPLOY` environment variable in Upsun (env/project) so the deployment script doesn't run. If only `drush deploy` should be disabled, use `DRUPAL_NO_DRUSH_DEPLOY`. This can be helpful for restoring backups or automation.

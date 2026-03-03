@@ -1,8 +1,5 @@
 # Project Concepts
 
-> [!CAUTION]
-> This documentation is **deprecated** and updating is in progress.
-
 ## Single point of truth
 
 There is always a single point of truth (referred to as "SPOT") for certain elements of the project. In the SPOT the original version of the data is located and all other locations are copies of this controlling (master) version.
@@ -15,7 +12,7 @@ The core codebase's SPOT is the project repository. It contains business logic a
 
 ### Vendor packages
 
-The vendor packages (such as Drupal core, iqual modules or contributed modules) are locked to specific versions using composer in the project repository. The code of the packages is however located in a package repository and tracked in separate code repositories. The code is then downloaded during an installation of Drupal.
+The vendor packages (such as Drupal core, iqual modules or contributed modules) are locked to specific versions using Composer in the project repository. The code of the packages is however located in a package repository and tracked in separate code repositories. The code is then downloaded during an installation of Drupal (i.e. `ddev composer install`).
 
 ### Database & public assets
 
@@ -35,4 +32,4 @@ The filesystem should always be synchronized from the SPOT if in another environ
 
 ### Configuration
 
-The most current configuration should always be committed to the project repositry. If configuration modification is allowed on a live/production deployment make sure to always synchronize the config from this environment back to the repository.
+The most current configuration should always be committed to the project repository. If configuration modification is allowed on a live/production deployment make sure to always synchronize the config from this environment back to the repository (e.g. using `make config-pull` or the [Config Pull workflow](./automation.md#config-pull)).

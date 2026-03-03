@@ -1,168 +1,133 @@
 # Drupal Development
 
-> [!CAUTION]
-> This documentation is **deprecated** and updating is in progress.
-
-[Check the in-depth step-by-step guide on the initial setup](https://support-iqual.atlassian.net/wiki/spaces/ID/pages/2532704262/Initial+setup+G)
+[Check the in-depth step-by-step guide on the initial setup](https://support-iqual.atlassian.net/wiki/spaces/BW/pages/3260579957/Initial+setup+G)
 
 ## Requirements
 
-* GNU/Linux environment
-    * Recommendation: Ubuntu 20.04/22.04 (WSL2 for Windows)
-    * `ssh`, `socat`, `git`, `make` installed
-    * Mac OS X support is limited
-* GitHub access
+* **GNU/Linux environment** (or macOS)
+    * Windows: WSL2 is required
+* **Docker** installed
+* **DDEV** installed ([Installation guide](https://ddev.readthedocs.io/en/stable/users/install/ddev-installation/))
+* **GitHub access**
     * SSH authentication with private key
-    * Key added to the `ssh-agent`
-* Docker installed
-    * Authenticated to iqual Docker registry
-    * iqual reverse proxy installed
-* Visual Studio Code
-    * Remote-Containers
-    * Remote-WSL (Windows)
-
+    * SSH key registered in DDEV: `ddev auth ssh`
+* **Visual Studio Code** (recommended)
 
 ## Workflow
 
-To start developing a project's a repository can either be cloned to work on locally, or a remote Codespace can be launched. The development workflow is based on the GitHub flow, where features and bugfixes are developed in branches, merged into main via PR and main is deployed to the currently active environment (e.g. production). Main should always be in a deployable state.
+The development workflow is based on the GitHub flow, where features and bugfixes are developed in branches, merged into main via pull request and main is deployed to the currently active environment (e.g. production). Main should always be in a deployable state.
 
 See the [Git Workflow guide](https://support-iqual.atlassian.net/wiki/spaces/ID/pages/2990080011/GIT+workflow+G) for an in-depth documentation on the development git workflow.
 
-## Developing locally
+## Developing Locally
 
-The recommended development approach is to `git` clone (with SSH) the repository to a local GNU/Linux environment and to launch Visual Studio Code for a fully featured Drupal developer experience.
+The recommended development approach is to `git clone` (with SSH) the repository to a local environment and to use DDEV with Visual Studio Code for a fully featured Drupal developer experience.
+
+### Quick Start
+
+1. Clone the repository and navigate to the project root.
+2. Run `make install` to start the DDEV runtime, build and deploy Drupal.
+3. Run `make launch` to open the project in your browser or `make login` for a one-time login.
 
 ### Development with Visual Studio Code
 
-The project repository contains a `.devcontainer`, `.vscode` and depending on the setup a workspace configuration for development using Visual Studio Code.
+The project repository contains `.vscode` configuration for development using Visual Studio Code, including recommended extensions, editor settings, debug configurations and tasks.
 
-When starting VS Code with `make code` (or `code .`) within the project repository it will automatically prepare the local environment and deploy it. Once the container start-up has succeeded VS Code will install itself inside of the container and use the `Remote Containers` feature to communicate with the window on the desktop. It also makes sure that the SSH authentication provided in the linux environment through the `ssh-agent` is propagated to the container.
+To launch VS Code:
 
-After VS Code completed its installation it will execute `make project` within the container to automatically set-up the Drupal project. This command will try to install all vendor packages using `composer`, sync the database and filesystem from the single point of truth using `drush`, run database updates and import the config with a `drush deploy`.
+```bash
+make code
+```
 
-The start-up might soft-fail due to multiple reasons, since it tries to automatically set-up the desired environment but aborts if anomalies are detected. Check the [project commands](./commands.md) and [project concepts](./concepts.md) documentation for further explanations on how these commands work.
+VS Code includes pre-configured tasks (accessible via the Command Palette or `Ctrl+Shift+P`) for common operations like installing the project, building Drupal (`Ctrl+Shift+B`), running tests and toggling XDebug. See the [commands documentation](./commands.md) for all available `make` targets.
 
-### Development with other IDEs
+> [!TIP]
+> VS Code's PHP language support is provided by [Intelephense](https://marketplace.visualstudio.com/items?itemName=bmewburn.vscode-intelephense-client). PHPCS and PHPCBF are integrated for real-time linting and auto-fixing. DDEV shim binaries in the `bin/` directory allow VS Code extensions to transparently call tools inside the DDEV container.
 
-Other IDEs apart from Visual Studio Code are currently not actively supported. However it is possible to only deploy the local environment (with `make deploy-local`) and then use a different code editor on the project workfolder. In order to use `git` and remote `drush` commands within the environment SSH credentials need to be provided.
+### Development with Other IDEs
 
-## Developing remotely
-
-Alternatively to local development there is the option to run a development environment with a code editor remotely. This can be useful for quick access to a new environment without requring local compute resources.
-
-### Development on GitHub Codespaces
-
-Currently the only supported remote development environment is GitHub Codespaces. This basically provides a hosted solution to the Visual Studio Code editor setup. The same launch operations are executed on GitHub Codespaces as on a local VS Code setup. It can be directly launched on a GitHub repository in the "Code" dropdown at the top (feature has to be enabled by administrator).
-
-In order for GitHub Codespaces to work a few environment variables are needed for proper authentication:
-
-* `DOCKERHUB_CONTAINER_REGISTRY_USER`: The Docker Hub container registry user to access the private container images (read access)
-* `DOCKERHUB_CONTAINER_REGISTRY_PASSWORD`: The Docker Hub container registry password to access the private container images (read access)
-* `DOCKERHUB_CONTAINER_REGISTRY_SERVER`: The Docker Hub container registry server, i.e. `https://index.docker.io/v1/`
-* `SSH_KEY`: A private SSH key for drush remote access. The public key has to be added to the SSH-to-kubectl proxy
-* `COMPOSER_AUTH`: (Optional) The composer authentication string for access to a private packagist repo
-    * e.g. `{\"http-basic\":{\"repo.packagist.com\":{\"username\":\"USER\",\"password\":\"TOKEN\"}}}`
+Other IDEs can be used by running `make install` to start the DDEV environment and then using the IDE on the project folder. DDEV commands (e.g. `ddev drush`, `ddev composer`) can be used from the host.
 
 ## XDebug
 
-XDebug is disabled by default in the image for debugging PHP (`trigger` mode). The VS Code setup includes the XDebug debugger for adding break-points. It will automatically enable XDebug once a debugging session is launched (i.e. when pressing F5) by running the `xdebug` `make` target as a background task.
+XDebug is available but disabled by default for performance. The VS Code setup includes an XDebug launch configuration that will automatically enable and disable XDebug when starting and stopping a debug session.
 
-Check the [official XDebug documentation](https://xdebug.org/docs/) for further more advanced documentation.
-
-Below are some common configurations for XDebug. To add a environment variable it can be added as a separate line in `.env.secrets`. Whenever a environment variable is changed the deployment has to re-deployed. In the case of VS Code this can be simply done by doing a `Rebuild Container`.
+Check the [official XDebug documentation](https://xdebug.org/docs/) for more advanced configuration.
 
 ### Enabling and Disabling XDebug
 
-VS Code will automatically enable XDebug when a debugging session is started. However XDebug can also be manually enabled by running the `make xdebug` target. For disabling there is a `make xdebug-disable` target.
+VS Code will automatically toggle XDebug when using the debug launch configuration (F5). XDebug can also be manually toggled:
 
 ```bash
-make xdebug
+ddev xdebug on
+ddev xdebug off
 ```
 
-To completely disable XDebug it can also be turned off by setting the following environment variable:
+## PHP Profiling
 
-```bash
-XDEBUG_MODE=off
-```
+See the official DDEV docuemtnation for PHP profiling:
 
-### PHP Profiling
-
-A useful tool for identifing performance bottlenecks is the profiling mode of XDebug. To switch XDebug into profiling mode, a few configuration changes need to take place. The mode has to be set to `profile` and a sensible `output_dir` should be defined. The following configuration generates a `cachegrind` file in the root of the project.
-
-```bash
-XDEBUG_MODE=profile
-XDEBUG_CONFIG="output_dir=/project"
-```
-
-The profiler can then be triggered by either enabling xdebug with `make xdebug` or by using the trigger variable `XDEBUG_TRIGGER` (in `ENV`, `GET` or `COOKIE`). For example to profile a drush command `XDEBUG_TRIGGER= drush status` can be run.
-
-To analyze the generated `cachegrind` files there are a few available tools. Check the [profiling documentation on the official XDebug page](https://xdebug.org/docs/profiler). For a very simple overview it is possible to use [Webgrind](https://github.com/jokkedk/webgrind) to display a weighted table or graph of the called function.
-
-> Make sure to not commit the cachegrind files.
-
-### Using XDebug in a external IDE
-
-If you are trying to reach a non-default debugger outside of the local deployment's network (i.e. VS Code) then it is also possible to set a different client host. The default port ist `9003` ond client host `localhost`. For example to set the client host to the localhost of the host machine the following environment variable can be added to `.env.secrets`:
-
-```bash
-XDEBUG_CONFIG="client_host=host.docker.internal"
-```
-
-> On Windows (WSL2) you have to use `host.docker.internal` for the localhost, however on Linux you can use `172.17.0.1`.
+* [XHProf Profiling](https://docs.ddev.com/en/stable/users/debugging-profiling/xhprof-profiling/)
+* [XDebug Profiling](https://docs.ddev.com/en/stable/users/debugging-profiling/xdebug-profiling/)
 
 ## PHPUnit
 
-For running the project specific PHPUnit tests, there are multiple avaiable PHPUnit commands. To run simple unit tests, there is `make phpunit` which will only run the unit testsuite defined in the project's `phpunit.xml` (falls back to `phpunit.xml.dist`). There is also the option to run database test including Drupal Testing Traits (DTT) tests, that could modify your database, with `make phpunit-db`. If [Chrome has been launched as an external tool](#chrome), the browser testing can be executed using `make phpunit-browser`. This will also require DTT and could also modify your existing database.
+For running the project specific PHPUnit tests, there are multiple available commands. See the [commands documentation](./commands.md#testing) for a full list.
 
-> `phpunit` has to be required in the project, including DTT.
+* `make drupal-test-unit`: Run the unit testsuite
+* `make drupal-test-func`: Run functional tests (unit, kernel, functional, functional-javascript)
+* `make drupal-test-db`: Run database tests (kernel, functional, existingsite) — _Warning: can modify your DB_
+* `make drupal-test-browser`: Run browser tests (requires [Chrome tool](#chrome)) — _Warning: can modify your DB_
 
-### Multi-Domain testing
+> `phpunit` and Drupal Testing Traits (DTT) have to be required in the project. Javascript tests also require a browser, see [Chrome tool](#chrome).
 
-By default only the `web` hostname can be tested against using PHPUnit tests that request the website using curl or Chrome. To add more aliases (subdomains) to be accessible during testing, add a list of aliases to a `local_domain_aliases` array in the `extra.project-scaffold` section of the project's `composer.json` and run `composer project:scaffold`. After rebuilding your VS Code environment, these additional aliases will be accessible within the Docker network (e.g. local domain alias `foo` in a `bar` project will add a `foo.bar-sw-project.localdev.iqual.ch` alias).
+### Multi-Domain Testing
+
+By default there is a wildcard subdomain available for the primary DDEV hostname (e.g. `*.foo.ddev.site` for the `foo` project). So sites can be tested against different hostnames. If required it is also posibble to add custom `.ddev.site` domains, by adding a `.ddev/config.custom.yaml` with custom `additional_hostnames` (see [additional project hostnames docs on DDEV](https://docs.ddev.com/en/stable/users/extend/additional-hostnames/)).
+
 
 ## PHPCS
 
-For code sniffing there is a make target that will run sniffing according to the Drupal standard on the custom themes & modules in the repository called `make phpcs`. To run both PHPCS and some basic PHP linting first, there is also `make lint`.
+For code sniffing there is a make target that runs PHPCS according to the Drupal standard on custom themes and modules: `make drupal-lint`. To run validation, linting, and static analysis together use `make lint`.
 
 > `phpcs` has to be required in the project, including the Drupal and DrupalPractice standards.
 
+## PHPStan
+
+Static analysis is available via PHPStan. Run `make drupal-analysis` to analyse custom themes and modules. The configuration is defined in `app/phpstan.neon`.
+
 ## Email
 
-For debugging emails it is advised to enable the mailtrap integration. This can either be enabled by using the `EMAIL_MAILTRAP_AUTH` environment variable (see [Drupal image variables](https://github.com/iqual-ch/dc-drupal/blob/main/docs/environment-variables.md)) or by using a SMTP Drupal module and setting the SMTP credentials to Mailtrap.
-
-Using the environment variable, you can add it to the `.env.secrets` like this (replace credentials):
-
-```bash
-EMAIL_MAILTRAP_AUTH=INSERT_USERNAME:INSERT_PASSWORD
-```
-
-For example using the `swiftmailer` module, the config overrides in the `settings.local.php` should look like this (replace credentials):
-
-```php
-$config['swiftmailer.transport']['transport'] = 'smtp';
-$config['swiftmailer.transport']['smtp_host'] = 'smtp.mailtrap.io';
-$config['swiftmailer.transport']['smtp_port'] = 2525;
-$config['swiftmailer.transport']['smtp_encryption'] = 'tls';
-$config['swiftmailer.transport']['smtp_credential_provider'] = 'swiftmailer';
-$config['swiftmailer.transport']['smtp_credentials']['swiftmailer']['username'] = 'INSERT_USERNAME';
-$config['swiftmailer.transport']['smtp_credentials']['swiftmailer']['password'] = 'INSERT_PASSWORD';
-```
-
-## Multiple local deployments
-
-It is possible to run multiple environments of the same project in parallel. To enable this, the `project_name` of the project needs to be changed. This variable has to be updated or added in the `extra.project-scaffold` section of the project's `composer.json`. After modifying or adding the variable make sure to run `composer project:scaffold`. Once the change has been applied the container has to be re-opened in VS Code. In this case it possible to have different databases per git branch. For example a project by the name `example-sw-project` can be changed to `example-feature-sw-project` on a `feature-x` branch. In that case the database can be kept completely separate from the main branch.
-
-If multiple environments should be running simultaneously then the repository (i.e. the filesystem/codebase) also has to exist multiple times. This can be achieved by creating a copy of the existing repository or by cloning to a different secondary folder.
-
-> Make sure to not commit a modified `project_name` to main, since the modification is tracked in multiple files and could break other developer's setup.
+The Mailpit integration of DDEV is enabled by default and automatically catches all emails, if the `sendmail` configuration of the Symfony Mailer is active (for local). See the [email capture and review documentation](https://docs.ddev.com/en/stable/users/usage/developer-tools/#email-capture-and-review-mailpit) of DDEV.
 
 ## Database Administration
 
-For database administration during development there is an included VS Code extension called `SQLTools`. It provides basic capability like viewing tables and running queries on the database directly in the sidebar of VS Code.
+DDEV includes built-in database management. Use `ddev describe` to see the database connection details. The recommended VS Code extension [DevDB](https://marketplace.visualstudio.com/items?itemName=damms005.devdb) is included in the recommended extensions for database administration directly in VS Code.
 
+## Database Snapshots
+
+DDEV supports database snapshots for quickly saving and restoring database states:
+
+```bash
+ddev snapshot --name my-snapshot     # Create a named snapshot
+ddev snapshot restore --latest       # Restore the latest snapshot
+ddev snapshot restore my-snapshot    # Restore a named snapshot
+```
+
+Snapshots can also be used during installation:
+
+```bash
+make install DDEV_SNAPSHOT=latest
+```
 
 ## External Tools
 
 ### Chrome
 
-The browser Chrome is available as external tool. It can be launched by using `make tool-chrome`. Chrome can be used for local PHPUnit testing that requires a browser.
+The browser Chrome is available as a DDEV add-on for PHPUnit browser testing. It can be installed using:
+
+```bash
+make tool-chrome
+```
+
+To remove it, use `make tool-chrome REMOVE=true`. Chrome is required for running `make drupal-test-browser`.

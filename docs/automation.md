@@ -92,7 +92,7 @@ A JSON payload has to follow this structure:
       * `matchExtension`: (optional) Matching the name of a module or theme in the `core.extension.yml` of the Drupal config (`string`)
       * `matchExtensionInverse`: (optional) Inverse matching the name of a module or theme in the `core.extension.yml` of the Drupal config (`string`)
 
-An example operation for removing `dompdf/dompdf` if it is installed and requiring `iqual/iq_barrio` and `drupal/antibot:^2.0` and updating all depedencies would look like this:
+An example operation for removing `dompdf/dompdf` if it is installed and requiring `iqual/iq_barrio` and `drupal/antibot:^2.0` and updating all dependencies would look like this:
 
 ```json
 {
@@ -255,7 +255,7 @@ This workflow will first run `parallel-lint` to check the syntax of all custom t
    * Manual dispatch
    * Call from other workflow
 
-This workflow will run the "unit" testsuite according to the `phpunit.xml` (fallback to `phpunit.xml.dist`) in the repository. This type of testing doesn't require a full Drupal build and will not use the images defined in `manifests/local`.
+This workflow will run the "unit" testsuite according to the `phpunit.xml` (fallback to `phpunit.xml.dist`) in the repository. This type of testing doesn't require a full Drupal build.
 
 ## PHPUnit Functional Testing
 

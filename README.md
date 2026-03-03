@@ -56,7 +56,7 @@ Assets that are only added if it doesn't exist in the target yet:
 ```
 assets/add/
 ├── .platform
-│   └── routes.yaml.twig
+│   └── routes.yaml.twig
 └── @web-root
     └── sites
         └── default
@@ -69,7 +69,7 @@ assets/add/
 
 ### Replaced Assets
 
-Assets that are fully managed by the package and will be created if inexistant or otherwise overwritten in the target destination:
+Assets that are fully managed by the package and will be created if inexistent or otherwise overwritten in the target destination:
 
 <details>
 <summary>Show structure of replaced assets</summary>
@@ -78,51 +78,64 @@ Assets that are fully managed by the package and will be created if inexistant o
 ```
 assets/replace/
 ├── @app-root
-│   ├── drush
-│   │   ├── drush.yml
-│   │   ├── platformsh_generate_drush_yml.php.twig
-│   │   └── sites
-│   │       └── self.site.yml.twig
-│   ├── .environment.twig
-│   ├── php.ini.twig
-│   ├── phpunit.xml.dist
-│   └── resources
-│       ├── build.sh.twig
-│       ├── deploy.sh.twig
-│       └── robots.txt.twig
+│   ├── .environment.twig
+│   ├── drush
+│   │   ├── drush.yml
+│   │   ├── platformsh_generate_drush_yml.php.twig
+│   │   └── sites
+│   │       └── self.site.yml.twig
+│   ├── php.ini.twig
+│   ├── phpcs.xml.dist
+│   ├── phpstan.neon
+│   ├── phpunit.xml.dist
+│   └── resources
+│       ├── build.sh.twig
+│       ├── deploy.sh.twig
+│       └── robots.txt.twig
 ├── .ddev
-│   ├── config.yaml.twig
-│   ├── homeadditions
-│   │   └── .bash_aliases.twig
-│   └── php
-│       └── my-php.ini.twig
+│   ├── .env.solr.twig
+│   ├── commands
+│   │   └── web
+│   │       ├── lint
+│   │       ├── phpcbf
+│   │       ├── phpcs
+│   │       ├── phpstan
+│   │       └── phpunit
+│   ├── config.solr.yaml.twig
+│   ├── config.yaml.twig
+│   ├── docker-compose.solr.yaml.twig
+│   ├── homeadditions
+│   │   └── .bash_aliases.twig
+│   └── php
+│       └── my-php.ini.twig
 ├── .editorconfig
 ├── .github
-│   ├── actions
-│   │   ├── install-local
-│   │   │   └── action.yml.twig
-│   │   └── upgrade
-│   │       ├── rector.php
-│   │       └── upgrader.sh
-│   └── workflows
-│       ├── phpcs.yml.twig
-│       ├── phpunit-functional-testing.yml.twig
-│       ├── phpunit-unit-testing.yml.twig
-│       ├── testing.yml.twig
-│       ├── update.yml.twig
-│       ├── upgrade.yml.twig
-│       └── visual-regression-testing.yml.twig
+│   ├── actions
+│   │   ├── install-local
+│   │   │   └── action.yml.twig
+│   │   └── upgrade
+│   │       ├── rector.php
+│   │       └── upgrader.sh
+│   └── workflows
+│       ├── config-pull.yml.twig
+│       ├── phpcs.yml.twig
+│       ├── phpunit-functional-testing.yml.twig
+│       ├── phpunit-unit-testing.yml.twig
+│       ├── testing.yml.twig
+│       ├── update.yml.twig
+│       ├── upgrade.yml.twig
+│       └── visual-regression-testing.yml.twig
 ├── Makefile
 ├── README.md.twig
 ├── solr
-│   └── site_search
-│       └── conf
-│           └── README.md.twig
+│   └── site_search
+│       └── conf
+│           └── README.md.twig
 ├── .vscode
-│   ├── extensions.json
-│   ├── launch.json
-│   ├── settings.json.twig
-│   └── tasks.json
+│   ├── extensions.json
+│   ├── launch.json
+│   ├── settings.json.twig
+│   └── tasks.json
 └── @web-root
     └── sites
         └── default
@@ -137,7 +150,7 @@ assets/replace/
 
 ### Merged Assets
 
-Assets that will be merged into existing destination files or added if inexstistant:
+Assets that will be merged into existing destination files or added if inexistent:
 
 <details>
 <summary>Show structure of merged assets</summary>
@@ -151,8 +164,9 @@ assets/merge/
 ├── .gitattributes
 ├── .gitignore.twig
 ├── .platform
-│   └── services.yaml.twig
-└── .platform.app.yaml.twig
+│   └── services.yaml.twig
+├── .platform.app.yaml.twig
+└── playwright-vrt.config.json.twig
 ```
 
 </details>
