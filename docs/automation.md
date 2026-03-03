@@ -92,7 +92,7 @@ A JSON payload has to follow this structure:
       * `matchExtension`: (optional) Matching the name of a module or theme in the `core.extension.yml` of the Drupal config (`string`)
       * `matchExtensionInverse`: (optional) Inverse matching the name of a module or theme in the `core.extension.yml` of the Drupal config (`string`)
 
-An example operation for removing `dompdf/dompdf` if it is installed and requiring `iqual/iq_barrio` and `drupal/antibot:^2.0` and updating all depedencies would look like this:
+An example operation for removing `dompdf/dompdf` if it is installed and requiring `iqual/iq_barrio` and `drupal/antibot:^2.0` and updating all dependencies would look like this:
 
 ```json
 {
@@ -255,7 +255,7 @@ This workflow will first run `parallel-lint` to check the syntax of all custom t
    * Manual dispatch
    * Call from other workflow
 
-This workflow will run the "unit" testsuite according to the `phpunit.xml` (fallback to `phpunit.xml.dist`) in the repository. This type of testing doesn't require a full Drupal build and will not use the images defined in `manifests/local`.
+This workflow will run the "unit" testsuite according to the `phpunit.xml` (fallback to `phpunit.xml.dist`) in the repository. This type of testing doesn't require a full Drupal build.
 
 ## PHPUnit Functional Testing
 
@@ -284,4 +284,6 @@ This workflow requires a full build of Drupal.
    * Pull request (re)open (`workflows.phpunit` disabled)
    * Call from other workflow (`workflows.phpunit` enabled)
 
-This workflow will install the project in a GitHub Actions runner environment and run a visual regression test on it ([iqual-ch/ci-pocketknife-installer](https://github.com/iqual-ch/ci-pocketknife-installer) and [iqual-ch/ci-pocketknife](https://github.com/iqual-ch/ci-pocketknife/)). This workflow requires a `.env.visreg` file setting the test and reference website URLs for testing. The workflow will crawl the website for relevant links. If the test fails (when there are visual differences between the two websites), then it will upload a BackstopJS report as a workflow artifact.
+This workflow will install the project in a GitHub Actions runner environment and run a visual regression test using the node package [`iqual/playwright-vrt`](https://github.com/iqual-ch/playwright-vrt). The workflow will look for the website's sitemap, and fall back to crawling to gather relevant links. If the test fails (when there are visual differences between the local and live/reference version), then it will upload a Playwright report as a workflow artifact.
+
+The VRT configuration can be customized in the `playwright-vrt.config.json` file in the root of the project.

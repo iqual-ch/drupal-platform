@@ -1,13 +1,10 @@
 # Configuration
 
-> [!CAUTION]
-> This documentation is **deprecated** and updating is in progress.
-
-The project setup allows a lot of customization using multiple configuration options. The runtime and Drupal environment can be modified for project needs, even on a per-environment basis.
+The project setup allows a lot of customization using multiple configuration options. The runtime and Drupal environment can be modified for project needs.
 
 ## Drupal Platform Package Variables
 
-Assets and configuration managed by the Drupal Platform has to be customized using the available package variables. These can be set in the `composer.json`'s `extra.project-scaffold` section. To apply the changes run `composer project:scaffold`. By default the package will only prompt for the required variables (marked with a [`*`]) and vanity variables (market with a [`~`]) on initial installation of the package, during an update or when executing `composer project:update`.
+Assets and configuration managed by the Drupal Platform have to be customized using the available package variables. These can be set in the `composer.json`'s `extra.project-scaffold` section. To apply the changes run `composer project:scaffold`. By default the package will only prompt for the required variables (marked with a [`*`]) and vanity variables (marked with a [`~`]) on initial installation of the package, during an update or when executing `composer project:update`.
 
 <details>
 <summary>List of available package variables</summary>
@@ -17,19 +14,11 @@ Assets and configuration managed by the Drupal Platform has to be customized usi
 * `name` [`*`]: Code name of the project (e.g. `iqual`)
 * `title` [`~`]: Title of the project (e.g. `iqual AG`)
 * `url` [`*`]: URL to the current remote live deployment (e.g. `https://www.iqual.ch`)
-* `drupal_spot` [`*`]: The drupal single point of truth for asset synchronization
-  * Kubernetes: name of the target environment, e.g. `prod`
-  * Platform.sh: machine name of the main project branch, e.g. `main-123`
+* `drupal_spot` [`*`]: The Drupal single point of truth for asset synchronization (machine name of the main Platform.sh branch, e.g. `main-123`)
 * Runtime configuration
-  * `runtime.base_image`: Base docker image for the Drupal container
-  * `runtime.base_image_tag`: Base docker image tag for the Drupal container
-  * `runtime.db_image`: Database docker image
-  * `runtime.db_image_tag`: Database docker image tag
-  * `runtime.php_version` [`*`]: PHP version of the platform (e.g. `8.2`)
+  * `runtime.php_version` [`*`]: PHP version of the platform (e.g. `8.3`)
   * `runtime.db_version` [`*`]: Database version of the platform (e.g. `10.6`)
-  * `runtime.solr_image`: Solr docker image
-  * `runtime.solr_image_tag`: Solr image tag
-  * `runtime.solr_version`: Solr version of the platform (e.g. `9.2`)
+  * `runtime.solr_version`: Solr version of the platform (e.g. `9.2`, `null` to disable)
   * `runtime.php_memory_limit`: PHP memory limit (e.g. `256M`)
   * `runtime.php_upload_limit`: PHP upload limit (e.g. `100M`)
 * CI/CD workflow settings
@@ -37,48 +26,43 @@ Assets and configuration managed by the Drupal Platform has to be customized usi
   * `workflows.upgrade`: Enable/Add the Drupal upgrade workflow
   * `workflows.phpunit`: Enable/Add the Drupal testing workflow
   * `workflows.vrt`: Enable/Add the visual regression testing workflow
-* `local_domain_suffix`: The domain suffix for local development
-* `local_domain_aliases` array: Additional aliases of the local development domain in the Docker network
-* Development setup (`development` array)
-  * `devcontainer-docker-compose`: Local dev environment with docker-compose and devcontainers
 * `deployment`: Deployment integration type, see [available remote deployment options](./deployment.md#remote-deployment)
-* Kubernetes contexts
-  * `kubernetes_contexts.dev`: Kubernetes development cluster context
-  * `kubernetes_contexts.stage`: Kubernetes staging cluster context
-  * `kubernetes_contexts.prod`: Kubernetes production cluster context
 * Platform.sh config
-  * `platformsh_config.region`: Deployment region (e.g. `de-2`)
+  * `platformsh_config.region`: Deployment region (e.g. `ch-1`)
   * `platformsh_config.project_id`: ID of the project
 
 </details>
 
 ## Environment
 
-### Environment files in repository
+### Environment Variables
 
-The general project environment variables are stored in the `.env` file in the root of the project. These variables will be loaded and available for the runtime and CLI and will also be available for the Drupal website (i.e. `php-fpm`).
+General project environment variables for the local environment are configured in `.ddev/config.yaml` under `web_environment`. This includes the `DRUPAL_ENVIRONMENT`, `DRUPAL_SPOT`, `DRUPAL_SPOT_ORIGIN`, and testing-related variables (`SIMPLETEST_DB`, `SIMPLETEST_BASE_URL`, etc.).  To add non-sensistive environment variables, create a `.ddev/config.custom.yaml` file with custom entries under `web_environment`. After running `ddev start` these will be merged into the base configuration and become available in the runtime environment.
 
-It contains general configuration like the name of the project but also the SSH proxy endpoint and Kubernetes contexts for remote `drush` commands. Additionally this is where the single point of truth is defined (i.e. `DRUPAL_SPOT`). This is used for automatic database synchronization on non-production deployments without a database (i.e. `make db-sync`). These variables are managed by the Drupal Platform and should not be modified manually. However additional variables are allowed.
+> [!CAUTION]
+> The `.ddev/config.yaml` is managed by the Drupal Platform and should not be modified manually.
 
-The second environment file `.env.local` should not be modified since it is generated dynamically and is consumed by the `local` environment.
+> [!WARNING]
+> The `.env` file in the root of the project is not supported by default. Neither DDEV nor the remote deployment on Upsun will pick up the file's contents.
 
-### Environment variables in deployment manifest
+### Secrets
 
-Additionally to the environment file there are environment variables defined in the deployment manifests (e.g. `docker-compose.yml`). The environment variables in the manifests should not be modified manually since they are managed by the Drupal Platform. Use environment and secret files instead.
+Local development secrets can be stored in `.ddev/.env` (git-ignored). This can be useful for storing sensitive API credentials as environment variables that can be loaded into the config in a settings file in Drupal (see Credentials in Config section).
 
-## Secrets
-
-Local deployment secrets can be stored in a `.env.secrets` file in the root of the project. The file is git-ignored but will be created on environment creation. This can be useful for storing sensitive API credentials as environment variables that can be loaded into the config in a settings file in Drupal (see Credentials in Config section).
-
-Remote deployment secrets can be injected from Kubernetes Secrets as environment variables or in the case of Platform.sh using [project or environment variables](#credentials-on-platformsh).
+Remote deployment secrets on Platform.sh can be injected using [project or environment variables](#credentials-on-upsun).
 
 ### SSH Authentication
 
-For `git` authentication and SSH proxy access (e.g. `drush` remote commands) a SSH authentication mechanism has to be provided. This can either be done using VS Code's `ssh-agent` integration or by using the `SSH_KEY` environment variable (e.g. in `.env.secrets`). Check the [Drupal Image environment variable documentation](https://github.com/iqual-ch/dc-drupal/blob/main/docs/environment-variables.md) for more information.
+For remote `drush` commands (e.g. `drush sql:sync @spot @self`), SSH authentication must be available in DDEV. Register your SSH key with:
 
-### Composer Authentication
+```bash
+ddev auth ssh
+```
 
-Composer will prompt for authentication if necesseary and when the CLI is in interactive mode. Alternatively the `COMPOSER_AUTH` environment variable can be used (e.g. in `.env.secrets`).
+> [!TIP]
+> In order to only add a single key, use `ddev auth ssh -f $HOME/.ssh/YOUR_SSH_KEY`.
+
+This makes your host `ssh-agent` keys available inside the DDEV container.
 
 ## Drupal Settings and Services
 
@@ -94,23 +78,26 @@ look for environment variables to configure Drupal (e.g. database settings) and 
 5. `settings.local.php` (ignored by git)
 6. `services.local.yml` (ignored by git)
 
-So for example for configuring `local` environments, settings can be added to the `local.settings.php` file. For sensitive settings or configuration that should only apply to your local copy of the environment use the `settings.local.php` file.
+So for example for configuring `local` environments, settings can be added to the `local.settings.php` file.
 
-#### Platform.sh Environment Type
+> [!TIP]
+> For sensitive settings or configuration that should only apply to your local copy of the environment use the `settings.local.php` file. This file is git ignored by default and won't be committed and therefore configuration won't apply to other developers' environments.
 
-For Platform.sh deployments the environment type (`$PLATFORM_ENVIRONMENT_TYPE`) is mapped to the following Drupal environment (`$DRUPAL_ENVIRONMENT`) equivalents:
+#### Upsun Environment Type
+
+For Upsun deployments the environment type (`$PLATFORM_ENVIRONMENT_TYPE`) is mapped to the following Drupal environment (`$DRUPAL_ENVIRONMENT`) equivalents:
 
 * `production`: `prod`
 * `staging`: `stage`
 * `development`: `dev`
 
-Therefore the Platform.sh environment type `production` will still include the `prod.settings.php` settings file.
+Therefore the Upsun environment type `production` will still include the `prod.settings.php` settings file.
 
 ### Credentials in Config
 
-Credentials or other sensitive information should not be committed to the project's repository. Instead placeholders should be used in the config and the the config options should then be overriden in a settings file. The settings file can contain the sensitive information if it is git-ignored (i.e. `settings.local.php`) or load the data from an environment variables (e.g. stored in `.env.secrets`).
+Credentials or other sensitive information should not be committed to the project's repository. Instead placeholders should be used in the config and the config options should then be overridden in a settings file. The settings file can load the data from environment variables (e.g. stored in `.ddev/.env`) or (not recommended) contain the sensitive information if it is git-ignored (i.e. `settings.local.php`) .
 
-For example, if you want to store the API key and webhook hash of the Mailchimp module in an environemt variable, you can add the following to the `all.settings.php` (applying to all environments, and committed):
+For example, if you want to store the API key and webhook hash of the Mailchimp module in an environment variable, you can add the following to the `all.settings.php` (applying to all environments, and committed):
 
 ```php
 $config['mailchimp.settings'] = [
@@ -119,13 +106,13 @@ $config['mailchimp.settings'] = [
 ];
 ```
 
-Then the `MAILCHIMP_API_KEY` and `MAILCHIMP_WEBHOOK_HASH` can be set in the environemnt using the `.env.secrets` file. Alternatively it is still possible to override the variables directly in the `settings.local.php` file.
+Then the `MAILCHIMP_API_KEY` and `MAILCHIMP_WEBHOOK_HASH` can be set in the environment using the `.ddev/.env` file. Alternatively it is still possible to override the variables directly in the `settings.local.php` file.
 
 For more advanced setups use a key management module.
 
-#### Credentials on Platform.sh
+#### Credentials on Upsun
 
-Platform.sh allows adding variables to [projects](https://docs.platform.sh/development/variables/set-variables.html#create-project-variables) and [specific environments](https://docs.platform.sh/development/variables/set-variables.html#create-environment-specific-variables). This enables adding sensitive credentials directly for projects or environments. By using specific variable keys, it is also possible to directly override drupal settings or configuration.
+Upsun (formerly Platform.sh) allows adding variables to [projects](https://fixed.docs.upsun.com/development/variables/set-variables.html#create-project-variables) and [specific environments](https://fixed.docs.upsun.com/development/variables/set-variables.html#create-environment-specific-variables). This enables adding sensitive credentials directly for projects or environments. By using specific variable keys, it is also possible to directly override Drupal settings or configuration.
 
 Variables that begin with `drupalsettings` or `drupal` get mapped to the $settings array verbatim, even if the value is an array. For example, a variable named `drupalsettings:example-setting` with value `foo` becomes `$settings['example-setting'] = 'foo';`.
 
@@ -166,7 +153,7 @@ parameters:
 
 ## Solr
 
-If a `runtime.solr_version` is defined (e.g. `9.2` instead of `null`) then an additional Solr service will be deployed. This Solr integration only supports a single core with the name `site_search`. Unless a `sorconfig.xml` exists in the `/solr/site_search/conf/` directory, it will not create a core on start-up.
+If a `runtime.solr_version` is defined (e.g. `9.2` instead of `null`) then an additional Solr service will be deployed. This Solr integration only supports a single core with the name `site_search`. Unless a `solrconfig.xml` exists in the `/solr/site_search/conf/` directory, it will not create a core on start-up.
 
 ### Set-up a new Solr core with Search API
 

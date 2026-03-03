@@ -1,86 +1,101 @@
 # Project Commands (Makefile)
 
-> [!CAUTION]
-> This documentation is **deprecated** and updating is in progress.
+The project includes a `Makefile` with predefined targets for common project tasks. All targets can be executed in the project root using `make TARGET`.
 
-## Make targets
+> [!TIP]
+> Run `make help` for a full list of available commands with descriptions.
 
-The following `make` targets are available in the project's `Makefile`. They can be executed in the project root using `make TARGET`.
+## Local Development
 
-### Help
+* `code`: Launch VS Code for local development
+* `cli`: Attach to the local DDEV shell (alias for `cli-local`)
+* `cli-local`: Attach to the local DDEV environment shell (`ddev ssh`)
 
-* `help`: Display help
+## Project Installation
 
-### Drupal commands
+* `install`: Install the project stack with runtime, runs:
+    * `runtime`: Start the local DDEV runtimes (`ddev start`)
+    * `drupal`: Build and deploy Drupal locally, runs:
+        * `drupal-build`: Build the Drupal app (`composer install`, create required directories)
+        * `drupal-data`: Import Drupal data (database and filesystem), runs:
+            * `drupal-db`: Import the Drupal database from the SPOT (skips if database already exists unless `FORCE=true`)
+            * `drupal-fs`: Import the Drupal filesystem (uses `iq_stage_file_proxy` by default, or `drush rsync` if `FS_PULL=true`)
+        * `drupal-deploy`: Run Drupal deployment commands (`drush deploy`, skipped if `DRUPAL_NO_DEPLOY=true`)
 
-> These commands can only be run from within the Drupal container
+* `install-safe`: Same as `install` but first checks for uncommitted git changes
+* `new`: Create a new Drupal project (runs `install` with `NEW_PROJECT=true`, which runs `drush site:install` or imports a database backup from `app/resources`)
 
-* `project`: Auto-install the Drupal project into the current environment (requires a running container environment)
-    * Checks if there are uncommited changes and aborts if detected
-    * Pulls new commits from git if set (`$GIT_COMMIT` or `$GIT_BRANCH`)
-    * Checks if `vendor` folder exists
-    * Runs `make install` if checks passed
-* `install`: Install the existing Drupal site
-    * Runs `composer install` (with `--no-dev` on `prod`)
-    * Execute `make db-sync` and `make fs-sync` if the database is empty
-    * Runs `drush deploy` (WARNING: This will override config)
-* `update`: Update the Drupal site (`composer` and `drush`) and export the new config
+> [!TIP]
+> Use `DDEV_SNAPSHOT=latest` to restore the latest DDEV snapshot during `make runtime` (or `make install`), or specify a named snapshot with `DDEV_SNAPSHOT=<name>`.
+
+## Maintenance
+
+* `update`: Update the Drupal site (`composer update`, `drush updb`, `drush cex`)
 * `upgrade`: Upgrade the Drupal site by running the `upgrader.sh` script with a `JSON_INPUT`. See the [upgrade workflow documentation](automation.md#upgrade-drupal-project).
-* `theme`: Compile the current Drupal theme (`iq_barrio`)
-* `db-backup`: Alias for db-dump wth `$APP_ROOT/backups` as backup folder
-* `db-dump`: Dump the Drupal database to `$DUMP_FOLDER` (or if not set to `$APP_ROOT`)
-* `db-sync`: Synchronize Drupal database from `$DB_SOURCE` (if not set from `$DRUPAL_SPOT`)
-* `fs-sync`: Synchronize Drupal public files if `$DRUPAL_FS_SYNC` is set to `true` (`rsync`), otherwise enables `iq_stage_file_proxy`.
-* `uninstall`: Uninstall/reset the Drupal site
-* `new`: Create a new Drupal site form repo (`drush site:install` with profile or from a backup in the `app/resources` folder)
+* `config-pull`: Pull Drupal configuration from the SPOT (`drush config:pull`)
+* `theme`: Compile the current Drupal theme
 
-### Development commands
+## Utility
 
-> These commands can only be run outside of the Drupal container
+* `launch`: Open the project in the browser
+* `login`: Open the browser with a one-time login link
+* `log`: Show recent Drupal watchdog and DDEV logs
+* `stop`: Stop the local DDEV runtimes
+* `destroy`: Permanently delete the local DDEV runtimes
 
-* `code`: Open Visual Studio Code for code development
-* `cli`: Alias for `cli-local`
-* `cli-local`: Attach to the local environment shell
-* `cli-prod`: Attach to the production environment shell
-* `cli-%`: Attach to the `%` environment shell (replace `%` with name of environment in `./manifests` folder)
+## Services
 
-### Deployment commands
+* `service-solr`: Install and configure the DDEV Solr service
 
-> These commands can only be run outside of the Drupal container
+## Tooling
 
-* `local`: Alias for `deploy-local`
-* `deploy-local`: Deploy the local environment (`docker-compose`)
-* `deploy-dev`: Deploy the development environment (Kubernetes) – _patch operation by default_
-* `deploy-stage`: Deploy the staging environment (Kubernetes) – _patch operation by default_
-* `deploy-prod`: Deploy the production environment (Kubernetes) – _patch operation by default_
-* `deploy-%`: Deploy the `%` environment (replace `%` with name of environment in `./manifests` folder)
-* `delete-local`: Delete the local deployment with `docker-compose` permanently
+* `tool-chrome`: Install the DDEV Selenium Chrome extension (use `REMOVE=true` to uninstall)
 
-### Tool commands
+## Testing
 
-> These commands can only be run outside of the Drupal container
+* `test`: Run project tests (first runs `drupal-validate`, `drupal-lint`, `drupal-analysis` and then), runs:
+    * `drupal-test-unit`: Run the Drupal unit testsuite
+* `drupal-test-list`: List all available Drupal tests
+* `drupal-test-func`: Run Drupal functional tests (unit, kernel, functional, functional-javascript)
+* `drupal-test-db`: Run Drupal database tests (kernel, functional, existingsite) — _Warning: can modify your DB_
+* `drupal-test-browser`: Run Drupal browser tests (functional-javascript, existingsite-javascript) — _Warning: requires Chrome tool, can modify your DB_
 
-* `tool-%`: Launch the tool `%` (e.g. `tool-chrome`)
+## Linting
 
-See [Drupal development documentation](drupal-development.md#external-tools) for a list of available external tools.
+* `lint`: Lint the project, runs:
+    * `drupal-validate`: Validate the Composer lock file
+    * `drupal-lint`: Lint custom themes and modules (PHP lint + PHPCS)
+    * `drupal-analysis`: Run PHPStan static analysis on custom themes and modules
 
-### PHP commands
+## Beautifying
 
-> These commands can only be run from within the Drupal container
+* `beauty`: Beautify and fix code in the project, runs:
+    * `drupal-beauty`: Run PHPCBF on custom themes and modules
 
-* `xdebug`: Enable XDebug and restart the web server.
-* `xdebug-disable`: Disable XDebug and restart the web server.
-* `test`: Run basic tests, but only unit tests with PHPUnit
-* `test-all`: Run all available tests, including database and browser tests (requires the `chrome` tool)
-* `validate`: Validate the composer lock file
-* `lint`: Run linters
-* `phplint`: Run a simple PHP syntax lint on custom theme & module files in the repo
-* `phpcs`: Run PHPCS on custom theme & module files in the repo according to the Drupal standards
-* `phpunit-all`: Run all PHPUnit based tests
-* `phpunit`: Run the unit testsuite with PHPUnit
-* `phpunit-db`: Run kernel, functional & existingsite testsuites with PHPUnit requiring a database (_Warning: Can modify your DB_)
-* `phpunit-browser`: Run functional-javascript & existingsite-javascript testsuites with PHPUnit requiring a browser (_Warning: Can modify your DB_)
+## DDEV Commands
 
-## Scripts and aliases
+In addition to `make` targets, the following DDEV commands are available and can be executed directly with `ddev <command>`:
 
-There are also scripts and a bunch of aliases available in the Drupal container. Check the [script documentation of the Drupal image](https://github.com/iqual-ch/dc-drupal/blob/main/docs/scripts.md).
+* `ddev composer`: Run Composer inside the web container
+* `ddev drush`: Run Drush inside the web container
+* `ddev phpunit`: Run PHPUnit inside the web container
+* `ddev phpcs`: Run PHPCS inside the web container
+* `ddev phpcbf`: Run PHPCBF inside the web container
+* `ddev phpstan`: Run PHPStan inside the web container
+* `ddev lint`: Run PHP linting inside the web container
+
+> [!TIP]
+> Check the [official DDEV documentation for `ddev` CLI usage](https://docs.ddev.com/en/stable/users/usage/cli/).
+
+## Shell Aliases
+
+There are also shell aliases available inside the DDEV container (via `ddev ssh`) and on the remote Upsun deployment. These include shortcuts for common `git`, `drush` and navigation commands. Notable aliases include:
+
+* `cr`: `drush cache:rebuild`
+* `cex`: `drush config:export`
+* `cim`: `drush config:import`
+* `uli`: `drush user:login`
+* `cdd`: Change directory to a Drupal directory (e.g. `cdd %files`)
+* `dssh`: SSH into a remote Drush alias (e.g. `dssh @spot`)
+
+> Run `ddev ssh` to access the container shell and use these aliases.
