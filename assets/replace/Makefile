@@ -171,9 +171,9 @@ log: ## Show logs
 
 theme: ## Compile Drupal theme
 	@echo "Compiling Drupal theme"
-	drush iq_barrio_helper:sass-interpolate-config 2>/dev/null || true
-	drush iqsc:compile 2>/dev/null || true
-	drush cr
+	ddev drush iq_barrio_helper:sass-interpolate-config 2>/dev/null || true
+	ddev drush iqsc:compile 2>/dev/null || true
+	ddev drush cr
 
 config-pull: drupal-build ## Pull Drupal configuration
 	@echo -e " $(MSG_SUCCESS) Pulling Drupal configuration"
