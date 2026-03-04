@@ -104,8 +104,8 @@ drupal-db: ## Import drupal database
 	@echo -e " $(MSG_INFO) Importing Drupal database"
 	if [ "$(NEW_PROJECT)" = "true" ]; then
 		echo -e " $(MSG_INFO) Running Drupal site install"
-		if compgen -G "$$DDEV_COMPOSER_ROOT/resources/*.sql.gz" > /dev/null; then
-			ddev drush sqlq --file=$$(compgen -G "$$DDEV_COMPOSER_ROOT/resources/*.sql.gz" | head -1)
+		if compgen -G "./app/resources/*.sql.gz" > /dev/null; then
+			ddev drush sqlq --file=$$(compgen -G "./app/resources/*.sql.gz" | head -1)
 			ddev drush updb
 		else
 			ddev drush si --existing-config --yes $(DRUSH_FLAGS)
