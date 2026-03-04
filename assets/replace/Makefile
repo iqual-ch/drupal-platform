@@ -143,7 +143,7 @@ drupal-update:
 	@echo -e " $(MSG_INFO) Updating Drupal"
 	ddev composer update $(COMPOSER_FLAGS)
 	ddev drush cr
-	ddev drush updb $(ddev DRUSH_FLAGS)
+	ddev drush updb $(DRUSH_FLAGS)
 	ddev drush cex $(DRUSH_FLAGS)
 
 upgrade: ## Upgrade Drupal site
