@@ -72,7 +72,7 @@ install: runtime stack ## Install project stack with runtime
 
 new: ## Create new project
 	@echo -e " $(MSG_INFO) Creating new project"
-	$(MAKE) install NEW_PROJECT=true
+	$(MAKE) install NEW_PROJECT=true DRUPAL_NO_DEPLOY=true
 
 runtime: ## Start local runtime
 	@echo -e " $(MSG_INFO) Starting DDEV runtimes"
