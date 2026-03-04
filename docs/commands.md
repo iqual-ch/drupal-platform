@@ -23,7 +23,7 @@ The project includes a `Makefile` with predefined targets for common project tas
         * `drupal-deploy`: Run Drupal deployment commands (`drush deploy`, skipped if `DRUPAL_NO_DEPLOY=true`)
 
 * `install-safe`: Same as `install` but first checks for uncommitted git changes
-* `new`: Create a new Drupal project (runs `install` with `NEW_PROJECT=true`, which runs `drush site:install` or imports a database backup from `app/resources`)
+* `new`: Create a new Drupal project (runs `install` with `NEW_PROJECT=true` and `DRUPAL_NO_DEPLOY=true`, which runs `drush site:install` or imports a database backup from `app/resources`)
 
 > [!TIP]
 > Use `DDEV_SNAPSHOT=latest` to restore the latest DDEV snapshot during `make runtime` (or `make install`), or specify a named snapshot with `DDEV_SNAPSHOT=<name>`.
