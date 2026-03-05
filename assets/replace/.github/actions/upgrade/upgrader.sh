@@ -58,8 +58,22 @@ if [[ -n "$RSH" && "$RSH" == "ddev" ]]; then
   echo "Using remote shell: ddev"
 fi
 
+# Pretty print the command to be run, with proper quoting for arguments with spaces.
+function log_cmd {
+  local parts=()
+  for arg in "$@"; do
+    if [[ "$arg" =~ [[:space:]] ]]; then
+      parts+=("\"$arg\"")
+    else
+      parts+=("$arg")
+    fi
+  done
+  echo "${parts[*]}"
+}
+
+# Run command locally or in environment.
 function rsh {
-  echo "$@"
+  log_cmd "$@"
   if [[ -n "$RSH" && "$RSH" == "make-cli" ]]; then
     # Make sure the arguments' value is quoted in a format that can be reused as input.
     COMMAND="${*@Q}" make cli
@@ -203,6 +217,13 @@ for operation in "${OPERATIONS[@]}"; do
   else
     DATA_ARRAY=()
   fi
+
+  # Strip surrounding double quotes from data elements for backwards compatibility.
+  for i in "${!DATA_ARRAY[@]}"; do
+    if [[ "${DATA_ARRAY[$i]}" =~ ^\"(.*)\"$ ]]; then
+      DATA_ARRAY[$i]="${BASH_REMATCH[1]}"
+    fi
+  done
 
   KEY=$(echo "${operation}" | jq -r '.key')
 
