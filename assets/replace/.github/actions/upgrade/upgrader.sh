@@ -58,8 +58,22 @@ if [[ -n "$RSH" && "$RSH" == "ddev" ]]; then
   echo "Using remote shell: ddev"
 fi
 
+# Pretty print the command to be run, with proper quoting for arguments with spaces.
+function log_cmd {
+  local parts=()
+  for arg in "$@"; do
+    if [[ "$arg" =~ [[:space:]] ]]; then
+      parts+=("\"$arg\"")
+    else
+      parts+=("$arg")
+    fi
+  done
+  echo "${parts[*]}"
+}
+
+# Run command locally or in environment.
 function rsh {
-  echo "$@"
+  log_cmd "$@"
   if [[ -n "$RSH" && "$RSH" == "make-cli" ]]; then
     # Make sure the arguments' value is quoted in a format that can be reused as input.
     COMMAND="${*@Q}" make cli
@@ -130,9 +144,13 @@ for operation in "${OPERATIONS[@]}"; do
   MATCH_EXTENSION=$(echo "${operation}" | jq -r '.matchExtension // ""')
   MATCH_EXTENSION_INVERSE=$(echo "${operation}" | jq -r '.matchExtensionInverse // ""')
 
-  echo -e "---------------------------------------------------"
-  echo -e "\tRunning action: ${ACTION}"
-  echo -e "---------------------------------------------------"
+  if [[ -n "$GITHUB_ACTIONS" ]]; then
+    echo "::group::${ACTION}"
+  else
+    echo -e "---------------------------------------------------"
+    echo -e "\tRunning action: ${ACTION}"
+    echo -e "---------------------------------------------------"
+  fi
 
   # Check if operation matches composer requirements.
   if [ -n "${MATCH}" ] && ! package_required "${MATCH}"; then
@@ -368,6 +386,10 @@ for operation in "${OPERATIONS[@]}"; do
       echo "Unsupported action: ${ACTION}"
       ;;
   esac
+
+  if [[ -n "$GITHUB_ACTIONS" ]]; then
+    echo "::endgroup::"
+  fi
 
 done
 
