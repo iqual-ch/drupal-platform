@@ -204,6 +204,13 @@ for operation in "${OPERATIONS[@]}"; do
     DATA_ARRAY=()
   fi
 
+  # Strip surrounding double quotes from data elements for backwards compatibility.
+  for i in "${!DATA_ARRAY[@]}"; do
+    if [[ "${DATA_ARRAY[$i]}" =~ ^\"(.*)\"$ ]]; then
+      DATA_ARRAY[$i]="${BASH_REMATCH[1]}"
+    fi
+  done
+
   KEY=$(echo "${operation}" | jq -r '.key')
 
   # Switch to relevant action.
