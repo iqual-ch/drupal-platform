@@ -144,13 +144,9 @@ for operation in "${OPERATIONS[@]}"; do
   MATCH_EXTENSION=$(echo "${operation}" | jq -r '.matchExtension // ""')
   MATCH_EXTENSION_INVERSE=$(echo "${operation}" | jq -r '.matchExtensionInverse // ""')
 
-  if [[ -n "$GITHUB_ACTIONS" ]]; then
-    echo "::group::${ACTION}"
-  else
-    echo -e "---------------------------------------------------"
-    echo -e "\tRunning action: ${ACTION}"
-    echo -e "---------------------------------------------------"
-  fi
+  echo -e "---------------------------------------------------"
+  echo -e "\tRunning action: ${ACTION}"
+  echo -e "---------------------------------------------------"
 
   # Check if operation matches composer requirements.
   if [ -n "${MATCH}" ] && ! package_required "${MATCH}"; then
@@ -386,10 +382,6 @@ for operation in "${OPERATIONS[@]}"; do
       echo "Unsupported action: ${ACTION}"
       ;;
   esac
-
-  if [[ -n "$GITHUB_ACTIONS" ]]; then
-    echo "::endgroup::"
-  fi
 
 done
 
