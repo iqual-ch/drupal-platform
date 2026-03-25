@@ -227,3 +227,7 @@ if (getenv('IS_DDEV_PROJECT') == 'true' && is_readable($ddev_settings)) {
     $config['stage_file_proxy.settings']['origin'] = getenv('DRUPAL_SPOT_ORIGIN');
   }
 }
+
+if (file_exists($app_root . '/' . $site_path . '/settings.extra.php')) {
+    include $app_root . '/' . $site_path . '/settings.extra.php';
+}
