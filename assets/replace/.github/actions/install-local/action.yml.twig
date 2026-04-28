@@ -21,7 +21,7 @@ runs:
 
   - name: Cache Composer dependency
     id: cache-composer
-    uses: actions/cache@v4
+    uses: actions/cache@v5
     with:
       path: .composer
       key: ${{ runner.os }}-build-drupal-composer-${{ hashFiles('**/composer.lock') }}
@@ -29,7 +29,7 @@ runs:
   - name: Cache Drupal database
     if: ${{ inputs.caching == 'true' }}
     id: cache-db
-    uses: actions/cache@v4
+    uses: actions/cache@v5
     with:
       path: .ddev/db_snapshots
       key: ${{ runner.os }}-build-drupal-db-${{ inputs.cache_key }}
