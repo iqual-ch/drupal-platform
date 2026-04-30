@@ -38,7 +38,7 @@ jobs:
   phpunit-db-tests:
     name: "Database tests"
     if: ${{ inputs.database-testing || (inputs.testing-type && inputs.testing-type == 'database') }}
-    runs-on: ubuntu-latest
+    runs-on: {% endverbatim %}{{ workflows.runner | default('ubuntu-latest') }}{% verbatim %}
 
     steps:
     - name: Checkout
@@ -75,7 +75,7 @@ jobs:
   phpunit-browser-tests:
     name: "Browser tests"
     if: ${{ inputs.browser-testing || (inputs.testing-type && inputs.testing-type == 'browser') }}
-    runs-on: ubuntu-latest
+    runs-on: {% endverbatim %}{{ workflows.runner | default('ubuntu-latest') }}{% verbatim %}
 
     steps:
     - name: Checkout

@@ -26,7 +26,7 @@ on:
         description: "Optional branch name for the pull request (default: misc/update-<timestamp>)."
 jobs:
   update:
-    runs-on: ubuntu-latest
+    runs-on: {% endverbatim %}{{ workflows.runner | default('ubuntu-latest') }}{% verbatim %}
 
     steps:
     - name: Checkout
