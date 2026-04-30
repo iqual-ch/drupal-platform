@@ -47,7 +47,7 @@ on:
 
 jobs:
   upgrade:
-    runs-on: ubuntu-latest
+    runs-on: {% endverbatim %}{{ workflows.runner | default('ubuntu-latest') }}{% verbatim %}
 
     steps:
     - name: Checkout

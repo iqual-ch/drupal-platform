@@ -17,7 +17,7 @@ concurrency:
 jobs:
   build:
     name: Build Drupal
-    runs-on: ubuntu-latest
+    runs-on: {% endverbatim %}{{ workflows.runner | default('ubuntu-latest') }}{% verbatim %}
 
     outputs:
       browser_testing: ${{ steps.phpunit-tests.outputs.browser_testing }}

@@ -17,7 +17,7 @@ on:
 jobs:
   run-vr-tests:
     name: Visual Regression tests
-    runs-on: ubuntu-latest
+    runs-on: {% endverbatim %}{{ workflows.runner | default('ubuntu-latest') }}{% verbatim %}
 
     steps:
     - name: Checkout
@@ -49,7 +49,7 @@ on:
 jobs:
   run-vr-tests:
     name: Visual Regression tests
-    runs-on: ubuntu-latest
+    runs-on: {% endverbatim %}{{ workflows.runner | default('ubuntu-latest') }}{% verbatim %}
 
     steps:
     - name: Checkout

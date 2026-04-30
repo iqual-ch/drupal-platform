@@ -26,6 +26,7 @@ Assets and configuration managed by the Drupal Platform have to be customized us
   * `workflows.upgrade`: Enable/Add the Drupal upgrade workflow
   * `workflows.phpunit`: Enable/Add the Drupal testing workflow
   * `workflows.vrt`: Enable/Add the visual regression testing workflow
+  * `workflows.runner`: Custom GitHub Actions runner label for DDEV-based workflows (e.g. `ubuntu-latest-m`, default: `ubuntu-latest`)
 * `deployment`: Deployment integration type, see [available remote deployment options](./deployment.md#remote-deployment)
 * Platform.sh config
   * `platformsh_config.region`: Deployment region (e.g. `ch-1`)
