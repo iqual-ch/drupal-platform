@@ -177,7 +177,7 @@ crons:
         cmd: 'cd public ; drush core-cron'
     drush-backup-cleanup:
         spec: '30 23 * * *'
-        cmd: '[ -d /app/drush-backups ] && find /app/drush-backups -type f -mmin +90 -delete'
+        cmd: '[ -d /app/drush-backups ] && find /app/drush-backups -type f -mmin +90 -delete || true'
 
 source:
     root: app
@@ -188,7 +188,7 @@ type: 'php:{{ runtime.php_version }}'
 crons:
     drush-backup-cleanup:
         spec: '30 23 * * *'
-        cmd: '[ -d /app/drush-backups ] && find /app/drush-backups -type f -mmin +90 -delete'
+        cmd: '[ -d /app/drush-backups ] && find /app/drush-backups -type f -mmin +90 -delete || true'
 {% if runtime.php_memory_limit %}
 variables:
     php:
