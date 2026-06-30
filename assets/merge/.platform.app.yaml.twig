@@ -175,6 +175,9 @@ crons:
     drupal:
         spec: '*/19 * * * *'
         cmd: 'cd public ; drush core-cron'
+    drush-backup-cleanup:
+        spec: '30 23 * * *'
+        cmd: '[ -d /app/drush-backups ] && find /app/drush-backups -type f -mmin +90 -delete'
 
 source:
     root: app
@@ -182,6 +185,10 @@ source:
 {% else %}
 name: 'drupal'
 type: 'php:{{ runtime.php_version }}'
+crons:
+    drush-backup-cleanup:
+        spec: '30 23 * * *'
+        cmd: '[ -d /app/drush-backups ] && find /app/drush-backups -type f -mmin +90 -delete'
 {% if runtime.php_memory_limit %}
 variables:
     php:
