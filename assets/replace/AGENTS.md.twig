@@ -16,6 +16,7 @@
 - **Runtime is already up** in this environment — don't run `make install` unless explicitly asked to (re)provision. Use `ddev drush status` to check site state first.
 - **Workflow:** GitHub Flow — branch → develop → PR → review → merge{% if deployment == "platform.sh" %} → deploy. Only `main` deploys to production{% endif %}. Branch format: `issue/XXX-YYY_description`, commit format: `XXX-YYY: Description`, referencing a Jira issue.
 - **Never push to `main`, and never merge a PR yourself.** Merging always requires an explicit, human-approved review — even if all checks pass.
+- **Prefer review over publishing:** when a user is present, offer to push or open a PR rather than doing it unasked — committing and pushing to your own working branch is always fine when that's how you deliver your work.
 - **Dependencies:** Composer (PHP) + npm/Bun (JS), locked in lock files. Config changes go through Drupal's config export/import (`drush cex`/`drush cim`), never hand-edited in the target environment.
 - **CI (GitHub Actions), on every PR:** PHPCS linting{% if workflows.phpunit %}, PHPUnit (unit/kernel/functional/browser){% endif %}{% if workflows.vrt %}, visual regression testing{% endif %}. Must pass before merge.
 
