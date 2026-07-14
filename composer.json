@@ -35,6 +35,11 @@
                 "vrt": true,
                 "phpunit": false
             },
+            "ai": {
+                "agents": true,
+                "claude": true,
+                "copilot": true
+            },
             "deployment": "platform.sh",
             "platformsh_config": {
                 "region": "ch-1",

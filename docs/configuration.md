@@ -27,6 +27,10 @@ Assets and configuration managed by the Drupal Platform have to be customized us
   * `workflows.phpunit`: Enable/Add the Drupal testing workflow
   * `workflows.vrt`: Enable/Add the visual regression testing workflow
   * `workflows.runner`: Custom GitHub Actions runner label for DDEV-based workflows (e.g. `ubuntu-latest-m`, default: `ubuntu-latest`)
+* AI integration settings (see [AI Integration](./ai.md))
+  * `ai.agents`: Enable/Add the generated `AGENTS.md` agent instruction file (default: `true`)
+  * `ai.claude`: Enable/Add the Claude Code plugin recommendation in `.claude/settings.json` (default: `true`)
+  * `ai.copilot`: Enable/Add the GitHub Copilot coding agent setup workflow (default: `true`)
 * `deployment`: Deployment integration type, see [available remote deployment options](./deployment.md#remote-deployment)
 * Platform.sh config
   * `platformsh_config.region`: Deployment region (e.g. `ch-1`)
