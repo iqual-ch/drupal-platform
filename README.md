@@ -128,6 +128,7 @@ assets/replace/
 │       ├── upgrade.yml.twig
 │       └── visual-regression-testing.yml.twig
 ├── AGENTS.md.twig
+├── CLAUDE.md.twig
 ├── Makefile
 ├── README.md.twig
 ├── solr

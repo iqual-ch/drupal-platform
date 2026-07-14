@@ -8,6 +8,7 @@ The integration consists of three managed assets, each of which can be disabled 
 |---|---|---|
 | `AGENTS.md` | `ai.agents` | Generated agent instruction file with project facts, commands and conventions. |
 | `.claude/settings.json` | `ai.claude` | Recommends the `iqual-developer` Claude Code plugin (marketplace: [iqual-ch/claude-plugins](https://github.com/iqual-ch/claude-plugins)). |
+| `CLAUDE.md` | `ai.claude` | Claude Code entry point that imports `AGENTS.md`. |
 | `.github/workflows/copilot-setup-steps.yml` | `ai.copilot` | Prepares the GitHub Copilot coding agent's cloud environment. |
 
 ## AGENTS.md
@@ -44,3 +45,5 @@ The workflow respects the `workflows.runner` variable for custom runner labels a
 ## Claude Code settings
 
 `.claude/settings.json` is a **merged** asset: the plugin recommendation keys are merged into the file, while any additional project-specific settings (e.g. `permissions`) are preserved. Local per-developer overrides belong in `.claude/settings.local.json` (git-ignored by the scaffolded `.gitignore`).
+
+`CLAUDE.md` is a **replaced** (fully managed) asset that imports `AGENTS.md` (`@AGENTS.md`), so Claude Code picks up the same instructions as other agents — do not add project-specific content to it.
