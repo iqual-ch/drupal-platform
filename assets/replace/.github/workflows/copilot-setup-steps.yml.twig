@@ -1,0 +1,72 @@
+{% if ai.copilot %}
+name: Copilot setup steps
+
+{% if deployment == "platform.sh" %}
+{% verbatim -%}
+env:
+  DDEV_VERSION: ${{ vars.DDEV_VERSION || 'latest' }}
+
+on:
+  workflow_dispatch:
+
+jobs:
+  # Must be named exactly "copilot-setup-steps" to be picked up by Copilot.
+  copilot-setup-steps:
+    runs-on: {% endverbatim %}{{ workflows.runner | default('ubuntu-latest') }}{% verbatim %}
+
+    timeout-minutes: 45
+
+    permissions:
+      contents: read
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v6
+
+    - name: Install agent skills from the iqual-developer plugin
+      uses: iqual-ch/claude-plugins/.github/actions/install-skills@main
+
+    - name: Install Drupal locally
+      uses: ./.github/actions/install-local
+      with:
+        ssh_key: ${{ secrets.SSH_KEY }}
+
+    # The coding agent gets a fully installed local site but must not be able
+    # to reach remote environments: remove the SSH key before handing over.
+    - name: Remove SSH access to remote environments
+      shell: bash
+      run: |
+        rm -f .ddev/homeadditions/.ssh/id_rsa
+        ddev exec 'rm -f ~/.ssh/id_rsa' || true
+        ddev restart
+
+    - name: Verify remote environment access is gone
+      shell: bash
+      run: |
+        if timeout 30 ddev drush @spot status 2>/dev/null; then
+          echo "::error::drush can still reach @spot over SSH after key removal."
+          exit 1
+        fi
+{% endverbatim -%}
+{% else %}
+on:
+  workflow_dispatch:
+
+jobs:
+  # Must be named exactly "copilot-setup-steps" to be picked up by Copilot.
+  copilot-setup-steps:
+    runs-on: {{ workflows.runner | default('ubuntu-latest') }}
+
+    timeout-minutes: 15
+
+    permissions:
+      contents: read
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v6
+
+    - name: Install agent skills from the iqual-developer plugin
+      uses: iqual-ch/claude-plugins/.github/actions/install-skills@main
+{% endif %}
+{% endif %}

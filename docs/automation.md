@@ -10,6 +10,7 @@ There are multiple GitHub Action workflows for running common automation tasks.
    * [PHPUnit: Unit Testing](#phpunit-unit-testing)
    * [PHPUnit: Functional Testing](#phpunit-functional-testing)
    * [Visual Regression Testing: Comparing reference website to local test deployment](#visual-regression-testing)
+* [Copilot: Set up the GitHub Copilot coding agent environment](#copilot-setup-steps)
 
 ## Update Drupal Project
 
@@ -287,3 +288,14 @@ This workflow requires a full build of Drupal.
 This workflow will install the project in a GitHub Actions runner environment and run a visual regression test using the node package [`iqual/playwright-vrt`](https://github.com/iqual-ch/playwright-vrt). The workflow will look for the website's sitemap, and fall back to crawling to gather relevant links. If the test fails (when there are visual differences between the local and live/reference version), then it will upload a Playwright report as a workflow artifact.
 
 The VRT configuration can be customized in the `playwright-vrt.config.json` file in the root of the project.
+## Copilot Setup Steps
+
+* Workflow: `copilot-setup-steps.yml`
+* Config variable: `ai.copilot`
+* Runs on:
+   * Manual dispatch
+   * Automatically by the GitHub Copilot coding agent before it starts working
+
+This workflow prepares the ephemeral GitHub Actions environment for the [GitHub Copilot coding agent](https://docs.github.com/en/copilot/using-github-copilot/coding-agent). It installs the shared agent skills from [`iqual-ch/claude-plugins`](https://github.com/iqual-ch/claude-plugins) and — for `platform.sh` deployments — a full local Drupal installation. Afterwards the SSH key is removed and verified to be gone, so the agent can build, lint and test the project but cannot reach remote environments.
+
+See [AI Integration](./ai.md) for the full concept.

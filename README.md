@@ -11,6 +11,7 @@ The bundled assets are for the iqual internal developer platform's Drupal integr
 * Workflows for Drupal automation using **GitHub Actions**
 * Integration for deployment to **Upsun** (formerly Platform.sh)
 * `Makefile` **commands** for project and app tasks
+* **AI integration** for coding agents
 
 ## Quick Start
 
@@ -118,6 +119,7 @@ assets/replace/
 │   │       └── upgrader.sh
 │   └── workflows
 │       ├── config-pull.yml.twig
+│       ├── copilot-setup-steps.yml.twig
 │       ├── phpcs.yml.twig
 │       ├── phpunit-functional-testing.yml.twig
 │       ├── phpunit-unit-testing.yml.twig
@@ -125,6 +127,8 @@ assets/replace/
 │       ├── update.yml.twig
 │       ├── upgrade.yml.twig
 │       └── visual-regression-testing.yml.twig
+├── AGENTS.md.twig
+├── CLAUDE.md.twig
 ├── Makefile
 ├── README.md.twig
 ├── solr
@@ -158,6 +162,8 @@ Assets that will be merged into existing destination files or added if inexisten
 
 ```
 assets/merge/
+├── .claude
+│   └── settings.json.twig
 ├── .dockerignore
 ├── .env.twig
 ├── .env.visreg.twig
@@ -185,6 +191,7 @@ assets/merge/
   * [Service Deployment](./docs/deployment.md)
   * [App Installation](./docs/installation.md)
   * [Automation (CI/CD)](./docs/automation.md)
+  * [AI Integration](./docs/ai.md)
 * DDEV
   * [DDEV Usage](https://docs.ddev.com/en/stable/users/usage/)
   * [DDEV Configuration](https://docs.ddev.com/en/stable/users/configuration/config/)
