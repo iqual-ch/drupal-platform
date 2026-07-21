@@ -296,6 +296,6 @@ The VRT configuration can be customized in the `playwright-vrt.config.json` file
    * Manual dispatch
    * Automatically by the GitHub Copilot coding agent before it starts working
 
-This workflow prepares the ephemeral GitHub Actions environment for the [GitHub Copilot coding agent](https://docs.github.com/en/copilot/using-github-copilot/coding-agent). It installs the shared agent skills from [`iqual-ch/claude-plugins`](https://github.com/iqual-ch/claude-plugins) and — for `platform.sh` deployments — a full local Drupal installation. Afterwards the SSH key is removed and verified to be gone, so the agent can build, lint and test the project but cannot reach remote environments.
+This workflow prepares the ephemeral GitHub Actions environment for the [GitHub Copilot coding agent](https://docs.github.com/en/copilot/using-github-copilot/coding-agent). It installs the shared agent skills from [`iqual-ch/claude-plugins`](https://github.com/iqual-ch/claude-plugins). It does not install Drupal locally, since that would require exposing the `SSH_KEY` secret to the coding agent.
 
 See [AI Integration](./ai.md) for the full concept.
