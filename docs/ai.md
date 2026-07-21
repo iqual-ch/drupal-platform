@@ -32,13 +32,9 @@ This keeps skills versioned and updated in one place, instead of drifting copies
 
 ## Copilot coding agent environment
 
-The Copilot cloud agent runs `.github/workflows/copilot-setup-steps.yml` before it starts working (the job must be named exactly `copilot-setup-steps`). The scaffolded workflow:
+The Copilot cloud agent runs `.github/workflows/copilot-setup-steps.yml` before it starts working (the job must be named exactly `copilot-setup-steps`). The scaffolded workflow installs the shared agent skills into `.agents/skills/`.
 
-1. Installs the shared agent skills.
-2. Installs the project locally (DDEV runtime + Drupal, using the `SSH_KEY` secret to sync from the SPOT) — `platform.sh` deployments only.
-3. **Removes the SSH key** and verifies the remote environment is unreachable, so the agent has a full local site and toolchain but no access to remote environments.
-
-For `local-only` deployments only the skills are installed.
+The workflow does **not** install the project locally: a local installation would require passing the `SSH_KEY` secret into the agent's environment, giving it access to remote environments.
 
 The workflow respects the `workflows.runner` variable for custom runner labels and can be disabled entirely with `ai.copilot: false`.
 
