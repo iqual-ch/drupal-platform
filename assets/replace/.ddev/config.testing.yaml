@@ -1,0 +1,6 @@
+# The Selenium add-on points the test base URL at http://web. Sites that
+# canonicalise their host redirect the browser away from it, and the test runner
+# then looks for a session cookie named for a host the browser never used.
+web_environment:
+  - DTT_BASE_URL=http://${DDEV_SITENAME}.ddev.site
+  - SIMPLETEST_BASE_URL=http://${DDEV_SITENAME}.ddev.site
