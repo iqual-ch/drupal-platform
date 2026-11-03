@@ -83,8 +83,8 @@ jobs:
     if: ${{ needs.build.outputs.browser_testing == 'true' || needs.build.outputs.database_testing == 'true' }}
     uses: ./.github/workflows/phpunit-functional-testing.yml
     with:
-      database-testing: ${{ needs.build.outputs.browser_testing == 'true'}}
-      browser-testing: ${{ needs.build.outputs.database_testing == 'true'}}
+      database-testing: ${{ needs.build.outputs.database_testing == 'true'}}
+      browser-testing: ${{ needs.build.outputs.browser_testing == 'true'}}
       cache_key: ${{ github.event.pull_request.head.sha || github.sha }}
     secrets: inherit
 
