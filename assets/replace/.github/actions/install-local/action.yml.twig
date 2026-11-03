@@ -14,6 +14,31 @@ inputs:
 runs:
   using: composite
   steps:
+  # Remove large preinstalled toolchains unused here, DDEV and Playwright bring their own.
+  - name: Free disk space
+    if: ${{ runner.os == 'Linux' && runner.environment == 'github-hosted' }}
+    shell: bash
+    run: |
+      df -h /
+      for path in \
+        /usr/share/dotnet \
+        /usr/share/swift \
+        /usr/local/.ghcup \
+        /usr/local/share/powershell \
+        /usr/local/share/chromium \
+        /usr/local/julia* \
+        /usr/lib/jvm \
+        /usr/lib/firefox \
+        /opt/microsoft \
+        /opt/google \
+        /opt/az \
+        /usr/share/az_*; do
+        if [ -e "$path" ]; then
+          sudo -n rm -rf -- "$path" || echo "::warning::Could not remove $path"
+        fi
+      done
+      df -h /
+
   - name: Generate dynamic env variables
     shell: bash
     run: |
