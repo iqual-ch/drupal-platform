@@ -10,7 +10,7 @@
         }
     ],
     "require": {
-        "iqual/project-scaffold": "^1.1"
+        "iqual/project-scaffold": "^1.1 || ^2.0"
     },
     "archive": {
         "exclude": ["/docs"]
