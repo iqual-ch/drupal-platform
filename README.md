@@ -107,6 +107,8 @@ assets/replace/
 │   ├── docker-compose.solr.yaml.twig
 │   ├── homeadditions
 │   │   └── .bash_aliases.twig
+│   ├── nginx
+│   │   └── pagedesigner.conf
 │   └── php
 │       └── my-php.ini.twig
 ├── .editorconfig
