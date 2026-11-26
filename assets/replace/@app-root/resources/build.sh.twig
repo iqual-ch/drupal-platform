@@ -4,6 +4,8 @@
 
 set -e
 
+rm -f ./public/core/install.php
+
 if [ -d "./public/themes/custom" ]; then
   mkdir -p ./build/public/themes/custom
   mv ./public/themes/custom ./build/public/themes/
